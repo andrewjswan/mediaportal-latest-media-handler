@@ -72,13 +72,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\ArgusTV.ServiceContracts.dll</HintPath>
     </Reference>
-    <Reference Include="ArgusTV.UI.MediaPortal, Version=2.0.1.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\ArgusTV.UI.MediaPortal.dll</HintPath>
-    </Reference>
-    <Reference Include="ArgusTV.UI.Process, Version=2.0.1.0, Culture=neutral, PublicKeyToken=452db6a8c7afea30, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\ArgusTV.UI.Process.dll</HintPath>
+    <Reference Include="Common.GUIPlugins">
+      <HintPath>..\External\Common.GUIPlugins.dll</HintPath>
     </Reference>
     <Reference Include="Common.Utils, Version=1.1.6.27644, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -121,14 +116,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\ForTheRecord.ServiceContracts.dll</HintPath>
     </Reference>
-    <Reference Include="ForTheRecord.UI.MediaPortal, Version=1.5.1.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\ForTheRecord.UI.MediaPortal.dll</HintPath>
-    </Reference>
-    <Reference Include="ForTheRecord.UI.Process, Version=1.6.0.2, Culture=neutral, PublicKeyToken=a9a5dfc20b8d6175, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\ForTheRecord.UI.Process.dll</HintPath>
-    </Reference>
     <Reference Include="Gentle.Common">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\Gentle.Common.dll</HintPath>
@@ -136,6 +123,9 @@
     <Reference Include="Gentle.Framework">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\Gentle.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="GUIVideos">
+      <HintPath>..\External\GUIVideos.dll</HintPath>
     </Reference>
     <Reference Include="MovingPictures, Version=1.2.0.1188, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -163,16 +153,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="TvControl, Version=1.1.6.19737, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -182,10 +163,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\TVDatabase.dll</HintPath>
     </Reference>
-    <Reference Include="TvLibrary.Interfaces, Version=1.1.6.19736, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\TvLibrary.Interfaces.dll</HintPath>
-    </Reference>
     <Reference Include="TvPlugin, Version=1.1.6.19738, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\TvPlugin.dll</HintPath>
@@ -193,10 +170,6 @@
     <Reference Include="Utils">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="WindowPlugins">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\WindowPlugins.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -300,14 +273,14 @@
   </Target>
   -->
   <PropertyGroup>
-        <PostBuildEvent>svn revert ..\..\Properties\AssemblyInfo.cs
+    <PostBuildEvent>svn revert ..\..\Properties\AssemblyInfo.cs
 cd $(TargetDir)
 copy $(ProjectDir)..\scripts\merge.bat .
 copy $(ProjectDir)..\scripts\Tools\ILMerge.exe .
 merge.bat
 del /q merge.bat ILMerge.exe</PostBuildEvent>
   </PropertyGroup>
-    <PropertyGroup>
+  <PropertyGroup>
     <PreBuildEvent>subwcrev ..\..\.. ..\..\Properties\AssemblyInfo.cs ..\..\Properties\AssemblyInfo.cs</PreBuildEvent>
   </PropertyGroup>
 </Project>

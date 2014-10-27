@@ -11,29 +11,13 @@
 //***********************************************************************
 extern alias RealNLog;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
-using MediaPortal.GUI.Library;
-using System.Threading;
-using System.Timers;
-using SQLite.NET;
 using System.IO;
 using RealNLog.NLog;
 using RealNLog.NLog.Config;
 using RealNLog.NLog.Targets;
 using MediaPortal.Services;
-using MediaPortal.Music.Database;
-using System.Globalization;
-
-
 
 
 namespace LatestMediaHandler
