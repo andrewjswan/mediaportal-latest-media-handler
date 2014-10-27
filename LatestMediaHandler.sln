@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{642C6B52-661A-4486-8AA3-10D32A525433}"
 	ProjectSection(SolutionItems) = preProject
 		LatestMediaHandler\FanartImage.cs = LatestMediaHandler\FanartImage.cs
@@ -10,14 +12,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LatestMediaHandler", "Lates
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4E7B5EA7-A01E-4E5A-A0CE-A3684A68376B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E7B5EA7-A01E-4E5A-A0CE-A3684A68376B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E7B5EA7-A01E-4E5A-A0CE-A3684A68376B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E7B5EA7-A01E-4E5A-A0CE-A3684A68376B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E7B5EA7-A01E-4E5A-A0CE-A3684A68376B}.Debug|x86.ActiveCfg = Debug|x86
+		{4E7B5EA7-A01E-4E5A-A0CE-A3684A68376B}.Debug|x86.Build.0 = Debug|x86
+		{4E7B5EA7-A01E-4E5A-A0CE-A3684A68376B}.Release|x86.ActiveCfg = Release|x86
+		{4E7B5EA7-A01E-4E5A-A0CE-A3684A68376B}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
