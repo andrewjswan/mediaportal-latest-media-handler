@@ -17,7 +17,6 @@ using System.Globalization;
 using RealNLog.NLog;
 using System.IO;
 using TvControl;
-using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
 

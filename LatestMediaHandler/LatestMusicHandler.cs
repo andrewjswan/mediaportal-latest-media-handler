@@ -10,27 +10,19 @@
 // Copyright        : Open Source software licensed under the GNU/GPL agreement. Thanks to MediaPortal that created many of the functions used here.
 //***********************************************************************
 
-using System.Globalization;
-
 namespace LatestMediaHandler
 {
   extern alias RealNLog;
-  using MediaPortal.Configuration;
-  using MediaPortal.Database;
   using MediaPortal.GUI.Library;
   using MediaPortal.Music.Database;
-  using MediaPortal.Picture.Database;
   using MediaPortal.TagReader;
-  using MediaPortal.Utils;
   using MediaPortal.Util;
   using RealNLog.NLog;
-  using SQLite.NET;
   using System;
   using System.Collections;
   using System.Collections.Generic;
   using System.IO;
   using System.Linq;
-  using System.Text;
   using System.Threading;
   using MediaPortal.Profile;
   using MediaPortal.Services;

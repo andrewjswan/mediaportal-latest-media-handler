@@ -9,28 +9,17 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-using System.Globalization;
 
 namespace LatestMediaHandler
 {
   extern alias RealNLog;
-  using MediaPortal.Configuration;
   using RealNLog.NLog;
   using System;
-  using System.Collections.Generic;
-  using System.Collections;
-  using MediaPortal.Util;
-  using MediaPortal.GUI.Library;
-  using System.Linq;
-  using System.Text;
   using System.ComponentModel;
-  using System.IO;
   using System.Threading;
-  using System.Reflection;
 
 
-
-  internal class LatestTVRecordingsWorker : BackgroundWorker
+    internal class LatestTVRecordingsWorker : BackgroundWorker
   {
     #region declarations
 

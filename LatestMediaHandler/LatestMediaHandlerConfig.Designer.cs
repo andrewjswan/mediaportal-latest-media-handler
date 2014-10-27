@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LatestMediaHandler
+﻿namespace LatestMediaHandler
 {
     partial class LatestMediaHandlerConfig
     {
