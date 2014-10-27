@@ -9,26 +9,12 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-using System.Globalization;
 
 namespace LatestMediaHandler
 {
   extern alias RealNLog;
-  using MediaPortal.Configuration;
-  using MediaPortal.Database;
-  using MediaPortal.GUI.Library;
-  using MediaPortal.Music.Database;
-  using MediaPortal.Picture.Database;
-  using RealNLog.NLog;
-  using SQLite.NET;
-  using System;
-  using System.Collections;
-  using System.Collections.Generic;
-  using System.IO;
-  using System.Linq;
-  using System.Text;
 
-  /// <summary>
+    /// <summary>
   /// Container for fanart data.
   /// </summary>
   internal class FanartImage

@@ -14,12 +14,7 @@ extern alias RealNLog;
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using RealNLog.NLog;
-using System.IO;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 
 namespace LatestMediaHandler

@@ -21,7 +21,6 @@ using MediaPortal.Video.Database;
 using MediaPortal.Plugins.MovingPictures;
 using MediaPortal.Plugins.MovingPictures.Database;
 using MediaPortal.Plugins.MovingPictures.MainUI;
-using Cornerstone.Database.Tables;
 using System.Globalization;
 using System.Threading;
 

@@ -13,25 +13,17 @@
 namespace LatestMediaHandler
 {
   extern alias RealNLog;
-  using MediaPortal.Configuration;
   using MediaPortal.GUI.Library;
-  using MediaPortal.Util;
   using RealNLog.NLog;
-  using SQLite.NET;
   using System;
   using System.Collections;
-  using System.Collections.Generic;
   using System.Drawing;
-  using System.Globalization;
   using System.IO;
-  using System.Linq;
   using System.Runtime.InteropServices;
   using System.Reflection;
-  using System.Text;
-  using System.Text.RegularExpressions;
 
 
-  /// <summary>
+    /// <summary>
   /// Utility class used by the Latest Media Handler plugin.
   /// </summary>
   internal static class Utils

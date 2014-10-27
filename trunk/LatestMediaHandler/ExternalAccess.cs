@@ -1,8 +1,5 @@
 ﻿extern alias RealNLog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using RealNLog.NLog;
 
 namespace LatestMediaHandler

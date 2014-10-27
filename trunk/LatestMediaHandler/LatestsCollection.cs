@@ -10,27 +10,7 @@
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
 extern alias RealNLog;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using RealNLog.NLog;
-using MediaPortal.Configuration;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Plugins.MovingPictures;
-using MediaPortal.Plugins.MovingPictures.Database;
-using Cornerstone.Database;
-using Cornerstone.Database.Tables;
-using TvDatabase;
-using ForTheRecord.Entities;
-using ForTheRecord.ServiceAgents;
-using ForTheRecord.ServiceContracts;
-using WindowPlugins.GUITVSeries;
-using System.Globalization;
 
 namespace LatestMediaHandler
 {

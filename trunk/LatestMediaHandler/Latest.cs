@@ -9,10 +9,6 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LatestMediaHandler
 {

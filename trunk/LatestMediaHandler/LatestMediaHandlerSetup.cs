@@ -17,24 +17,15 @@ using Microsoft.Win32;
 namespace LatestMediaHandler
 {
   extern alias RealNLog;
-  using System.Globalization;
   using MediaPortal.Configuration;
-  using MediaPortal.Dialogs;
   using MediaPortal.GUI.Library;
-  using MediaPortal.Music.Database;
-  using MediaPortal.Player;
   using MediaPortal.Services;
-  using MediaPortal.TagReader;
   using RealNLog.NLog;
   using RealNLog.NLog.Config;
   using RealNLog.NLog.Targets;
   using System;
   using System.Collections;
-  using System.Collections.Generic;
-  using System.Drawing;
   using System.IO;
-  using System.Linq;
-  using System.Reflection;
   using System.Text;
   using System.Threading;
   using System.Timers;
