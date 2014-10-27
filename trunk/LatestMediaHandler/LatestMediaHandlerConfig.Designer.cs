@@ -485,7 +485,7 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(158, 24);
             this.label10.TabIndex = 2;
-            this.label10.Text = "Created by cul8er";
+            this.label10.Text = "Created by cul8er (maintaind by yoavain)";
             // 
             // label9
             // 

@@ -34,7 +34,6 @@ namespace LatestMediaHandler
     private const string RXMatchNonWordCharacters = @"[^\w|;]";
     private const string RXMatchMPvs = @"({)([0-9]+)(})$"; // MyVideos fanart scraper filename index
     private const string RXMatchMPvs2 = @"(\()([0-9]+)(\))$"; // MyVideos fanart scraper filename index
-    public const string GetMajorMinorVersionNumber = "1.6.2.0"; //Holds current pluginversion.
     private static bool isStopping /* = false*/; //is the plugin about to stop, then this will be true
     private static Hashtable delayStop = null;
     private static bool used4TRTV = false;

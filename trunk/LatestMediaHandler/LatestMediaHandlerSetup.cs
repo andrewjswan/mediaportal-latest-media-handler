@@ -3412,7 +3412,7 @@ namespace LatestMediaHandler
     // Returns the author of the plugin which is shown in the plugin menu
     public string Author()
     {
-      return "cul8er";
+      return "cul8er (maintained by yoavain)";
     }
 
     // show the setup dialog
