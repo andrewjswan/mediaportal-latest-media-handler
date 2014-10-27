@@ -1,6 +1,6 @@
 @echo off
 cls
-Title Creating MediaPortal FanartHandler Installer
+Title Creating MediaPortal Latest Media Handler Installer
 
 :: Check for modification
 svn status ..\source | findstr "^M"
@@ -27,19 +27,19 @@ FOR /F "tokens=1-3" %%i IN ('Tools\sigcheck.exe "..\LatestMediaHandler\bin\Relea
 SET version=%version:~0,-1%
 
 :: Temp xmp2 file
-copy fanarthandler.xmp2 fanarthandlerTemp.xmp2
+copy LatestMediaHandler.xmp2 LatestMediaHandlerTemp.xmp2
 
-:: Sed "fanarthandler-{VERSION}.xml" from xmp2 file
-Tools\sed.exe -i "s/fanarthandler-{VERSION}.xml/fanarthandler-%version%.xml/g" fanarthandlerTemp.xmp2
+:: Sed "LatestMediaHandler-{VERSION}.xml" from xmp2 file
+Tools\sed.exe -i "s/LatestMediaHandler-{VERSION}.xml/LatestMediaHandler-%version%.xml/g" LatestMediaHandlerTemp.xmp2
 
 :: Build MPE1
-"%PROGS%\Team MediaPortal\MediaPortal\MPEMaker.exe" fanarthandlerTemp.xmp2 /B /V=%version% /UpdateXML
+"%PROGS%\Team MediaPortal\MediaPortal\MPEMaker.exe" LatestMediaHandlerTemp.xmp2 /B /V=%version% /UpdateXML
 
 :: Cleanup
-del fanarthandlerTemp.xmp2
+del LatestMediaHandlerTemp.xmp2
 
-:: Sed "FanartHandler-{VERSION}.MPE1" from fanarthandler.xml
-Tools\sed.exe -i "s/FanartHandler-{VERSION}.MPE1/FanartHandler-%version%.MPE1/g" fanarthandler-%version%.xml
+:: Sed "LatestMediaHandler-{VERSION}.MPE1" from LatestMediaHandler.xml
+Tools\sed.exe -i "s/LatestMediaHandler-{VERSION}.MPE1/LatestMediaHandler-%version%.MPE1/g" LatestMediaHandler-%version%.xml
 
 :: Parse version (Might be needed in the futute)
 FOR /F "tokens=1-4 delims=." %%i IN ("%version%") DO ( 
@@ -50,7 +50,7 @@ FOR /F "tokens=1-4 delims=." %%i IN ("%version%") DO (
 )
 
 :: Rename MPE1
-if exist "..\builds\FanartHandler-%major%.%minor%.%build%.%revision%.MPE1" del "..\builds\FanartHandler-%major%.%minor%.%build%.%revision%.MPE1"
-rename ..\builds\FanartHandler-MAJOR.MINOR.BUILD.REVISION.MPE1 "FanartHandler-%major%.%minor%.%build%.%revision%.MPE1"
+if exist "..\builds\LatestMediaHandler-%major%.%minor%.%build%.%revision%.MPE1" del "..\builds\LatestMediaHandler-%major%.%minor%.%build%.%revision%.MPE1"
+rename ..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.MPE1 "LatestMediaHandler-%major%.%minor%.%build%.%revision%.MPE1"
 
 
