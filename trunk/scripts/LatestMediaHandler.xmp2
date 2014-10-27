@@ -15,28 +15,28 @@
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\LatestMediaHandler\bin\Release\LatestMediaHandler.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{3e0cdaf9-7327-465e-b13e-9bf42591759d}-LatestMediaHandler.dll</ZipFileName>
-              <DestinationFilename>%Base%\LatestMediaHandler.dll</DestinationFilename>
+              <DestinationFilename>%Base%\plugins\process\LatestMediaHandler.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\Installer\config\LatestMediaHandler.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{d7d746d5-0e97-4660-b732-22a8d22bdec9}-LatestMediaHandler.org</ZipFileName>
-              <DestinationFilename>%Base%\LatestMediaHandler.xml</DestinationFilename>
+              <DestinationFilename>%Config%\LatestMediaHandler.xml</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\language\en.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c2eab1ba-0331-4372-80c0-fe560ec77f5f}-en.xml</ZipFileName>
-              <DestinationFilename>%Base%\en.xml</DestinationFilename>
+              <DestinationFilename>%Language%\LatestMediaHandler\en.xml</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\language\sv.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{50137788-85a9-44d0-9037-6efdc2b7496e}-sv.xml</ZipFileName>
-              <DestinationFilename>%Base%\sv.xml</DestinationFilename>
+              <DestinationFilename>%Language%\LatestMediaHandler\sv.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -69,7 +69,7 @@ cul8er</Value>
               <Description />
             </SectionParam>
             <SectionParam Name="Header image">
-              <Value>LatestMediaHandler_Icon.png</Value>
+              <Value>..\LatestMediaHandler_Icon.png</Value>
               <ValueType>File</ValueType>
               <Description>Image in upper right part</Description>
             </SectionParam>
@@ -96,7 +96,7 @@ cul8er</Value>
               <Description>Description of section, shown in under section title</Description>
             </SectionParam>
             <SectionParam Name="Header image">
-              <Value>LatestMediaHandler_Icon.png</Value>
+              <Value>..\LatestMediaHandler_Icon.png</Value>
               <ValueType>File</ValueType>
               <Description>Image in upper right part</Description>
             </SectionParam>
@@ -135,7 +135,7 @@ cul8er</Value>
               <Description>Use radiobutton in place of combobox</Description>
             </SectionParam>
             <SectionParam Name="Header image">
-              <Value>LatestMediaHandler_Icon.png</Value>
+              <Value>..\LatestMediaHandler_Icon.png</Value>
               <ValueType>File</ValueType>
               <Description>Image in upper right part</Description>
             </SectionParam>
@@ -280,28 +280,28 @@ cul8er</Value>
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\LatestMediaHandler\bin\Release\LatestMediaHandler.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{3e0cdaf9-7327-465e-b13e-9bf42591759d}-LatestMediaHandler.dll</ZipFileName>
-        <DestinationFilename>%Base%\LatestMediaHandler.dll</DestinationFilename>
+        <DestinationFilename>%Base%\plugins\process\LatestMediaHandler.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\Installer\config\LatestMediaHandler.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{d7d746d5-0e97-4660-b732-22a8d22bdec9}-LatestMediaHandler.org</ZipFileName>
-        <DestinationFilename>%Base%\LatestMediaHandler.xml</DestinationFilename>
+        <DestinationFilename>%Config%\LatestMediaHandler.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\language\en.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c2eab1ba-0331-4372-80c0-fe560ec77f5f}-en.xml</ZipFileName>
-        <DestinationFilename>%Base%\en.xml</DestinationFilename>
+        <DestinationFilename>%Language%\LatestMediaHandler\en.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\language\sv.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{50137788-85a9-44d0-9037-6efdc2b7496e}-sv.xml</ZipFileName>
-        <DestinationFilename>%Base%\sv.xml</DestinationFilename>
+        <DestinationFilename>%Language%\LatestMediaHandler\sv.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
