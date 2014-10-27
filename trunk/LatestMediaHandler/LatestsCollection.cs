@@ -29,7 +29,6 @@ using TvDatabase;
 using ForTheRecord.Entities;
 using ForTheRecord.ServiceAgents;
 using ForTheRecord.ServiceContracts;
-using ForTheRecord.UI.Process.Recordings;
 using WindowPlugins.GUITVSeries;
 using System.Globalization;
 
