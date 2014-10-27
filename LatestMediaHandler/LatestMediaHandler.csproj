@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4E7B5EA7-A01E-4E5A-A0CE-A3684A68376B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LatestMediaHandler</RootNamespace>
+    <AssemblyName>LatestMediaHandler</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ArgusTV.Client.Common, Version=2.0.1.0, Culture=neutral, PublicKeyToken=452db6a8c7afea30, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ArgusTV.Client.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ArgusTV.DataContracts, Version=2.0.1.0, Culture=neutral, PublicKeyToken=452db6a8c7afea30, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ArgusTV.DataContracts.dll</HintPath>
+    </Reference>
+    <Reference Include="ArgusTV.ServiceAgents, Version=2.0.1.0, Culture=neutral, PublicKeyToken=452db6a8c7afea30, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ArgusTV.ServiceAgents.dll</HintPath>
+    </Reference>
+    <Reference Include="ArgusTV.ServiceContracts, Version=2.0.1.0, Culture=neutral, PublicKeyToken=452db6a8c7afea30, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ArgusTV.ServiceContracts.dll</HintPath>
+    </Reference>
+    <Reference Include="ArgusTV.UI.MediaPortal, Version=2.0.1.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ArgusTV.UI.MediaPortal.dll</HintPath>
+    </Reference>
+    <Reference Include="ArgusTV.UI.Process, Version=2.0.1.0, Culture=neutral, PublicKeyToken=452db6a8c7afea30, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ArgusTV.UI.Process.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Utils, Version=1.1.6.27644, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\Common.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Cornerstone, Version=1.2.0.1188, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\Cornerstone.dll</HintPath>
+      <Aliases>RealCornerstone</Aliases>
+    </Reference>
+    <Reference Include="Databases">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\Databases.dll</HintPath>
+    </Reference>
+    <Reference Include="Dialogs">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\Dialogs.dll</HintPath>
+    </Reference>
+    <Reference Include="FanartHandler, Version=2.2.6.518, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\FanartHandler.dll</HintPath>
+    </Reference>
+    <Reference Include="ForTheRecord.Client.Common, Version=1.6.0.2, Culture=neutral, PublicKeyToken=a9a5dfc20b8d6175, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ForTheRecord.Client.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ForTheRecord.Entities, Version=1.5.1.0, Culture=neutral, PublicKeyToken=a9a5dfc20b8d6175, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ForTheRecord.Entities.dll</HintPath>
+    </Reference>
+    <Reference Include="ForTheRecord.ServiceAgents, Version=1.6.0.2, Culture=neutral, PublicKeyToken=a9a5dfc20b8d6175, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ForTheRecord.ServiceAgents.dll</HintPath>
+    </Reference>
+    <Reference Include="ForTheRecord.ServiceContracts, Version=1.6.0.2, Culture=neutral, PublicKeyToken=a9a5dfc20b8d6175, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ForTheRecord.ServiceContracts.dll</HintPath>
+    </Reference>
+    <Reference Include="ForTheRecord.UI.MediaPortal, Version=1.5.1.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ForTheRecord.UI.MediaPortal.dll</HintPath>
+    </Reference>
+    <Reference Include="ForTheRecord.UI.Process, Version=1.6.0.2, Culture=neutral, PublicKeyToken=a9a5dfc20b8d6175, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\ForTheRecord.UI.Process.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Common">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\Gentle.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Framework">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\Gentle.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="MovingPictures, Version=1.2.0.1188, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\MovingPictures.dll</HintPath>
+    </Reference>
+    <Reference Include="MP-TVSeries">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\MP-TVSeries.dll</HintPath>
+    </Reference>
+    <Reference Include="mvCentral, Version=1.0.3.417, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\mvCentral.dll</HintPath>
+    </Reference>
+    <Reference Include="MyFilms, Version=5.1.0.1468, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\MyFilms.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=1.0.0.505, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\NLog.dll</HintPath>
+      <Aliases>RealNLog</Aliases>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TvControl, Version=1.1.6.19737, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\TvControl.dll</HintPath>
+    </Reference>
+    <Reference Include="TVDatabase">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\TVDatabase.dll</HintPath>
+    </Reference>
+    <Reference Include="TvLibrary.Interfaces, Version=1.1.6.19736, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\TvLibrary.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="TvPlugin, Version=1.1.6.19738, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\TvPlugin.dll</HintPath>
+    </Reference>
+    <Reference Include="Utils">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowPlugins">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\External\MP12\WindowPlugins.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ExternalAccess.cs" />
+    <Compile Include="FanartImage.cs" />
+    <Compile Include="Latest4TRRecordingsHandler.cs" />
+    <Compile Include="LatestArgusRecordingsHandler.cs" />
+    <Compile Include="LatestMediaHandlerSetup.cs">
+    </Compile>
+    <Compile Include="Latest.cs" />
+    <Compile Include="LatestMovingPicturesHandler.cs" />
+    <Compile Include="LatestMusicHandler.cs" />
+    <Compile Include="LatestMvCentralHandler.cs" />
+    <Compile Include="LatestMyFilmsHandler.cs" />
+    <Compile Include="LatestMyVideosHandler.cs" />
+    <Compile Include="LatestPictureHandler.cs" />
+    <Compile Include="LatestReorgWorker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LatestsCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LatestTVRecordingsHandler.cs" />
+    <Compile Include="LatestTVRecordingsWorker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LatestTVSeriesHandler.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ShowLMHDialog.cs" />
+    <Compile Include="StartupWorker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Translation.cs" />
+    <Compile Include="TVRecordingsThumbnailHandler.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="LatestMediaHandlerConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LatestMediaHandlerConfig.Designer.cs">
+      <DependentUpon>LatestMediaHandlerConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UtilsFanartHandler.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LatestMediaHandlerConfig.resx">
+      <DependentUpon>LatestMediaHandlerConfig.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LatestMediaHandler_Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\LatestMediaHandler_Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LatestMediaHandler_Icon_Disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\LatestMediaHandler_Icon_Disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>"$(TargetDir)merge.bat"</PostBuildEvent>
+  </PropertyGroup>
+</Project>
