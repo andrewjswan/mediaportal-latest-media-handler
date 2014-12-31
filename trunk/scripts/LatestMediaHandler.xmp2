@@ -201,12 +201,12 @@ cul8er</Value>
         </MinVersion>
         <MaxVersion>
           <Major>1</Major>
-          <Minor>9</Minor>
+          <Minor>99</Minor>
           <Build>999</Build>
           <Revision>999</Revision>
         </MaxVersion>
         <WarnOnly>true</WarnOnly>
-        <Message>requires Installer version 1.9.0.0 to 1.9.999.999</Message>
+        <Message>requires Installer version 1.9.0.0 to 1.99.999.999</Message>
         <Name>Installer</Name>
       </DependencyItem>
     </Items>
@@ -223,7 +223,7 @@ cul8er</Value>
     <UpdateUrl>https://mediaportal-latest-media-handler.googlecode.com/svn/trunk/scripts/LatestMediaHandler.xml</UpdateUrl>
     <Version>
       <Major>2</Major>
-      <Minor>0</Minor>
+      <Minor>1</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
@@ -238,7 +238,7 @@ cul8er</Value>
 </VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://mediaportal-latest-media-handler.googlecode.com/svn/trunk/builds/LatestMediaHandler-{VERSION}.MPE1</OnlineLocation>
-    <ReleaseDate>2014-10-27T09:06:46</ReleaseDate>
+    <ReleaseDate>2014-12-31T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.MPE1</Location>
     <Params>
@@ -306,8 +306,8 @@ cul8er</Value>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>LatestMediaHandler_Icon.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9c84bcba-d057-4086-8466-f4974e107391}-LatestMediaHandler_Icon.png</ZipFileName>
+        <LocalFileName>..\LatestMediaHandler_Icon.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0b1c8721-929c-455c-8311-3f4b0b2dac74}-LatestMediaHandler_Icon.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
