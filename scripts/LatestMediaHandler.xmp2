@@ -218,13 +218,13 @@ cul8er</Value>
     <Name>Latest Media Handler</Name>
     <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
     <Author>cul8er (maintained by yoavain)</Author>
-    <HomePage>https://code.google.com/p/mediaportal-latest-media-handler/</HomePage>
+    <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
     <ForumPage>http://forum.team-mediaportal.com/fanart-handler-535/latestmediahandler-97936/</ForumPage>
-    <UpdateUrl>https://mediaportal-latest-media-handler.googlecode.com/svn/trunk/scripts/LatestMediaHandler.xml</UpdateUrl>
+    <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
     <Version>
       <Major>2</Major>
       <Minor>1</Minor>
-      <Build>0</Build>
+      <Build>1</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
@@ -233,12 +233,11 @@ cul8er</Value>
 * latest added series (tvseries)
 * latest added music
 * latest added tv recordings</ExtensionDescription>
-    <VersionDescription>* Optimizations
-
+    <VersionDescription>Move to GitHub
 </VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>https://mediaportal-latest-media-handler.googlecode.com/svn/trunk/builds/LatestMediaHandler-{VERSION}.MPE1</OnlineLocation>
-    <ReleaseDate>2014-12-31T09:06:46</ReleaseDate>
+    <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.MPE1</OnlineLocation>
+    <ReleaseDate>2015-04-01T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.MPE1</Location>
     <Params>
@@ -266,7 +265,7 @@ cul8er</Value>
           <Description>Online stored screenshot urls separated by ; </Description>
         </SectionParam>
         <SectionParam Name="Force to uninstall on update">
-          <Value>yes</Value>
+          <Value>YES</Value>
           <ValueType>Bool</ValueType>
           <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
         </SectionParam>
