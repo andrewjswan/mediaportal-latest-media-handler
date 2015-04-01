@@ -56,9 +56,9 @@
         <Name>Latest Media Handler</Name>
         <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
         <Author>cul8er</Author>
-        <HomePage>http://code.google.com/p/latestmediahandler/</HomePage>
+        <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
         <ForumPage>http://forum.team-mediaportal.com/fanart-handler-535/latestmediahandler-97936/</ForumPage>
-        <UpdateUrl>http://latestmediahandler.googlecode.com/svn/trunk/LatestMediaHandler.xml</UpdateUrl>
+        <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
         <Version>
           <Major>1</Major>
           <Minor>6</Minor>
@@ -76,7 +76,7 @@
 
 </VersionDescription>
         <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://latestmediahandler.googlecode.com/svn/trunk/LatestMediaHandler.mpe1</OnlineLocation>
+        <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler.mpe1</OnlineLocation>
         <ReleaseDate>2013-01-18T09:06:46</ReleaseDate>
         <Tags>latest media,music,recording,picture,series,movie</Tags>
         <Location>E:\Visual Studio 2008\Projects\LatestMediaHandler\LatestMediaHandler.mpe1</Location>
@@ -170,9 +170,9 @@
         <Name>Latest Media Handler</Name>
         <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
         <Author>cul8er</Author>
-        <HomePage>http://code.google.com/p/latestmediahandler/</HomePage>
+        <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
         <ForumPage>http://forum.team-mediaportal.com/fanart-handler-535/latestmediahandler-97936/</ForumPage>
-        <UpdateUrl>http://latestmediahandler.googlecode.com/svn/trunk/LatestMediaHandler.xml</UpdateUrl>
+        <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
         <Version>
           <Major>1</Major>
           <Minor>6</Minor>
@@ -189,7 +189,7 @@
 
 </VersionDescription>
         <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://latestmediahandler.googlecode.com/svn/trunk/LatestMediaHandler.mpe1</OnlineLocation>
+        <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler.mpe1</OnlineLocation>
         <ReleaseDate>2013-01-18T09:06:46</ReleaseDate>
         <Tags>latest media,music,recording,picture,series,movie</Tags>
         <Location>E:\Visual Studio 2008\Projects\LatestMediaHandler\LatestMediaHandler.mpe1</Location>
