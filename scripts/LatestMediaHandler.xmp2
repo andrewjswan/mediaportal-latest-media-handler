@@ -38,6 +38,13 @@
               <ZipFileName>Installer{CopyFile}\{50137788-85a9-44d0-9037-6efdc2b7496e}-sv.xml</ZipFileName>
               <DestinationFilename>%Language%\LatestMediaHandler\sv.xml</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Installer\language\fr.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{bf54ed8e-eea9-11e4-90ec-1681e6b88ec1}-fr.xml</ZipFileName>
+              <DestinationFilename>%Language%\LatestMediaHandler\fr.xml</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -301,6 +308,13 @@ cul8er</Value>
         <LocalFileName>..\Installer\language\sv.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{50137788-85a9-44d0-9037-6efdc2b7496e}-sv.xml</ZipFileName>
         <DestinationFilename>%Language%\LatestMediaHandler\sv.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Installer\language\fr.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bf54ed8e-eea9-11e4-90ec-1681e6b88ec1}-fr.xml</ZipFileName>
+        <DestinationFilename>%Language%\LatestMediaHandler\fr.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
