@@ -224,6 +224,9 @@ namespace LatestMediaHandler
     //Music
     public static string ArtistDetails = "Artist Details";
     public static string AlbumDetails = "Album Details";
+    public static string MostPlayedMusic = "Most Played Music";
+    public static string LatestPlayedMusic = "Latest Played Music";
+    public static string LatestAddedMusic = "Latest Added Music";
 
     //All
     public static string Play = "Play";

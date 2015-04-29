@@ -386,19 +386,19 @@ namespace LatestMediaHandler
         {
           LatestMediaHandlerSetup.LatestMusicType = "Most Played Music";
           pItem = new GUIListItem();
-          pItem.Label = "Display Most Played Music";
+          pItem.Label = Translation.MostPlayedMusic;
         }
         else if (LatestMediaHandlerSetup.LatestMusicType.Equals("Most Played Music"))
         {
           LatestMediaHandlerSetup.LatestMusicType = "Latest Played Music";
           pItem = new GUIListItem();
-          pItem.Label = "Display Latest Played Music";
+          pItem.Label = Translation.LatestPlayedMusic;
         }
         else if (LatestMediaHandlerSetup.LatestMusicType.Equals("Latest Played Music"))
         {
           LatestMediaHandlerSetup.LatestMusicType = "Latest Added Music";
           pItem = new GUIListItem();
-          pItem.Label = "Display Latest Added Music";
+          pItem.Label = Translation.LatestAddedMusic;
         }
         pItem.ItemId = 4;
         dlg.Add(pItem);

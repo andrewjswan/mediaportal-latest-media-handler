@@ -70,7 +70,7 @@ namespace LatestMediaHandler
       }
       catch (Exception ex)
       {
-        logger.Error("setupConfigFile: " + ex.ToString());
+        logger.Error("setupConfigFile: " + ex);
       }
     }
 
@@ -169,7 +169,7 @@ namespace LatestMediaHandler
       }
       catch (Exception ex)
       {
-        logger.Error("ParseTVSeriesRatings: " + ex.ToString());
+        logger.Error("ParseTVSeriesRatings: " + ex);
       }
       return null;
     }
@@ -184,7 +184,7 @@ namespace LatestMediaHandler
       }
       catch (Exception ex)
       {
-        logger.Error("LatestMediaHandlerConfig_Load: " + ex.ToString());
+        logger.Error("LatestMediaHandlerConfig_Load: " + ex);
       }
 
       label11.Text = "Version " + Utils.GetAllVersionNumber();
@@ -518,7 +518,7 @@ namespace LatestMediaHandler
       }
       catch (Exception ex)
       {
-        logger.Error("LatestMediaHandlerConfig_Load: " + ex.ToString());
+        logger.Error("LatestMediaHandlerConfig_Load: " + ex);
       }
 
     }

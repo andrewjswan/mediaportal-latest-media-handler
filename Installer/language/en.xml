@@ -23,7 +23,10 @@
  <!-- MUSIC-->
   <string Field="ArtistDetails">Artist Details</string>  
   <string Field="AlbumDetails">Album Details</string>    
-  
+  <string Field="MostPlayedMusic">Display Most Played Music</string>    
+  <string Field="LatestPlayedMusic">Display Latest Played Music</string>    
+  <string Field="LatestAddedMusic">Display Latest Added Music</string>    
+
   <!-- ALL-->
   <string Field="Play">Play</string>  
   
