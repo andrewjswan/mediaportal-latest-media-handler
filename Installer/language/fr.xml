@@ -6,26 +6,26 @@
  
  <!-- EPISODES-->
   <string Field="EpisodeDetails">Infos</string>
-  <string Field="DisplayNextEpisodes">Episodes suivant le dernier épisode vu</string>
-  <string Field="DisplayLatestEpisodes">Derniers épisodes ajoutés</string>
-  <string Field="ShowUnwatchedEpisodes">Episodes non vus</string>
-  <string Field="ShowAllEpisodes">Tous les épisodes</string>
+  <string Field="DisplayNextEpisodes">Afficher les épisodes suivant le dernier épisode vu</string>
+  <string Field="DisplayLatestEpisodes">Afficher les derniers épisodes ajoutés</string>
+  <string Field="ShowUnwatchedEpisodes">Afficher uniquement les épisodes non vus</string>
+  <string Field="ShowAllEpisodes">Afficher tous les épisodes</string>
   
  <!-- MOVIES-->
   <string Field="MovieDetails">Infos</string>
-  <string Field="ShowUnwatchedMovies">Films non vus</string>
-  <string Field="ShowAllMovies">Tous les films</string>
+  <string Field="ShowUnwatchedMovies">Afficher les films non vus</string>
+  <string Field="ShowAllMovies">Afficher tous les films</string>
   
  <!-- RECORDINGS-->
-  <string Field="ShowUnwatchedRecordings">Enregistrements non vus</string>
-  <string Field="ShowAllRecordings">Tous les enregistrements</string>  
+  <string Field="ShowUnwatchedRecordings">Afficher uniquement les enregistrements non vus</string>
+  <string Field="ShowAllRecordings">Afficher tous les enregistrements</string>  
 
  <!-- MUSIC-->
   <string Field="ArtistDetails">Artiste</string>  
   <string Field="AlbumDetails">Album</string>    
-  <string Field="MostPlayedMusic">Morceaux favoris</string>    
-  <string Field="LatestPlayedMusic">Derniers morceaux lus</string>    
-  <string Field="LatestAddedMusic">Derniers morceaux ajoutés</string> 
+  <string Field="MostPlayedMusic">Afficher les morceaux favoris</string>    
+  <string Field="LatestPlayedMusic">Afficher le derniers morceaux lus</string>    
+  <string Field="LatestAddedMusic">Afficher les derniers morceaux ajoutés</string> 
   
   <!-- ALL-->
   <string Field="Play">Lire</string>  
