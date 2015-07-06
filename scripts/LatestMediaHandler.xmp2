@@ -231,7 +231,7 @@ cul8er</Value>
     <Version>
       <Major>2</Major>
       <Minor>1</Minor>
-      <Build>1</Build>
+      <Build>2</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
@@ -240,11 +240,10 @@ cul8er</Value>
 * latest added series (tvseries)
 * latest added music
 * latest added tv recordings</ExtensionDescription>
-    <VersionDescription>Move to GitHub
-</VersionDescription>
+    <VersionDescription>MP 1.12</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.MPE1</OnlineLocation>
-    <ReleaseDate>2015-04-01T09:06:46</ReleaseDate>
+    <ReleaseDate>2015-07-06T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.MPE1</Location>
     <Params>
