@@ -1,33 +1,79 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!-- German (DE) -->
+<!-- Deutsch (DE) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<!-- Last Updated: 12th October 2011 -->
+<!-- Last Updated: 19th September 2015 by Catavolt -->
 <strings>
  
  <!-- EPISODES-->
-  <string Field="EpisodeDetails">Episoden-Infos</string>
-  <string Field="DisplayNextEpisodes">Nächste Folgen</string>
-  <string Field="DisplayLatestEpisodes">Zuletzt hinzugefügte Folgen</string>
-  <string Field="ShowUnwatchedEpisodes">Ungesehene Folgen</string>
-  <string Field="ShowAllEpisodes">Alle Folgen</string>
+  <string Field="EpisodeDetails">Episoden Details</string>
+  <string Field="DisplayNextEpisodes">Zeige nächte Episode für die zuletzt gesehene Episode</string>
+  <string Field="DisplayLatestEpisodes">Zeige zuletzt hinzugefügte Episoden</string>
+  <string Field="ShowUnwatchedEpisodes">Zeige nur ungesehene Episoden</string>
+  <string Field="ShowAllEpisodes">Zeige alle Episoden</string>
   
  <!-- MOVIES-->
-  <string Field="MovieDetails">Film-Infos</string>
-  <string Field="ShowUnwatchedMovies">Ungesehene Filme</string>
-  <string Field="ShowAllMovies">Alle Filme</string>
+  <string Field="MovieDetails">Film Details</string>
+  <string Field="ShowUnwatchedMovies">Zeige nur ungesehene Filme</string>
+  <string Field="ShowAllMovies">Zeige alle Filme</string>
   
  <!-- RECORDINGS-->
-  <string Field="ShowUnwatchedRecordings">Ungesehene Aufnahmen</string>
-  <string Field="ShowAllRecordings">Alle Aufnahmen</string>  
+  <string Field="ShowUnwatchedRecordings">Zeige nur ungesehene Aufnahmen</string>
+  <string Field="ShowAllRecordings">Zeige alle Aufnahmen</string>  
+  
+  <!-- LABEL -->
+  <string Field="LabelLatestAdded">Zuletzt hinzugefügt</string>
+  <string Field="LabelLatestPlayed">Zuletzt gespielt</string>
+  <string Field="LabelMostPlayed">Häufig gespielt</string>
 
  <!-- MUSIC-->
-  <string Field="ArtistDetails">Informationen zum Künstler</string>  
-  <string Field="AlbumDetails">Informationen zum Album</string>    
-  <string Field="MostPlayedMusic">Meistgespielte Titel</string>    
-  <string Field="LatestPlayedMusic">Zuletzt gespielter Titel</string>    
-  <string Field="LatestAddedMusic">Zuletzt hinzugefügte Titel</string> 
+  <string Field="ArtistDetails">Künstler Details</string>  
+  <string Field="AlbumDetails">Album Details</string>    
   
-  <!-- ALL-->
-  <string Field="Play">Lire</string>  
+ <!-- ALL-->
+  <string Field="Play">Abspielen</string>
+
+ <!-- SETTINGS-->
+  <string Field="PrefsDateFormat">Datumsformat</string>
+  <string Field="PrefsDescription">Latest Media Handller ist ein Plugin für MediaPortal 1.2 (oder neuer).\nDer Zweck dieses Plugins ist Information über die letzten Medien von:\n* Bildern\n* Musik Alben\n* Moving Pictures\n* TV Serien\n* Aufnahmen\nfür die MediaPortal Skins zu liefern so dass diese Dinge wie die letzten Film Title, Poster und Backdrops anzeigen können.</string>;
+  <string Field="PrefsLatestAddedMusic">neueste Musik</string>
+  <string Field="PrefsLatestPlayedMusic">letzt gespielte Musik</string>
+  <string Field="PrefsLMHOptions">Latest Media Handler Optionen</string>
+  <string Field="PrefsLMHOptionsDesc">Aktiviere Latest Media Unterstützung für:</string>
+  <string Field="PrefsMinutes">Minuten aktualisieren</string>
+  <string Field="PrefsMiscOptions">Weitere Optionen</string>
+  <string Field="PrefsMostPlayedMusic">häufigst gespielte Musik</string>
+  <string Field="PerfsMovingPictures">Moving Pictures</string>
+  <string Field="PrefsMovingPicturesWatched">Nur ungesehene Filme berücksichtigen</string>
+  <string Field="PrefsMusic">Musik</string>
+  <string Field="PrefsMvCentral">MvCentral</string>
+  <string Field="PrefsMyFilms">MyFilms</string>
+  <string Field="PrefsMyFilmsWatched">Nur ungesehene Filme berücksichtigen</string>
+  <string Field="PrefsMyVideos">MyVideos</string>
+  <string Field="PrefsMyVideosWatched">Nur ungesehene Videos berücksichtigen</string>
+  <string Field="PrefsPictures">Bilder</string>
+  <string Field="PrefsRatingFilter">Altersbeschränkungsfilter</string>
+  <string Field="PrefsRatingDesc">Nur Inhalte mit der folgenden Altersbeschränkung für unterstützte Plugins (TV Series) benutzen</string>
+  <string Field="PrefsRatingTV_Y">TV-Y: Geeignet für alle Altersgruppen</string>
+  <string Field="PrefsRatingTV_G">TV-G: Übrwiegend geeignet für alle Altersgruppen.</string>
+  <string Field="PrefsRatingTV_PG">TV-PG: für jüngere Zuschauer ungeeignet.</string>
+  <string Field="PrefsRatingTV_Y7">TV-Y7: Geeignet Zuschauer über 7 Jahren.</string>
+  <string Field="PrefsRatingTV_14">TV-14: für Zuschauer unter 14 Jahren ungeeignet.</string>
+  <string Field="PrefsRatingTV_MA">TV-MA: für Zuschauer unter 17 Jahren ungeeignet.</string>
+  <string Field="PrefsRecordings">Aufnahmen</string>
+  <string Field="PrefsRecordingsWatched">Nur ungesehene Aufnahmen berücksichtigen</string>
+  <string Field="PrefsRecordingsUnfinished">Laufende Aufnahmen anzeigen</string>
+  <string Field="PrefsRefreshInterval">Alle</string>
+  <string Field="PrefsSaveChanges">Änderungen speichen?</string>
+  <string Field="PrefsSaveChangesMsgBox">Die Einstellungen werden im Speicher gehalten. Drücken Sie vor dem Verlassen der MP-Konfiguration 'Ok', um diese Einstellungen dauerhaft zu speichern. Wenn Sie die MP-Konfiguration durch Drücken von 'Cancel' verlassen, werden diese Einstellungen NICHT gespeichert!</string>
+  <string Field="PrefsSaveChangesDialog">Wollen Sie Ihre Änderungen speichern?</string>
+  <string Field="PrefsTabAbout">Über</string>
+  <string Field="PrefsTabDB">Datenbank</string>
+  <string Field="PrefsTabLMH">Latest Media</string>
+  <string Field="PrefsTabMisc">Sonstiges</string>
+  <string Field="PrefsTabRatings">Altersbeschränkung</string>
+  <string Field="PrefsTVSeries">TV Serien</string>
+  <string Field="PrefsTVSeriesWatched">Nur ungesehene Serienfolgen berücksichtigen</string>
+  <string Field="PrefsUpdateDB">Abfrage/Update der Databanken</string>
+  <string Field="PrefsUpdateDBDesc">Aktiviere automatische Datenbank-Updates für:</string>
   
 </strings>

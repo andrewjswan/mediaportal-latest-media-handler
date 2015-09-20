@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- English (US) -->
+<!-- English (RU) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
 <!-- Last Updated: 19th September 2015 -->
 <strings>
@@ -21,23 +21,23 @@
   <string Field="ShowAllRecordings">Show All Recordings</string>  
 
  <!-- MUSIC-->
-  <string Field="ArtistDetails">Artist Details</string>  
-  <string Field="AlbumDetails">Album Details</string>    
+  <string Field="ArtistDetails">О Артисте</string>  
+  <string Field="AlbumDetails">О Альбоме</string>    
   <string Field="MostPlayedMusic">Display Most Played Music</string>    
   <string Field="LatestPlayedMusic">Display Latest Played Music</string>    
   <string Field="LatestAddedMusic">Display Latest Added Music</string>    
 
  <!-- LABEL -->
-  <string Field="LabelLatestAdded">Latest Added</string>  
-  <string Field="LabelLatestPlayed">Latest Played</string>  
-  <string Field="LabelMostPlayed">Most Played</string>  
+  <string Field="LabelLatestAdded">Недавно добавленные</string>  
+  <string Field="LabelLatestPlayed">Недавно проигранные</string>  
+  <string Field="LabelMostPlayed">Популярные</string>  
 
  <!-- ALL-->
   <string Field="Play">Play</string>  
   
  <!-- SETTINGS-->
   <string Field="PrefsDateFormat">Date format</string>
-  <string Field="PrefsDescription">Latest Media Handller is a plugin for MediaPortal 1.2 (or later).\nThe purpose of the plugin is to deliver information about latest\n* Pictures\n* Music Albums\n* My Video\n* TVSeries\n* Moving Pictures\n* My Films\n* MvCentral\n* Recordings\nto MediaPortal skins so that they can display things like latest movie title, poster and backdrops.</string>;
+  <string Field="PrefsDescription">Latest Media Handller is a plugin for MediaPortal 1.2 (or later).\nThe purpose of the plugin is to deliver information about latest\n* Pictures\n* Music Albums\n* Moving Pictures\n* TVSeries\n* Recordings\nto MediaPortal skins so that they can display things like latest movie title, poster and backdrops.</string>;
   <string Field="PrefsLatestAddedMusic">Latest Added Music</string>
   <string Field="PrefsLatestPlayedMusic">Latest Played Music</string>
   <string Field="PrefsLMHOptions">Latest Media Handler Options</string>

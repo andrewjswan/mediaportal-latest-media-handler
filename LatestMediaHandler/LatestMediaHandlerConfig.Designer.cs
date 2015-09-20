@@ -44,6 +44,7 @@
             this.checkBox12 = new System.Windows.Forms.CheckBox();
             this.checkBox13 = new System.Windows.Forms.CheckBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.checkBox15 = new System.Windows.Forms.CheckBox();
             this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.checkBox9 = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -67,7 +68,6 @@
             this.label9 = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.checkBox15 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage20.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -79,9 +79,9 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage20);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
@@ -240,6 +240,19 @@
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Latest Media Options";
             // 
+            // checkBox15
+            // 
+            this.checkBox15.AutoSize = true;
+            this.checkBox15.Checked = true;
+            this.checkBox15.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox15.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBox15.Location = new System.Drawing.Point(9, 396);
+            this.checkBox15.Name = "checkBox15";
+            this.checkBox15.Size = new System.Drawing.Size(87, 20);
+            this.checkBox15.TabIndex = 20;
+            this.checkBox15.Text = "MvCentral";
+            this.checkBox15.UseVisualStyleBackColor = true;
+            // 
             // checkBox8
             // 
             this.checkBox8.AutoSize = true;
@@ -371,9 +384,9 @@
             this.checkBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.checkBox2.Location = new System.Drawing.Point(9, 123);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(123, 20);
+            this.checkBox2.Size = new System.Drawing.Size(87, 20);
             this.checkBox2.TabIndex = 10;
-            this.checkBox2.Text = "Latest TVSeries";
+            this.checkBox2.Text = "TV Series";
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
@@ -423,9 +436,9 @@
             this.checkBox6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.checkBox6.Location = new System.Drawing.Point(9, 71);
             this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(218, 20);
+            this.checkBox6.Size = new System.Drawing.Size(62, 20);
             this.checkBox6.TabIndex = 3;
-            this.checkBox6.Text = "Music ...................................................";
+            this.checkBox6.Text = "Music";
             this.checkBox6.UseVisualStyleBackColor = true;
             this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox6_CheckedChanged);
             // 
@@ -483,9 +496,9 @@
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.Location = new System.Drawing.Point(262, 47);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(158, 24);
+            this.label10.Size = new System.Drawing.Size(383, 24);
             this.label10.TabIndex = 2;
-            this.label10.Text = "Created by cul8er (maintaind by yoavain)";
+            this.label10.Text = "Created by cul8er (maintaind by yoavain, ajs)";
             // 
             // label9
             // 
@@ -499,9 +512,9 @@
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox1.BackColor = System.Drawing.Color.White;
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.richTextBox1.Location = new System.Drawing.Point(6, 112);
@@ -517,19 +530,6 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // checkBox15
-            // 
-            this.checkBox15.AutoSize = true;
-            this.checkBox15.Checked = true;
-            this.checkBox15.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox15.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox15.Location = new System.Drawing.Point(9, 396);
-            this.checkBox15.Name = "checkBox15";
-            this.checkBox15.Size = new System.Drawing.Size(87, 20);
-            this.checkBox15.TabIndex = 20;
-            this.checkBox15.Text = "MvCentral";
-            this.checkBox15.UseVisualStyleBackColor = true;
-            // 
             // LatestMediaHandlerConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -538,13 +538,14 @@
             this.ClientSize = new System.Drawing.Size(792, 702);
             this.Controls.Add(this.tabControl1);
             this.DoubleBuffered = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "LatestMediaHandlerConfig";
             this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
             this.Text = "Latest Media Handler";
-            this.Load += new System.EventHandler(this.LatestMediaHandlerConfig_Load);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LatestMediaHandlerConfig_FormClosing);
+            this.Load += new System.EventHandler(this.LatestMediaHandlerConfig_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage20.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
@@ -559,7 +560,6 @@
             this.ResumeLayout(false);
 
         }
-
         #endregion
 
         private System.Windows.Forms.TabControl tabControl1;

@@ -17,9 +17,9 @@ namespace LatestMediaHandler
   using RealNLog.NLog;
   using SQLite.NET;
   using System;
+  using System.IO;
   using System.Collections.Generic;
   using System.Collections;
-  using System.IO;
   using MediaPortal.Picture.Database;
   using MediaPortal.Util;
   using MediaPortal.Profile;
@@ -285,8 +285,8 @@ namespace LatestMediaHandler
         {
           al.Clear();
         }
-        sqlQuery =
-          "select strFile, strDateTaken from picture where strFile not like '%kindgirls%' order by strDateTaken desc limit 10;";
+        sqlQuery = "select strFile, strDateTaken from picture where strFile not like '%kindgirls%' order by strDateTaken desc limit 10;";
+
         SQLiteResultSet resultSet = dbClient.Execute(sqlQuery);
         if (resultSet != null)
         {
@@ -312,16 +312,15 @@ namespace LatestMediaHandler
                 DateTime dTmp = DateTime.Parse(dateAdded);
                 dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", dTmp);
               }
-              catch
-              {
-              }
+              catch {   }
+
               string title = Utils.GetFilenameNoPath(tmpThumb).ToUpperInvariant();
               if (thumb != null && thumb.Trim().Length > 0)
               {
                 if (File.Exists(thumb))
                 {
-                  result.Add(new LatestMediaHandler.Latest(dateAdded, thumb, tmpThumb, title, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null));
+                  result.Add(new LatestMediaHandler.Latest(dateAdded, thumb, tmpThumb, title, 
+                             null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
                   //                   if (facade != null)
                   //                 {
                   AddToFilmstrip(result[x], i);
@@ -515,34 +514,14 @@ namespace LatestMediaHandler
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", string.Empty);
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", string.Empty);
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", string.Empty);
-            //OLD
-            LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".title", string.Empty);
-            LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".thumb", string.Empty);
-            LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".filename", string.Empty);
-            LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".dateAdded", string.Empty);
             z++;
           }
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "false");
-          //OLD
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest.enabled", "false");
           if (InitDB("PictureDatabase.db3"))
           {
             LatestMediaHandler.LatestsCollection ht = GetLatestPictures();
             if (ht != null)
             {
-              /*for (int i = 0; i < ht.Count && i < 3; i++)
-                           {
-                               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", string.Empty);
-                               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", string.Empty);
-                               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", string.Empty);
-                               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", string.Empty);
-                               //OLD
-                               LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".title", string.Empty);
-                               LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".thumb", string.Empty);
-                               LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".filename", string.Empty);
-                               LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".dateAdded", string.Empty);
-                               z++;
-                           }*/
               z = 1;
               for (int i = 0; i < ht.Count && i < 3; i++)
               {
@@ -550,13 +529,7 @@ namespace LatestMediaHandler
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", ht[i].Title);
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", ht[i].Thumb);
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", ht[i].Thumb);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded",
-                  ht[i].DateAdded);
-                //OLD
-                LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".title", ht[i].Title);
-                LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".thumb", ht[i].Thumb);
-                LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".filename", ht[i].Thumb);
-                LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest" + z + ".dateAdded", ht[i].DateAdded);
+                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", ht[i].DateAdded);
                 z++;
               }
               ht.Clear();
@@ -572,8 +545,15 @@ namespace LatestMediaHandler
           }
           z = 1;
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "true");
-          //OLD
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.picture.latest.enabled", "true");
+          logger.Debug("Updating Latest Media Info: Latest Pictures has new: " + (Utils.HasNewPictures ? "true" : "false"));
+        }
+        catch (FileNotFoundException)
+        {
+          //do nothing    
+        }
+        catch (MissingMethodException)
+        {
+          //do nothing    
         }
         catch (Exception ex)
         {

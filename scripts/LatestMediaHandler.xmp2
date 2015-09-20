@@ -19,7 +19,7 @@
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\config\LatestMediaHandler.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{d7d746d5-0e97-4660-b732-22a8d22bdec9}-LatestMediaHandler.org</ZipFileName>
               <DestinationFilename>%Config%\LatestMediaHandler.xml</DestinationFilename>
@@ -44,6 +44,20 @@
               <LocalFileName>..\Installer\language\fr.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{bf54ed8e-eea9-11e4-90ec-1681e6b88ec1}-fr.xml</ZipFileName>
               <DestinationFilename>%Language%\LatestMediaHandler\fr.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Installer\language\ru.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b409cb17-1a68-48d9-976e-e82760ce6e13}-ru.xml</ZipFileName>
+              <DestinationFilename>%Language%\LatestMediaHandler\ru.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Installer\language\de.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0e27f0e5-ba0c-4d06-bd92-9715a1518443}-de.xml</ZipFileName>
+              <DestinationFilename>%Language%\LatestMediaHandler\de.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -175,7 +189,7 @@ cul8er</Value>
           <Revision>27644</Revision>
         </MaxVersion>
         <WarnOnly>false</WarnOnly>
-        <Message>requires MediaPortal version 1.9</Message>
+        <Message>Requires MediaPortal version 1.2</Message>
         <Name>MediaPortal</Name>
       </DependencyItem>
       <DependencyItem>
@@ -194,7 +208,7 @@ cul8er</Value>
           <Revision>0</Revision>
         </MaxVersion>
         <WarnOnly>true</WarnOnly>
-        <Message>requires Skin version 1.4.0.0 to 1.4.0.0.</Message>
+        <Message>Requires Skin version 1.4.0.0 to 1.4.0.0.</Message>
         <Name>Skin</Name>
       </DependencyItem>
       <DependencyItem>
@@ -213,7 +227,7 @@ cul8er</Value>
           <Revision>999</Revision>
         </MaxVersion>
         <WarnOnly>true</WarnOnly>
-        <Message>requires Installer version 1.9.0.0 to 1.99.999.999</Message>
+        <Message>Requires Installer version 1.9.0.0 to 1.99.999.999</Message>
         <Name>Installer</Name>
       </DependencyItem>
     </Items>
@@ -224,37 +238,54 @@ cul8er</Value>
   <GeneralInfo>
     <Name>Latest Media Handler</Name>
     <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
-    <Author>cul8er (maintained by yoavain)</Author>
+    <Author>cul8er (maintained by yoavain, ajs)</Author>
     <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
-    <ForumPage>http://forum.team-mediaportal.com/fanart-handler-535/latestmediahandler-97936/</ForumPage>
+    <ForumPage>http://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
     <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
     <Version>
       <Major>2</Major>
-      <Minor>1</Minor>
-      <Build>2</Build>
-      <Revision>0</Revision>
+      <Minor>3</Minor>
+      <Build>0</Build>
+      <Revision>33</Revision>
     </Version>
-    <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
-* latest added pictures
-* latest added movies (moving pictures)
-* latest added series (tvseries)
-* latest added music
-* latest added tv recordings</ExtensionDescription>
-    <VersionDescription>MP 1.12</VersionDescription>
+    <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
+* latest added pictures
+* latest added music
+* latest added videos
+* latest added series (tvseries)
+* latest added movies (moving pictures)
+* latest added movies (my films)
+* latest added videos (mvcentral)
+* latest added tv recordings
+</ExtensionDescription>
+    <VersionDescription>* Settings now fully covered by localizations, Available in german and english.
+* Optimisations
+* Some fixes
+* Added FH compatibility
+* Added translated label (Almost always has a value: Latest Added (en)):
+#latestMediaHandler.tvrecordings.label
+#latestMediaHandler.movingpicture.label
+#latestMediaHandler.mvcentral.label
+#latestMediaHandler.music.label
+#latestMediaHandler.picture.label
+#latestMediaHandler.myfilms.label
+#latestMediaHandler.myvideo.label
+#latestMediaHandler.tvseries.label
+</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.MPE1</OnlineLocation>
-    <ReleaseDate>2015-07-06T09:06:46</ReleaseDate>
-    <Tags>latest media,music,recording,picture,series,movie</Tags>
+    <ReleaseDate>2015-09-20T09:06:46</ReleaseDate>
+    <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.MPE1</Location>
     <Params>
       <Items>
         <SectionParam Name="Icon">
-          <Value />
+          <Value>..\LatestMediaHandler\Resources\LatestMediaHandler_Icon.png</Value>
           <ValueType>File</ValueType>
           <Description>The icon file of the package (jpg,png,bmp)</Description>
         </SectionParam>
         <SectionParam Name="Online Icon">
-          <Value />
+          <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/LatestMediaHandler_Icon.png</Value>
           <ValueType>String</ValueType>
           <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
         </SectionParam>
@@ -289,7 +320,7 @@ cul8er</Value>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\config\LatestMediaHandler.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{d7d746d5-0e97-4660-b732-22a8d22bdec9}-LatestMediaHandler.org</ZipFileName>
         <DestinationFilename>%Config%\LatestMediaHandler.xml</DestinationFilename>
@@ -315,11 +346,32 @@ cul8er</Value>
         <ZipFileName>Installer{CopyFile}\{bf54ed8e-eea9-11e4-90ec-1681e6b88ec1}-fr.xml</ZipFileName>
         <DestinationFilename>%Language%\LatestMediaHandler\fr.xml</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Installer\language\ru.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b409cb17-1a68-48d9-976e-e82760ce6e13}-ru.xml</ZipFileName>
+        <DestinationFilename>%Language%\LatestMediaHandler\ru.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Installer\language\de.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0e27f0e5-ba0c-4d06-bd92-9715a1518443}-de.xml</ZipFileName>
+        <DestinationFilename>%Language%\LatestMediaHandler\de.xml</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\LatestMediaHandler_Icon.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{0b1c8721-929c-455c-8311-3f4b0b2dac74}-LatestMediaHandler_Icon.png</ZipFileName>
+        <DestinationFilename />
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\LatestMediaHandler\Resources\LatestMediaHandler_Icon.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7e7fd28c-81dc-4535-affb-39eb8970eb4b}-LatestMediaHandler_Icon.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>

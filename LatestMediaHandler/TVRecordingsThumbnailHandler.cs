@@ -33,13 +33,12 @@ namespace LatestMediaHandler
       {
 
         string previewThumb = string.Format(CultureInfo.CurrentCulture, "{0}\\{1}{2}", Thumbs.TVRecorded,
-          Path.ChangeExtension(
-            MediaPortal.Util.Utils.SplitFilename(_filename), null),
-          MediaPortal.Util.Utils.GetThumbExtension());
+                                            Path.ChangeExtension(MediaPortal.Util.Utils.SplitFilename(_filename), null),
+                                            MediaPortal.Util.Utils.GetThumbExtension());
 
-        _filename = string.Format(CultureInfo.CurrentCulture, "{0}{1}", Path.ChangeExtension(
-          MediaPortal.Util.Utils.SplitFilename(_filename), null),
-          MediaPortal.Util.Utils.GetThumbExtension());
+        _filename = string.Format(CultureInfo.CurrentCulture, "{0}{1}", 
+                                  Path.ChangeExtension(MediaPortal.Util.Utils.SplitFilename(_filename), null),
+                                  MediaPortal.Util.Utils.GetThumbExtension());
 
         if (!MediaPortal.Util.Utils.FileExistsInCache(previewThumb))
         {

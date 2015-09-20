@@ -568,6 +568,7 @@ namespace LatestMediaHandler
         ht = null;
         z = 1;
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest.enabled", "true");
+        logger.Debug("Updating Latest Media Info: Latest MyFilms has new: " + (Utils.HasNewMyFilms ? "true" : "false"));
       }
       else
       {

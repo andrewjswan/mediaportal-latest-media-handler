@@ -12,6 +12,7 @@
 extern alias RealNLog;
 extern alias RealCornerstone;
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using RealNLog.NLog; 
@@ -448,6 +449,14 @@ namespace LatestMediaHandler
             }
           }
         }
+        catch (FileNotFoundException)
+        {
+          //do nothing    
+        }
+        catch (MissingMethodException)
+        {
+          //do nothing    
+        }
         catch (Exception ex)
         {
           if (latests != null)
@@ -464,6 +473,14 @@ namespace LatestMediaHandler
         latests = null;
         result = resultTmp;
         return result;
+      }
+      catch (FileNotFoundException)
+      {
+        //do nothing    
+      }
+      catch (MissingMethodException)
+      {
+        //do nothing    
       }
       catch (Exception ex)
       {
@@ -742,126 +759,47 @@ namespace LatestMediaHandler
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".thumb", string.Empty);
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".fanart", string.Empty);
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".title", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".dateAdded",
-            string.Empty);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".dateAdded", string.Empty);
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".genre", string.Empty);
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".rating", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".roundedRating",
-            string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".classification",
-            string.Empty);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".roundedRating", string.Empty);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".classification", string.Empty);
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".runtime", string.Empty);
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".year", string.Empty);
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".id", string.Empty);
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", string.Empty);
-          //OLD
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".thumb", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".fanart", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".title", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".dateAdded", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".genre", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".rating", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".roundedRating", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".classification",
-            string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".runtime", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".year", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".id", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".plot", string.Empty);
           z++;
         }
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest.enabled", "false");
-        //OLD
-        LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest.enabled", "false");
         if (LatestMediaHandlerSetup.LatestMovingPictures.Equals("True", StringComparison.CurrentCulture))
           // && !(windowId.Equals("96742")))
         {
           GetLatestMovingPictures();
           if (result != null)
           {
-            /*for (int i = 0; i < result.Count && i < 3; i++)
-                        {
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".thumb", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".fanart", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".title", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".dateAdded", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".genre", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".rating", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".roundedRating", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".classification", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".runtime", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".year", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".id", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", string.Empty);
-                            //OLD
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".thumb", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".fanart", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".title", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".dateAdded", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".genre", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".rating", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".roundedRating", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".classification", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".runtime", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".year", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".id", string.Empty);
-                            LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".plot", string.Empty);
-                            z++;
-                        }*/
             z = 1;
             //ArrayList _al = new ArrayList();
             for (int i = 0; i < result.Count && i < 3; i++)
             {
               logger.Info("Updating Latest Media Info: Latest movie " + z + ": " + result[i].Title);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".thumb",
-                result[i].Thumb);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".fanart",
-                result[i].Fanart);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".title",
-                result[i].Title);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".dateAdded",
-                result[i].DateAdded);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".genre",
-                result[i].Genre);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".rating",
-                result[i].Rating);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".roundedRating",
-                result[i].RoundedRating);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".classification",
-                result[i].Classification);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".runtime",
-                result[i].Runtime);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".year",
-                result[i].Year);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".thumb", result[i].Thumb);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".fanart", result[i].Fanart);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".title", result[i].Title);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".dateAdded", result[i].DateAdded);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".genre", result[i].Genre);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".rating", result[i].Rating);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".roundedRating", result[i].RoundedRating);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".classification", result[i].Classification);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".runtime", result[i].Runtime);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".year", result[i].Year);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".id", result[i].Id);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot",
-                result[i].Summary);
-              //OLD
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".thumb", result[i].Thumb);
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".fanart",
-                result[i].Fanart);
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".title", result[i].Title);
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".dateAdded",
-                result[i].DateAdded);
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".genre", result[i].Genre);
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".rating",
-                result[i].Rating);
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".roundedRating",
-                result[i].RoundedRating);
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".classification",
-                result[i].Classification);
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".runtime",
-                result[i].Runtime);
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".year", result[i].Year);
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".id", result[i].Id);
-              LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest" + z + ".plot", result[i].Summary);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", result[i].Summary);
               z++;
             }
           }
           z = 1;
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest.enabled", "true");
-          //OLD
-          LatestMediaHandlerSetup.SetProperty("#fanarthandler.movingpicture.latest.enabled", "true");
+          logger.Debug("Updating Latest Media Info: Latest movie has new: " + (Utils.HasNewMovingPictures ? "true" : "false"));
         }
         else
         {

@@ -367,20 +367,13 @@ namespace LatestMediaHandler
               latestRecordings.Sort(new LatestRecordingsComparer());
               for (int x0 = 0; x0 < latestRecordings.Count; x0++)
               {
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".title",
-                  latestRecordings[x0].Title);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".startTime",
-                  latestRecordings[x0].StartTime);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".startDate",
-                  latestRecordings[x0].StartDate);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".endTime",
-                  latestRecordings[x0].EndTime);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".endDate",
-                  latestRecordings[x0].EndDate);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channel",
-                  latestRecordings[x0].Channel);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channelLogo",
-                  latestRecordings[x0].ChannelLogo);
+                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".title", latestRecordings[x0].Title);
+                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".startTime", latestRecordings[x0].StartTime);
+                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".startDate", latestRecordings[x0].StartDate);
+                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".endTime", latestRecordings[x0].EndTime);
+                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".endDate", latestRecordings[x0].EndDate);
+                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channel",latestRecordings[x0].Channel);
+                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channelLogo", latestRecordings[x0].ChannelLogo);
                 if (i == 3)
                 {
                   break;

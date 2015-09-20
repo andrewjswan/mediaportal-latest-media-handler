@@ -22,6 +22,7 @@ namespace LatestMediaHandler
   extern alias RealNLog;
   using System;
   using System.Collections.Generic;
+  using MediaPortal.Profile;
   using RealNLog.NLog;
 
   internal class LatestMvCentralHandler
@@ -137,42 +138,42 @@ namespace LatestMediaHandler
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artist", string.Empty);
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".album", string.Empty);
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".track", string.Empty);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded",
-                  string.Empty);
+                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded", string.Empty);
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart", string.Empty);
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", string.Empty);
                 z++;
               }
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest.enabled", "false");
+
               if (result != null)
               {
                 z = 1;
                 for (int i = 0; i < result.Count && i < 3; i++)
                 {
-                  logger.Info("Updating Latest Media Info: Latest MvCental " + z + ": " + result[i].Artist + " - " +
-                              result[i].Album);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".thumb",
-                    result[i].Thumb);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artist",
-                    result[i].Artist);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".album",
-                    result[i].Album);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".track",
-                    result[i].Title);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded",
-                    result[i].DateAdded);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart",
-                    result[i].Fanart);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre",
-                    result[i].Genre);
+                  logger.Info("Updating Latest Media Info: Latest MvCental " + z + ": " + result[i].Artist + " - " + result[i].Album);
+                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".thumb", result[i].Thumb);
+                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artist", result[i].Artist);
+                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".album", result[i].Album);
+                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".track", result[i].Title);
+                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded", result[i].DateAdded);
+                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart", result[i].Fanart);
+                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", result[i].Genre);
                   z++;
                 }
                 //hTable.Clear();
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest.enabled", "true");
+                logger.Debug("Updating Latest Media Info: Latest MvCentral has new: " + (Utils.HasNewMvCentral ? "true" : "false"));
               }
               //hTable = null;
               z = 1;
-
+            }
+            catch (FileNotFoundException)
+            {
+              //do nothing    
+            }
+            catch (MissingMethodException)
+            {
+              //do nothing    
             }
             catch (Exception ex)
             {
@@ -185,6 +186,14 @@ namespace LatestMediaHandler
           }
           LatestMediaHandlerSetup.SyncPointMusicUpdate = 0;
         }
+      }
+      catch (FileNotFoundException)
+      {
+        //do nothing    
+      }
+      catch (MissingMethodException)
+      {
+        //do nothing    
       }
       catch (Exception ex)
       {
@@ -275,12 +284,9 @@ namespace LatestMediaHandler
             string sArtist = allTrack.ArtistInfo[0].Artist;
             try
             {
-              dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}",
-                allTrack.DateAdded);
+              dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", allTrack.DateAdded);
             }
-            catch
-            {
-            }
+            catch { }
 
             String sPath = allTrack.LocalMedia[0].File.FullName;
 
@@ -311,8 +317,7 @@ namespace LatestMediaHandler
               {
                 if (!artistsWithImageMissing.Contains(UtilsFanartHandler.GetFHArtistName(sArtist)))
                 {
-                  artistsWithImageMissing.Add(UtilsFanartHandler.GetFHArtistName(sArtist),
-                    UtilsFanartHandler.GetFHArtistName(sArtist));
+                  artistsWithImageMissing.Add(UtilsFanartHandler.GetFHArtistName(sArtist), UtilsFanartHandler.GetFHArtistName(sArtist));
                 }
               }
               IDictionaryEnumerator _enumerator = ht2.GetEnumerator();
@@ -331,9 +336,7 @@ namespace LatestMediaHandler
                 i++;
               }
             }
-            catch
-            {
-            }
+            catch { }
 
             string tmpArtist = string.Empty;
             string tmpAlbum = string.Empty;
@@ -349,12 +352,12 @@ namespace LatestMediaHandler
             }
 
             resultTmp.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, allTrack.Track,
-              allTrack.LocalMedia[0].File.FullName,
-              tmpArtist, tmpAlbum,
-              tmpGenre,
-              allTrack.Rating.ToString(),
-              allTrack.Rating.ToString(), null, null, null, null,
-              null, null, null, null, null, null));
+                          allTrack.LocalMedia[0].File.FullName,
+                          tmpArtist, tmpAlbum,
+                          tmpGenre,
+                          allTrack.Rating.ToString(),
+                          allTrack.Rating.ToString(), 
+                          null, null, null, null, null, null, null, null, null, null));
             if (result == null || result.Count == 0)
             {
               result = resultTmp;
@@ -488,18 +491,12 @@ namespace LatestMediaHandler
       {
         if (item != null && selectedFacadeItem1 != item.ItemId)
         {
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.thumb",
-            result[(item.ItemId - 1)].Thumb);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.artist",
-            result[(item.ItemId - 1)].Artist);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.album",
-            result[(item.ItemId - 1)].Album);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.track",
-            result[(item.ItemId - 1)].Title);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.dateAdded",
-            result[(item.ItemId - 1)].DateAdded);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.genre",
-            result[(item.ItemId - 1)].Genre);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.thumb", result[(item.ItemId - 1)].Thumb);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.artist", result[(item.ItemId - 1)].Artist);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.album", result[(item.ItemId - 1)].Album);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.track", result[(item.ItemId - 1)].Title);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.dateAdded", result[(item.ItemId - 1)].DateAdded);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.genre", result[(item.ItemId - 1)].Genre);
           selectedFacadeItem1 = item.ItemId;
 
           GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
@@ -634,6 +631,11 @@ namespace LatestMediaHandler
 
     private void LoadSongsFromFolder(string folder, bool includeSubFolders)
     {
+      using (Settings xmlreader = new MPSettings())
+      {
+        _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
+      }
+
       // clear current playlist
       playlistPlayer = MediaPortal.Playlists.PlayListPlayer.SingletonPlayer;
       //playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC).Clear();
@@ -654,8 +656,7 @@ namespace LatestMediaHandler
             if (tag != null)
             {
               tag.Artist = MediaPortal.Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
-              tag.AlbumArtist = MediaPortal.Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist,
-                _stripArtistPrefixes);
+              tag.AlbumArtist = MediaPortal.Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist, _stripArtistPrefixes);
               tag.Genre = MediaPortal.Util.Utils.FormatMultiItemMusicStringTrim(tag.Genre, false);
               tag.Composer = MediaPortal.Util.Utils.FormatMultiItemMusicStringTrim(tag.Composer, _stripArtistPrefixes);
               item.Description = tag.Title;

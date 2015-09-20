@@ -14,6 +14,7 @@ namespace LatestMediaHandler
 {
   extern alias RealNLog;
   using MediaPortal.GUI.Library;
+  using MediaPortal.Configuration;
   using RealNLog.NLog;
   using System;
   using System.Collections;
@@ -23,7 +24,7 @@ namespace LatestMediaHandler
   using System.Reflection;
 
 
-    /// <summary>
+  /// <summary>
   /// Utility class used by the Latest Media Handler plugin.
   /// </summary>
   internal static class Utils
@@ -34,11 +35,48 @@ namespace LatestMediaHandler
     private const string RXMatchNonWordCharacters = @"[^\w|;]";
     private const string RXMatchMPvs = @"({)([0-9]+)(})$"; // MyVideos fanart scraper filename index
     private const string RXMatchMPvs2 = @"(\()([0-9]+)(\))$"; // MyVideos fanart scraper filename index
+
     private static bool isStopping /* = false*/; //is the plugin about to stop, then this will be true
     private static Hashtable delayStop = null;
+
     private static bool used4TRTV = false;
     private static bool usedArgus = false;
     private static DateTime lastRefreshRecording;
+
+    private const string ConfigFilename = "LatestMediaHandler.xml";
+    public  const string DefTVSeriesRatings = "TV-Y;TV-Y7;TV-G;TV-PG;TV-14;TV-MA";
+
+    public static string latestPictures { get; set; }
+    public static string latestMusic { get; set; }
+    public static string latestMusicType { get; set; }
+    public static string latestMyVideos { get; set; }
+    public static string latestMyVideosWatched { get; set; }
+    public static string latestMovingPictures { get; set; }
+    public static string latestMovingPicturesWatched { get; set; }
+    public static string latestTVSeries { get; set; }
+    public static string latestTVSeriesWatched { get; set; }
+    public static string latestTVSeriesRatings { get; set; }
+    public static string latestTVRecordings { get; set; }
+    public static string latestTVRecordingsWatched { get; set; }
+    public static string latestMyFilms { get; set; }
+    public static string latestMyFilmsWatched { get; set; }
+    public static string latestMvCentral { get; set; }
+    public static string refreshDbPicture { get; set; }
+    public static string refreshDbMusic { get; set; }
+    public static string reorgInterval { get; set; }
+    public static string dateFormat { get; set; }
+
+    public static bool HasNewPictures { get; set; }
+    public static bool HasNewMusic { get; set; }
+    public static bool HasNewMyVideos { get; set; }
+    public static bool HasNewMovingPictures { get; set; }
+    public static bool HasNewTVSeries { get; set; }
+    public static bool HasNewTVRecordings { get; set; }
+    public static bool HasNewMyFilms { get; set; }
+    public static bool HasNewMvCentral { get; set; }
+
+    public static DateTime NewDateTime { get; set; }
+    public static DateTime TVSeriesLastUpdate { get; set; }
 
     internal static DateTime LastRefreshRecording
     {
@@ -63,7 +101,6 @@ namespace LatestMediaHandler
     /// <summary>
     /// Return value.
     /// </summary>
-
 
     internal static Hashtable DelayStop
     {
@@ -363,9 +400,7 @@ namespace LatestMediaHandler
       }
       return false;
     }
-
-
-
+ 
     /// <summary>
     /// Decide if image is corropt or not
     /// </summary>
@@ -398,5 +433,178 @@ namespace LatestMediaHandler
       }
       return false;
     }
+
+    public static string Check(bool Value, bool Box = true)
+    {
+      return (Box ? "[" : string.Empty) + (Value ? "x" : " ") + (Box ? "]" : string.Empty) ;
+    }
+
+    public static string Check(string Value, bool Box = true)
+    {
+      return (Box ? "[" : string.Empty) + (Value.Equals("True", StringComparison.CurrentCulture) ? "x" : " ") + (Box ? "]" : string.Empty) ;
+    }
+
+    public static void LoadSettings(bool Conf = false)
+    {
+      latestPictures = "True";
+      latestMusic = "True";
+      latestMusicType = "Latest Added Music";
+      latestMyVideos = "True";
+      latestMyVideosWatched = "True";
+      latestMovingPictures = "False";
+      latestMovingPicturesWatched = "True";
+      latestTVSeries = "True";
+      latestTVSeriesWatched = "True";
+      latestTVSeriesRatings = "1;1;1;1;1;1";
+      latestTVRecordings = "False";
+      latestTVRecordingsWatched = "True";
+      latestMyFilms = "False";
+      latestMyFilmsWatched = "True";
+      latestMvCentral = "False";
+
+      refreshDbPicture = "False";
+      refreshDbMusic = "False";
+      reorgInterval = "1440";
+
+      dateFormat = "yyyy-MM-dd";
+
+      HasNewPictures = false;
+      HasNewMusic = false;
+      HasNewMyVideos = false;
+      HasNewMovingPictures = false;
+      HasNewTVSeries = false;
+      HasNewTVRecordings = false;
+      HasNewMyFilms = false;
+      HasNewMvCentral = false;
+
+      NewDateTime = DateTime.Now;
+      TVSeriesLastUpdate = DateTime.Now;
+
+      try
+      {
+        logger.Debug("Load settings from: "+ConfigFilename);
+        #region Load settings
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, ConfigFilename)))
+        {
+          latestPictures = xmlreader.GetValueAsString("LatestMediaHandler", "latestPictures", latestPictures);
+          latestMusic = xmlreader.GetValueAsString("LatestMediaHandler", "latestMusic", latestMusic);
+          latestMusicType = xmlreader.GetValueAsString("LatestMediaHandler", "latestMusicType", latestMusicType).Trim();
+          latestMyVideos = xmlreader.GetValueAsString("LatestMediaHandler", "latestMyVideos", latestMyVideos);
+          latestMyVideosWatched = xmlreader.GetValueAsString("LatestMediaHandler", "latestMyVideosWatched", latestMyVideosWatched);
+          latestMovingPictures = xmlreader.GetValueAsString("LatestMediaHandler", "latestMovingPictures", latestMovingPictures);
+          latestMovingPicturesWatched = xmlreader.GetValueAsString("LatestMediaHandler", "latestMovingPicturesWatched", latestMovingPicturesWatched);
+          latestTVSeries = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVSeries", latestTVSeries);
+          latestTVSeriesWatched = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVSeriesWatched", latestTVSeriesWatched);
+          latestTVSeriesRatings = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVSeriesRatings", latestTVSeriesRatings);
+          latestTVRecordings = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVRecordings", latestTVRecordings);
+          latestTVRecordingsWatched = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVRecordingsWatched", latestTVRecordingsWatched);
+          latestMyFilms = xmlreader.GetValueAsString("LatestMediaHandler", "latestMyFilms", latestMyFilms);
+          latestMyFilmsWatched = xmlreader.GetValueAsString("LatestMediaHandler", "latestMyFilmsWatched", latestMyFilmsWatched);
+          latestMvCentral = xmlreader.GetValueAsString("LatestMediaHandler", "latestMvCentral", latestMvCentral);
+          refreshDbPicture = xmlreader.GetValueAsString("LatestMediaHandler", "refreshDbPicture", refreshDbPicture);
+          refreshDbMusic = xmlreader.GetValueAsString("LatestMediaHandler", "refreshDbMusic", refreshDbMusic);
+          reorgInterval = xmlreader.GetValueAsString("LatestMediaHandler", "reorgInterval", reorgInterval);
+          //useLatestMediaCache = xmlreader.GetValueAsString("LatestMediaHandler", "useLatestMediaCache", useLatestMediaCache);
+          dateFormat = xmlreader.GetValueAsString("LatestMediaHandler", "dateFormat", dateFormat);
+        }
+        #endregion
+        logger.Debug("Load settings from: "+ConfigFilename+" complete.");
+      }
+      catch (Exception ex)
+      {
+        logger.Error("LoadSettings: "+ex);
+      }
+
+      #region Check Settings
+      if (!Conf)
+        if (!string.IsNullOrEmpty(latestTVSeriesRatings))
+        {
+/*
+          "TV-Y: This program is designed to be appropriate for all children");
+          "TV-Y7: This program is designed for children age 7 and above.");
+          "TV-G: Most parents would find this program suitable for all ages.");
+          "TV-PG: This program contains material that parents may find unsuitable for younger children.");
+          "TV-14: This program contains some material that many parents would find unsuitable for children under 14 years of age.");
+          "TV-MA: This program is specifically designed to be viewed by adults and therefore may be unsuitable for children under 17.");            
+*/
+          string[] s = latestTVSeriesRatings.Split(';');
+          string[] r = DefTVSeriesRatings.Split(';');
+
+          latestTVSeriesRatings = string.Empty;
+          for (int i = 0; i < s.Length; i++)
+          {
+            if (s[i].Equals("1"))
+              latestTVSeriesRatings = latestTVSeriesRatings + (string.IsNullOrEmpty(latestTVSeriesRatings) ? "" : ";") + r[i];
+          }
+        }
+        else
+        {
+          latestTVSeriesRatings = DefTVSeriesRatings;
+        }
+      #endregion
+
+      #region Report Settings
+      logger.Debug("Latest: " + Check(latestPictures) + " Pictures, " + 
+                                Check(latestMusic) + " Music, " +
+                                Check(latestMyVideos) + Check(latestMyVideosWatched) + " MyVideo, " + 
+                                Check(latestTVSeries) + Check(latestTVSeriesWatched) + " TVSeries, " +
+                                Check(latestTVRecordings) + Check(latestTVRecordingsWatched) + " TV Recordings, " +
+                                Check(latestMovingPictures) + Check(latestMovingPicturesWatched) + " MovingPictures, " +
+                                Check(latestMyFilms) + Check(latestMyFilmsWatched) + " MyFilms, " +
+                                Check(latestMvCentral) + " MvCentral");
+      logger.Debug("Music Type: " + latestMusicType) ;
+      logger.Debug("TVSeries ratings: " + latestTVSeriesRatings) ;
+      logger.Debug("DB: " + Check(refreshDbPicture) + " Pictures, " + 
+                            Check(refreshDbMusic) + " Music, "+
+                            "Interval: " + reorgInterval);
+      logger.Debug("Date Format: " + dateFormat) ;
+      #endregion
+    }
+
+    public static void SaveSettings()
+    {
+      try
+      {
+        logger.Debug("Save settings to: "+ConfigFilename);
+        #region Save settings
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, ConfigFilename)))
+        {
+          xmlwriter.SetValue("LatestMediaHandler", "latestPictures", latestPictures);
+          xmlwriter.SetValue("LatestMediaHandler", "latestMusic", latestMusic);
+          xmlwriter.SetValue("LatestMediaHandler", "latestMusicType", latestMusicType);
+          xmlwriter.SetValue("LatestMediaHandler", "latestMyVideos", latestMyVideos);
+          xmlwriter.SetValue("LatestMediaHandler", "latestMyVideosWatched", latestMyVideosWatched);
+          xmlwriter.SetValue("LatestMediaHandler", "latestMovingPictures", latestMovingPictures);
+          xmlwriter.SetValue("LatestMediaHandler", "latestMovingPicturesWatched", latestMovingPicturesWatched);
+          xmlwriter.SetValue("LatestMediaHandler", "latestTVSeries", latestTVSeries);
+          xmlwriter.SetValue("LatestMediaHandler", "latestTVSeriesWatched", latestTVSeriesWatched);
+          xmlwriter.SetValue("LatestMediaHandler", "latestTVSeriesRatings", latestTVSeriesRatings);
+          xmlwriter.SetValue("LatestMediaHandler", "latestTVRecordings", latestTVRecordings);
+          xmlwriter.SetValue("LatestMediaHandler", "latestTVRecordingsWatched", latestTVRecordingsWatched);
+          xmlwriter.SetValue("LatestMediaHandler", "latestMyFilms", latestMyFilms);
+          xmlwriter.SetValue("LatestMediaHandler", "latestMyFilmsWatched", latestMyFilmsWatched);
+          xmlwriter.SetValue("LatestMediaHandler", "latestMvCentral", latestMvCentral);
+          xmlwriter.SetValue("LatestMediaHandler", "refreshDbPicture", refreshDbPicture);
+          xmlwriter.SetValue("LatestMediaHandler", "refreshDbMusic", refreshDbMusic);
+          xmlwriter.SetValue("LatestMediaHandler", "reorgInterval", reorgInterval);
+          xmlwriter.SetValue("LatestMediaHandler", "dateFormat", dateFormat);
+        } 
+        #endregion
+        /*
+        try
+        {
+          xmlwriter.SaveCache();
+        }
+        catch
+        {   }
+        */
+        logger.Debug("Save settings to: "+ConfigFilename+" complete.");
+      }
+      catch (Exception ex)
+      {
+        logger.Error("SaveSettings: "+ex);
+      }
+    }
+
   }
 }

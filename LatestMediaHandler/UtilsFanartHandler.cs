@@ -69,11 +69,11 @@ namespace LatestMediaHandler
     }
 
 
-    internal static Hashtable GetMusicFanartForLatest(string artist)
+    internal static Hashtable GetMusicFanartForLatest(string artist, string album = (string) null)
     {
       try
       {
-        return FanartHandler.ExternalAccess.GetMusicFanartForLatestMedia(artist);
+        return FanartHandler.ExternalAccess.GetMusicFanartForLatestMedia(artist, album);
       }
       catch (Exception ex)
       {

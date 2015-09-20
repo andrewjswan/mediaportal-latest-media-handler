@@ -50,6 +50,8 @@ namespace LatestMediaHandler
           Thread.CurrentThread.Name = "StartupWorker";
           Utils.AllocateDelayStop("StartupWorker-OnDoWork");
 
+          logger.Debug("StartupWorker: "+e.Argument.ToString());
+
           if (e.Argument is LatestMusicHandler)
           {
             LatestMediaHandlerSetup.Lmh.GetLatestMediaInfo(true);
@@ -67,14 +69,7 @@ namespace LatestMediaHandler
           {
             if (LatestMediaHandlerSetup.Ltvsh.CurrentType == LatestTVSeriesHandler.Types.Latest)
             {
-              if (LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True"))
-              {
-                LatestMediaHandlerSetup.Ltvsh.TVSeriesUpdateLatest(LatestTVSeriesHandler.Types.Latest, true);
-              }
-              else
-              {
-                LatestMediaHandlerSetup.Ltvsh.TVSeriesUpdateLatest(LatestTVSeriesHandler.Types.Latest, false);
-              }
+              LatestMediaHandlerSetup.Ltvsh.TVSeriesUpdateLatest(LatestTVSeriesHandler.Types.Latest, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True"));
             }
             LatestMediaHandlerSetup.Ltvsh.ChangedEpisodeCount();
             LatestMediaHandlerSetup.Ltvsh.SetupTVSeriesLatest();
@@ -92,9 +87,6 @@ namespace LatestMediaHandler
           {
             LatestMediaHandlerSetup.Lmch.GetLatestMediaInfo(true);
           }
-
-
-
         }
         catch (Exception ex)
         {
@@ -102,14 +94,12 @@ namespace LatestMediaHandler
           logger.Error("OnDoWork: " + ex.ToString());
         }
       }
-
     }
 
     internal void OnRunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
     {
       try
       {
-
         Utils.ReleaseDelayStop("StartupWorker-OnDoWork");
       }
       catch (Exception ex)
