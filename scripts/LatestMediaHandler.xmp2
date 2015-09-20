@@ -248,35 +248,39 @@ cul8er</Value>
       <Build>0</Build>
       <Revision>33</Revision>
     </Version>
-    <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
-* latest added pictures
-* latest added music
-* latest added videos
-* latest added series (tvseries)
-* latest added movies (moving pictures)
-* latest added movies (my films)
-* latest added videos (mvcentral)
-* latest added tv recordings
+    <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
+
+* latest added pictures
+* latest added music
+* latest added videos
+* latest added series (tvseries)
+* latest added movies (moving pictures)
+* latest added movies (my films)
+* latest added videos (mvcentral)
+* latest added tv recordings
+
 </ExtensionDescription>
-    <VersionDescription>* Settings now fully covered by localizations, Available in german and english.
-* Optimisations
-* Some fixes
-* Added FH compatibility
-* Added translated label (Almost always has a value: Latest Added (en)):
-#latestMediaHandler.tvrecordings.label
-#latestMediaHandler.movingpicture.label
-#latestMediaHandler.mvcentral.label
-#latestMediaHandler.music.label
-#latestMediaHandler.picture.label
-#latestMediaHandler.myfilms.label
-#latestMediaHandler.myvideo.label
-#latestMediaHandler.tvseries.label
+    <VersionDescription>* Settings now fully covered by localizations, Available in german and english.
+
+* Optimisations
+* Some fixes
+* Added FH 4.0 compatibility
+* Added translated label (Almost always has a value: Latest Added (en)):
+
+#latestMediaHandler.tvrecordings.label
+#latestMediaHandler.movingpicture.label
+#latestMediaHandler.mvcentral.label
+#latestMediaHandler.music.label
+#latestMediaHandler.picture.label
+#latestMediaHandler.myfilms.label
+#latestMediaHandler.myvideo.label
+#latestMediaHandler.tvseries.label
 </VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.MPE1</OnlineLocation>
+    <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
     <ReleaseDate>2015-09-20T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
-    <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.MPE1</Location>
+    <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>
       <Items>
         <SectionParam Name="Icon">
@@ -290,7 +294,7 @@ cul8er</Value>
           <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
         </SectionParam>
         <SectionParam Name="Configuration file">
-          <Value />
+          <Value>%Plugins%\process\latestmediahandler.dll</Value>
           <ValueType>Template</ValueType>
           <Description>The file used to configure the extension.
  If have .exe extension the will be executed

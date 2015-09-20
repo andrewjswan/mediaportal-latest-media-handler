@@ -17,7 +17,7 @@ if "%programfiles(x86)%XXX"=="XXX" goto 32BIT
 	set PROGS=%programfiles(x86)%
 	goto CONT
 :32BIT
-	set PROGS=%ProgramFiles%	
+	set PROGS=%ProgramFiles%
 :CONT
 
 :: Get version from DLL
@@ -51,6 +51,6 @@ FOR /F "tokens=1-4 delims=." %%i IN ("%version%") DO (
 
 :: Rename MPE1
 if exist "..\builds\LatestMediaHandler-%major%.%minor%.%build%.%revision%.MPE1" del "..\builds\LatestMediaHandler-%major%.%minor%.%build%.%revision%.MPE1"
-rename ..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.MPE1 "LatestMediaHandler-%major%.%minor%.%build%.%revision%.MPE1"
+rename ..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1 "LatestMediaHandler-%major%.%minor%.%build%.%revision%.mpe1"
 
 
