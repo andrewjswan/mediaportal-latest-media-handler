@@ -239,8 +239,9 @@ namespace LatestMediaHandler
     {
       try
       {
+        int P = LatestMediaHandlerSetup.SyncPointMusicUpdate ;
         int sync = Interlocked.CompareExchange(ref LatestMediaHandlerSetup.SyncPointMusicUpdate, 1, 0);
-        logger.Debug("GetLatestMediaInfo: Music sync ["+sync+"]");
+        logger.Debug("GetLatestMediaInfo: Music sync ["+P+"-"+sync+"-"+LatestMediaHandlerSetup.SyncPointMusicUpdate+"]");
         if (sync == 0)
         {
           int z = 1;

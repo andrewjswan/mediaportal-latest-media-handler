@@ -64,6 +64,7 @@ namespace LatestMediaHandler
     internal static int SyncPointReorg /* = 0*/;
     internal static int SyncPointTVRecordings /* = 0*/;
     internal static int SyncPointMusicUpdate;
+    internal static int SyncPointMvCMusicUpdate;
     internal int SyncPointRefresh;
 
     private static LatestMyVideosHandler lmvh;
@@ -613,6 +614,12 @@ namespace LatestMediaHandler
       Lph   = new LatestPictureHandler();
       Lmfh  = new LatestMyFilmsHandler();
       Lmch  = new LatestMvCentralHandler();
+
+      SyncPointReorg = 0;
+      SyncPointTVRecordings = 0;
+      SyncPointMusicUpdate = 0;
+      SyncPointMvCMusicUpdate = 0;
+      SyncPointRefresh = 0;
 
       //TVRecordingsTimerTick = Environment.TickCount;
       ReorgTimerTick = Environment.TickCount;

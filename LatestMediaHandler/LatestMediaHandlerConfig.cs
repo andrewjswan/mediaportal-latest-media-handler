@@ -234,6 +234,13 @@ namespace LatestMediaHandler
         logger.Error("DoSave: " + ex);
       }
 
+      if (LatestMusicType == Translation.LabelMostPlayed)
+        LatestMusicType = "Most Played Music";
+      else if (LatestMusicType == Translation.LabelLatestPlayed)
+        LatestMusicType = "Latest Played Music";
+      else // if (LatestMusicType == Translation.LabelLatestAdded)
+        LatestMusicType = "Latest Added Music";
+
       Utils.SaveSettings();
 
       // MessageBox.Show("Settings is stored in memory. Make sure to press Ok when exiting MP Configuration. Pressing Cancel when exiting MP Configuration will result in these setting NOT being saved!");

@@ -120,7 +120,7 @@ namespace LatestMediaHandler
     {
       try
       {
-        int sync = Interlocked.CompareExchange(ref LatestMediaHandlerSetup.SyncPointMusicUpdate, 1, 0);
+        int sync = Interlocked.CompareExchange(ref LatestMediaHandlerSetup.SyncPointMvCMusicUpdate, 1, 0);
         if (sync == 0)
         {
           int z = 1;
@@ -184,7 +184,7 @@ namespace LatestMediaHandler
           {
             LatestMediaHandlerSetup.EmptyLatestMediaPropsMvCentral();
           }
-          LatestMediaHandlerSetup.SyncPointMusicUpdate = 0;
+          LatestMediaHandlerSetup.SyncPointMvCMusicUpdate = 0;
         }
       }
       catch (FileNotFoundException)
@@ -198,7 +198,7 @@ namespace LatestMediaHandler
       catch (Exception ex)
       {
         logger.Error("GetLatestMediaInfo (MvCentral): " + ex.ToString());
-        LatestMediaHandlerSetup.SyncPointMusicUpdate = 0;
+        LatestMediaHandlerSetup.SyncPointMvCMusicUpdate = 0;
       }
     }
 

@@ -93,7 +93,7 @@
           <Major>2</Major>
           <Minor>3</Minor>
           <Build>0</Build>
-          <Revision>33</Revision>
+          <Revision>34</Revision>
         </Version>
         <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
 
@@ -107,25 +107,10 @@
 * latest added tv recordings
 
 </ExtensionDescription>
-        <VersionDescription>* Settings now fully covered by localizations, Available in german and english.
-
-* Optimisations
-* Some fixes
-* Added FH 4.0 compatibility
-* Added translated label (Almost always has a value: Latest Added (en)):
-
-  #latestMediaHandler.tvrecordings.label
-  #latestMediaHandler.movingpicture.label
-  #latestMediaHandler.mvcentral.label
-  #latestMediaHandler.music.label
-  #latestMediaHandler.picture.label
-  #latestMediaHandler.myfilms.label
-  #latestMediaHandler.myvideo.label
-  #latestMediaHandler.tvseries.label
-</VersionDescription>
+        <VersionDescription>* Fix for latest Music</VersionDescription>
         <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-2.3.0.33.mpe1</OnlineLocation>
-        <ReleaseDate>2015-09-20T17:53:34.7158412+03:00</ReleaseDate>
+        <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-2.3.0.34.mpe1</OnlineLocation>
+        <ReleaseDate>2015-09-20T23:27:08.3175537+03:00</ReleaseDate>
         <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
         <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
         <Params>

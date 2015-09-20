@@ -32,14 +32,14 @@ copy LatestMediaHandler.xmp2 LatestMediaHandlerTemp.xmp2
 :: Sed "LatestMediaHandler-{VERSION}.xml" from xmp2 file
 Tools\sed.exe -i "s/LatestMediaHandler-{VERSION}.xml/LatestMediaHandler-%version%.xml/g" LatestMediaHandlerTemp.xmp2
 
-:: Build MPE1
+:: Build mpe1
 "%PROGS%\Team MediaPortal\MediaPortal\MPEMaker.exe" LatestMediaHandlerTemp.xmp2 /B /V=%version% /UpdateXML
 
 :: Cleanup
 del LatestMediaHandlerTemp.xmp2
 
-:: Sed "LatestMediaHandler-{VERSION}.MPE1" from LatestMediaHandler.xml
-Tools\sed.exe -i "s/LatestMediaHandler-{VERSION}.MPE1/LatestMediaHandler-%version%.MPE1/g" LatestMediaHandler-%version%.xml
+:: Sed "LatestMediaHandler-{VERSION}.mpe1" from LatestMediaHandler.xml
+Tools\sed.exe -i "s/LatestMediaHandler-{VERSION}.mpe1/LatestMediaHandler-%version%.mpe1/g" LatestMediaHandler-%version%.xml
 
 :: Parse version (Might be needed in the futute)
 FOR /F "tokens=1-4 delims=." %%i IN ("%version%") DO ( 
@@ -49,8 +49,8 @@ FOR /F "tokens=1-4 delims=." %%i IN ("%version%") DO (
 	SET revision=%%l
 )
 
-:: Rename MPE1
-if exist "..\builds\LatestMediaHandler-%major%.%minor%.%build%.%revision%.MPE1" del "..\builds\LatestMediaHandler-%major%.%minor%.%build%.%revision%.MPE1"
+:: Rename mpe1
+if exist "..\builds\LatestMediaHandler-%major%.%minor%.%build%.%revision%.mpe1" del "..\builds\LatestMediaHandler-%major%.%minor%.%build%.%revision%.mpe1"
 rename ..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1 "LatestMediaHandler-%major%.%minor%.%build%.%revision%.mpe1"
 
 
