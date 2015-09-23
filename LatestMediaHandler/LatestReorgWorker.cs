@@ -9,17 +9,17 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
+extern alias RealNLog;
+
+using RealNLog.NLog;
+
+using System;
+using System.ComponentModel;
+using System.Threading;
 
 namespace LatestMediaHandler
 {
-  extern alias RealNLog;
-  using RealNLog.NLog;
-  using System;
-  using System.ComponentModel;
-  using System.Threading;
-
-
-    internal class LatestReorgWorker : BackgroundWorker
+  internal class LatestReorgWorker : BackgroundWorker
   {
     #region declarations
 
@@ -40,18 +40,15 @@ namespace LatestMediaHandler
         try
         {
           if (LatestMediaHandlerSetup.FHThreadPriority.Equals("Lowest", StringComparison.CurrentCulture))
-          {
             Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-          }
           else
-          {
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
-          }
+
           Thread.CurrentThread.Name = "LatestReorgWorker";
           Utils.AllocateDelayStop("LatestReorgWorker-OnDoWork");
           logger.Info("Database reorg is starting.");
           if (LatestMediaHandlerSetup.LatestMusic.Equals("True", StringComparison.CurrentCulture) &&
-              LatestMediaHandlerSetup.RefreshDbMusic.Equals("True"))
+              LatestMediaHandlerSetup.RefreshDbMusic.Equals("True", StringComparison.CurrentCulture))
           {
             try
             {
@@ -66,7 +63,7 @@ namespace LatestMediaHandler
             }
           }
           if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture) &&
-              LatestMediaHandlerSetup.RefreshDbPicture.Equals("True"))
+              LatestMediaHandlerSetup.RefreshDbPicture.Equals("True", StringComparison.CurrentCulture))
           {
             try
             {

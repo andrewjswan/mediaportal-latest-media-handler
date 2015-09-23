@@ -10,20 +10,23 @@
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
 extern alias RealNLog;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Globalization;
+using System.Threading;
+using System.Timers;
+using System.Windows.Forms;
+
 using MediaPortal.GUI.Video;
 using MediaPortal.Util;
-using RealNLog.NLog; 
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Video.Database;
-using System.Globalization;
-using System.Threading;
 
-
+using RealNLog.NLog; 
 
 namespace LatestMediaHandler
 {
@@ -48,6 +51,11 @@ namespace LatestMediaHandler
     private int lastFocusedId = 0;
 
     #endregion
+
+    public const int ControlID = 919198710;
+    public const int Play1ControlID = 91915991;
+    public const int Play2ControlID = 91915992;
+    public const int Play3ControlID = 91915993;
 
     public int LastFocusedId
     {
@@ -109,6 +117,34 @@ namespace LatestMediaHandler
       set { _isGetTypeRunningOnThisThread = value; }
     }
 
+    internal bool PlayMovie(GUIWindow fWindow)
+    {
+      try
+      {
+        if (fWindow.GetFocusControlId() == Play1ControlID)
+        {
+          PlayMovie(1);
+          return true;
+        }
+        else if (fWindow.GetFocusControlId() == Play2ControlID)
+        {
+          PlayMovie(2);
+          return true;
+        }
+        else if (fWindow.GetFocusControlId() == Play3ControlID)
+        {
+          PlayMovie(3);
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show("Unable to play video! " + ex.ToString());
+        return true;
+      }
+      return false;
+    }
+
     internal void PlayMovie(int index)
     {
       GUIVideoFiles.Reset(); // reset pincode
@@ -147,12 +183,12 @@ namespace LatestMediaHandler
         dlg.Add(pItem);
         pItem.ItemId = 1;
 
-        //pItem = new GUIListItem(Translation.MovieDetails);
-        //dlg.Add(pItem);
-        //pItem.ItemId = 2;
+        pItem = new GUIListItem(Translation.MovieDetails);
+        dlg.Add(pItem);
+        pItem.ItemId = 2;
 
         //Add Watched/Unwatched Filter Menu Item
-        if (LatestMediaHandlerSetup.LatestMyVideosWatched.Equals("False"))
+        if (LatestMediaHandlerSetup.LatestMyVideosWatched.Equals("False", StringComparison.CurrentCulture))
         {
           pItem = new GUIListItem(Translation.ShowUnwatchedMovies);
           dlg.Add(pItem);
@@ -176,7 +212,7 @@ namespace LatestMediaHandler
           case 1:
           {
             GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            GUIControl gc = gw.GetControl(919198710);
+            GUIControl gc = gw.GetControl(ControlID);
             facade = gc as GUIFacadeControl;
             if (facade != null)
             {
@@ -186,26 +222,24 @@ namespace LatestMediaHandler
           }
           case 2:
           {
-            /* GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-                                     GUIControl gc = gw.GetControl(919198710);
-                                     facade = gc as GUIFacadeControl;
-                                     if (facade != null)
-                                     {
-                                         string sHyp = "movieid:" + result[(facade.SelectedListItemIndex)].Id;
-                                         GUIWindowManager.ActivateWindow(96742, sHyp, false);
-                                     }*/
+            GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+            GUIControl gc = gw.GetControl(ControlID);
+            facade = gc as GUIFacadeControl;
+            if (facade != null)
+            {
+              IMDBMovie movie = (IMDBMovie) latestMyVideos[facade.SelectedListItemIndex];
+
+              // Open video info screen
+              GUIVideoInfo videoInfo = (GUIVideoInfo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_VIDEO_INFO);
+              videoInfo.Movie = movie;
+
+              GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_VIDEO_INFO);
+            }
             break;
           }
           case 3:
           {
-            if (LatestMediaHandlerSetup.LatestMyVideosWatched.Equals("False"))
-            {
-              LatestMediaHandlerSetup.LatestMyVideosWatched = "True";
-            }
-            else
-            {
-              LatestMediaHandlerSetup.LatestMyVideosWatched = "False";
-            }
+            LatestMediaHandlerSetup.LatestMyVideosWatched = (LatestMediaHandlerSetup.LatestMyVideosWatched.Equals("False", StringComparison.CurrentCulture)) ? "True" : "False" ;
             MyVideosUpdateLatest();
             break;
           }
@@ -231,7 +265,7 @@ namespace LatestMediaHandler
       try
       {
         GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(919198710);
+        GUIControl gc = gw.GetControl(ControlID);
         facade = gc as GUIFacadeControl;
         if (facade != null)
         {
@@ -248,7 +282,7 @@ namespace LatestMediaHandler
         string orderClause = "order by movieinfo.dateAdded DESC limit 50";
         string fromClause  = "movie,movieinfo,path";
         string whereClause = "where movieinfo.idmovie=movie.idmovie and movie.idpath=path.idpath" + 
-                                   (LatestMediaHandlerSetup.LatestMyVideosWatched.Equals("True") ? " and movieinfo.iswatched=0" : "");
+                                   (LatestMediaHandlerSetup.LatestMyVideosWatched.Equals("True", StringComparison.CurrentCulture) ? " and movieinfo.iswatched=0" : "");
         string sql         =  String.Format("select movieinfo.fRating,movieinfo.strCredits,movieinfo.strTagLine,movieinfo.strPlotOutline, " +
                                                    "movieinfo.strPlot,movieinfo.strVotes,movieinfo.strCast,movieinfo.iYear,movieinfo.strGenre,movieinfo.strPictureURL, " +
                                                    "movieinfo.strTitle,path.strPath,movie.discid,movieinfo.IMDBID,movieinfo.idMovie,path.cdlabel,movieinfo.mpaa,movieinfo.runtime, " + 
@@ -269,15 +303,17 @@ namespace LatestMediaHandler
               thumb = "DefaultFolderBig.png";
             }
 
-            latests.Add(new Latest(sTimestamp, thumb, GetFanart(item.Title, item.ID), item.Title, null, null,
-                        null, item.Genre.Replace("/", ","),
-                        item.Rating.ToString(CultureInfo.CurrentCulture),
-                        Math.Round(item.Rating, MidpointRounding.AwayFromZero).ToString(CultureInfo.CurrentCulture), 
-                        item.MPARating,
-                        (item.RunTime).ToString(),
-                        item.Year.ToString(CultureInfo.CurrentCulture), null, null,
-                        null, item, item.ID.ToString(), item.Plot, null));
-
+            latests.Add(new Latest(sTimestamp, thumb, GetFanart(item.Title, item.ID), item.Title, 
+                                   null, null, null, 
+                                   item.Genre.Replace("/", ","),
+                                   item.Rating.ToString(CultureInfo.CurrentCulture),
+                                   Math.Round(item.Rating, MidpointRounding.AwayFromZero).ToString(CultureInfo.CurrentCulture), 
+                                   item.MPARating,
+                                   (item.RunTime).ToString(),
+                                   item.Year.ToString(CultureInfo.CurrentCulture), 
+                                   null, null, null, 
+                                   item, item.ID.ToString(), item.Plot, 
+                                   null));
             try
             {
               DateTime dTmp = DateTime.Parse(sTimestamp);
@@ -300,6 +336,7 @@ namespace LatestMediaHandler
           movies.Clear();
         }
         movies = null;
+
         latestMyVideos = new Hashtable();
         int i0 = 1;
         x = 0;
@@ -507,7 +544,7 @@ namespace LatestMediaHandler
           selectedFacadeItem1 = item.ItemId;
 
           GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          GUIControl gc = gw.GetControl(919198710);
+          GUIControl gc = gw.GetControl(ControlID);
           facade = gc as GUIFacadeControl;
           if (facade != null)
           {
@@ -526,9 +563,9 @@ namespace LatestMediaHandler
       try
       {
         GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(919198710);
+        GUIControl gc = gw.GetControl(ControlID);
         facade = gc as GUIFacadeControl;
-        if (facade != null && gw.GetFocusControlId() == 919198710 && facade.SelectedListItem != null)
+        if (facade != null && gw.GetFocusControlId() == ControlID && facade.SelectedListItem != null)
         {
           int _id = facade.SelectedListItem.ItemId;
           String _image = facade.SelectedListItem.DVDLabel;
@@ -539,7 +576,7 @@ namespace LatestMediaHandler
             {
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.fanart1", _image);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart1", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart2", "");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart2", "false");
               Thread.Sleep(1000);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.fanart2", "");
               showFanart = 2;
@@ -548,7 +585,7 @@ namespace LatestMediaHandler
             {
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.fanart2", _image);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart2", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart1", "");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart1", "false");
               Thread.Sleep(1000);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.fanart1", "");
               showFanart = 1;
@@ -561,8 +598,8 @@ namespace LatestMediaHandler
         {
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.fanart1", " ");
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.fanart2", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart1", "true");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart2", "");
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart1", "false");
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart2", "false");
           Utils.UnLoadImage(ref images);
           showFanart = 1;
           selectedFacadeItem2 = -1;
@@ -580,12 +617,32 @@ namespace LatestMediaHandler
       UpdateSelectedProperties(item);
     }
 
+    internal void EmptyLatestMediaPropsMyVideos()
+    {
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.label", Translation.LabelLatestAdded);
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest.enabled", "false");
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.hasnew", "false");
+      for (int z = 1; z < 4; z++)
+      {
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".thumb", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".fanart", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".title", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".dateAdded", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".genre", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".rating", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".roundedRating", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".classification", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".runtime", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".year", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".id", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".plot", string.Empty);
+      }
+    }
+
     internal void MyVideosUpdateLatest()
     {
       try
       {
-        int z = 1;
-
         if (LatestMediaHandlerSetup.LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
         {
           try
@@ -596,29 +653,11 @@ namespace LatestMediaHandler
           {
             logger.Error("MyVideosUpdateLatest: " + ex.ToString());
           }
+          EmptyLatestMediaPropsMyVideos();
 
           if (result != null)
           {
-            for (int i = 0; i < result.Count && i < 3; i++)
-            {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".thumb", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".fanart", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".title", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".dateAdded", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".genre", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".rating", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".roundedRating", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".classification", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".runtime", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".year", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".id", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".plot", string.Empty);
-              z++;
-            }
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest.enabled", "false");
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest.hasnew", "false");
-
-            z = 1;
+            int z = 1;
             for (int i = 0; i < result.Count && i < 3; i++)
             {
               logger.Info("Updating Latest Media Info: Latest myvideo " + z + ": " + result[i].Title);
@@ -636,21 +675,128 @@ namespace LatestMediaHandler
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".plot", result[i].Summary);
               z++;
             }
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest.enabled", "true");
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest.hasnew", Utils.HasNewMyVideos ? "true" : "false");
+            logger.Debug("Updating Latest Media Info: Latest myvideo has new: " + (Utils.HasNewMyVideos ? "true" : "false"));
           }
-          z = 1;
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest.enabled", "true");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest.hasnew", Utils.HasNewMyVideos ? "true" : "false");
-          logger.Debug("Updating Latest Media Info: Latest myvideo has new: " + (Utils.HasNewMyVideos ? "true" : "false"));
         }
         else
         {
-          LatestMediaHandlerSetup.EmptyLatestMediaPropsMyVideos();
+          EmptyLatestMediaPropsMyVideos();
         }
       }
       catch (Exception ex)
       {
-        LatestMediaHandlerSetup.EmptyLatestMediaPropsMyVideos();
+        EmptyLatestMediaPropsMyVideos();
         logger.Error("MyVideosUpdateLatest: " + ex.ToString());
+      }
+    }
+
+    internal void SetupVideoLatest()
+    {
+      try
+      {
+        GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
+      }
+      catch (Exception ex)
+      {
+        logger.Error("SetupVideoLatest: " + ex.ToString());
+      }
+    }
+
+    internal void DisposeVideoLatest()
+    {
+      try
+      {
+        GUIWindowManager.Receivers -= new SendMessageHandler(OnMessage);
+      }
+      catch (Exception ex)
+      {
+        logger.Error("DisposeVideoLatest: " + ex.ToString());
+      }
+    }
+
+    private void OnMessage(GUIMessage message)
+    {
+      if (LatestMediaHandlerSetup.LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
+      {
+        try
+        {
+          switch (message.Message)
+          {
+            case GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH:
+            {
+              logger.Debug("VideoInfo refresh detected: Refreshing latest.");
+              try
+              {
+                MyVideosUpdateLatest() ;
+              }
+              catch (Exception ex)
+              {
+                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
+              }
+              break;
+            }
+            case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
+            case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
+            {
+              logger.Debug("Playback End/Stop detected: Refreshing latest.");
+              try
+              {
+                MyVideosUpdateLatest() ;
+              }
+              catch (Exception ex)
+              {
+                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
+              }
+              break;
+            }
+          }
+        }
+        catch { }
+      }
+    }
+
+    internal void UpdateImageTimer(GUIWindow fWindow, Object stateInfo, ElapsedEventArgs e)
+    {
+      if (LatestMediaHandlerSetup.LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
+      {
+        try
+        {
+          if (fWindow.GetFocusControlId() == ControlID)
+          {
+            UpdateSelectedImageProperties();
+            NeedCleanup = true;
+          }
+          else
+          {
+            if (NeedCleanup && NeedCleanupCount >= 5)
+            {
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.fanart1", " ");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.fanart2", " ");
+              Utils.UnLoadImage(ref images);
+              ShowFanart = 1;
+              SelectedFacadeItem2 = -1;
+              SelectedFacadeItem2 = -1;
+              NeedCleanup = false;
+              NeedCleanupCount = 0;
+            }
+            else if (NeedCleanup && NeedCleanupCount == 0)
+            {
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart1", "false");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart2", "false");
+              NeedCleanupCount++;
+            }
+            else if (NeedCleanup)
+            {
+              NeedCleanupCount++;
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          logger.Error("UpdateImageTimer (myvideo): " + ex.ToString());
+        }
       }
     }
 

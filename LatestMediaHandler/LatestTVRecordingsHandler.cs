@@ -10,11 +10,16 @@
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
 extern alias RealNLog;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Globalization;
+using System.Threading;
+
 using RealNLog.NLog;
+
 //using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -22,13 +27,9 @@ using MediaPortal.Dialogs;
 //using MediaPortal.Player;
 //using MediaPortal.Playlists;
 //using TvDatabase;
-using System.Globalization;
 using TvDatabase;
 using TvPlugin;
 using TvControl;
-using System.Threading;
-
-
 
 namespace LatestMediaHandler
 {
@@ -142,7 +143,7 @@ namespace LatestMediaHandler
         pItem.ItemId = 1;
 
         //Add Watched/Unwatched Filter Menu Item
-        if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False"))
+        if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False", StringComparison.CurrentCulture))
         {
           pItem = new GUIListItem(Translation.ShowUnwatchedRecordings);
           dlg.Add(pItem);
@@ -166,7 +167,7 @@ namespace LatestMediaHandler
           case 1:
           {
             GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            GUIControl gc = gw.GetControl(919199840);
+            GUIControl gc = gw.GetControl(LatestTVAllRecordingsHandler.ControlID);
             facade = gc as GUIFacadeControl;
             if (facade != null)
             {
@@ -176,7 +177,7 @@ namespace LatestMediaHandler
           }
           case 2:
           {
-            if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False"))
+            if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False", StringComparison.CurrentCulture))
             {
               LatestMediaHandlerSetup.LatestTVRecordingsWatched = "True";
             }
@@ -240,12 +241,12 @@ namespace LatestMediaHandler
             }
 
             latestRecordings.Add(new LatestRecording(rec.Title, rec.Genre, rec.StartTime,
-                                 String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.StartTime), 
-                                 rec.StartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                 String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.EndTime),
-                                 rec.EndTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                 rec.ReferencedChannel().DisplayName, 
-                                 logoImagePath));
+                                                     String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.StartTime), 
+                                                     rec.StartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
+                                                     String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.EndTime),
+                                                     rec.EndTime.ToString("HH:mm", CultureInfo.CurrentCulture),
+                                                     rec.ReferencedChannel().DisplayName, 
+                                                     logoImagePath));
           }
 
           latestRecordings.Sort(new LatestRecordingsComparer());
@@ -333,12 +334,12 @@ namespace LatestMediaHandler
                 //Program program = Program.RetrieveByTitleTimesAndChannel(schedule.ProgramName, schedule.StartTime,schedule.EndTime, schedule.IdChannel);                           
 
                 latestRecordings.Add(new LatestRecording(recSeries.ProgramName, null, recSeries.StartTime,
-                                     String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", recSeries.StartTime),
-                                     recSeries.StartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                     String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", recSeries.EndTime),
-                                     recSeries.EndTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                     recSeries.ReferencedChannel().DisplayName, 
-                                     logoImagePath));
+                                                         String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", recSeries.StartTime),
+                                                         recSeries.StartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
+                                                         String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", recSeries.EndTime),
+                                                         recSeries.EndTime.ToString("HH:mm", CultureInfo.CurrentCulture),
+                                                         recSeries.ReferencedChannel().DisplayName, 
+                                                         logoImagePath));
               }
             }
             else
@@ -354,12 +355,12 @@ namespace LatestMediaHandler
               }
 
               latestRecordings.Add(new LatestRecording(schedule.ProgramName, null, schedule.StartTime,
-                                   String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", schedule.StartTime),
-                                   schedule.StartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                   String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", schedule.EndTime),
-                                   schedule.EndTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                   schedule.ReferencedChannel().DisplayName, 
-                                   logoImagePath));
+                                                       String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", schedule.StartTime),
+                                                       schedule.StartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
+                                                       String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", schedule.EndTime),
+                                                       schedule.EndTime.ToString("HH:mm", CultureInfo.CurrentCulture),
+                                                       schedule.ReferencedChannel().DisplayName, 
+                                                       logoImagePath));
             }
           }
 
@@ -402,32 +403,32 @@ namespace LatestMediaHandler
           int i0 = 1;
           foreach (TvDatabase.Recording rec in recordings)
           {
-            if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("True"))
+            if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("True", StringComparison.CurrentCulture))
             {
               if (rec.TimesWatched < 1)
               {
                 latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture),
-                            "thumbNail", null, rec.Title,
-                            rec.EndTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), null,
-                            null, rec.Genre, null, null, null, null, null, null, null, null, rec, null,
-                            rec.Description,
-                            rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture)));
+                                       "thumbNail", null, rec.Title,
+                                       rec.EndTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), null,
+                                       null, rec.Genre, null, null, null, null, null, null, null, null, rec, null,
+                                       rec.Description,
+                                       rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture)));
               }
             }
-            else if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False"))
+            else if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False", StringComparison.CurrentCulture))
             {
               latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture),
-                          "thumbNail", null, rec.Title,
-                          rec.EndTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), null,
-                          null, rec.Genre, null, null, null, null, null, null, null, null, rec, null,
-                          rec.Description,
-                          rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture)));
+                                     "thumbNail", null, rec.Title,
+                                     rec.EndTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), null,
+                                     null, rec.Genre, null, null, null, null, null, null, null, null, rec, null,
+                                     rec.Description,
+                                     rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture)));
             }
           }
 
           GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          //GUIControl gc = gw.GetControl(919199840);
-          facade = gw.GetControl(919199840) as GUIFacadeControl;
+          //GUIControl gc = gw.GetControl(ControlID);
+          facade = gw.GetControl(LatestTVAllRecordingsHandler.ControlID) as GUIFacadeControl;
           if (facade != null)
           {
             facade.Clear();
@@ -616,7 +617,7 @@ namespace LatestMediaHandler
           selectedFacadeItem1 = item.ItemId;
 
           GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          GUIControl gc = gw.GetControl(919199840);
+          GUIControl gc = gw.GetControl(LatestTVAllRecordingsHandler.ControlID);
           facade = gc as GUIFacadeControl;
           if (facade != null)
           {
@@ -635,9 +636,9 @@ namespace LatestMediaHandler
       try
       {
         GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(919199840);
+        GUIControl gc = gw.GetControl(LatestTVAllRecordingsHandler.ControlID);
         facade = gc as GUIFacadeControl;
-        if (facade != null && gw.GetFocusControlId() == 919199840 && facade.SelectedListItem != null)
+        if (facade != null && gw.GetFocusControlId() == LatestTVAllRecordingsHandler.ControlID && facade.SelectedListItem != null)
         {
           int _id = facade.SelectedListItem.ItemId;
           String _image = facade.SelectedListItem.DVDLabel;
@@ -648,7 +649,7 @@ namespace LatestMediaHandler
             {
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", _image);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
               Thread.Sleep(1000);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", "");
               showFanart = 2;
@@ -657,7 +658,7 @@ namespace LatestMediaHandler
             {
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", _image);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
               Thread.Sleep(1000);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", "");
               showFanart = 1;
@@ -670,8 +671,8 @@ namespace LatestMediaHandler
         {
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "true");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "");
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
           Utils.UnLoadImage(ref images);
           showFanart = 1;
           selectedFacadeItem2 = -1;

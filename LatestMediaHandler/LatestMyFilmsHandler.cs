@@ -10,20 +10,24 @@
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
 extern alias RealNLog;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Globalization;
+using System.Threading;
+using System.Timers;
+using System.Windows.Forms;
+
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
 using MediaPortal.Video.Database;
+
 using RealNLog.NLog;
+
 using MyFilmsPlugin.MyFilms;
 using MyFilmsPlugin.MyFilms.MyFilmsGUI;
-using MediaPortal.Dialogs;
-using System.Globalization;
-using MediaPortal.GUI.Library;
-using System.Threading;
-
-
 
 namespace LatestMediaHandler
 {
@@ -48,6 +52,11 @@ namespace LatestMediaHandler
     private int lastFocusedId = 0;
 
     #endregion
+    
+    public const int ControlID = 919199880;
+    public const int Play1ControlID = 91919988;
+    public const int Play2ControlID = 91919989;
+    public const int Play3ControlID = 91919990;
 
     public int LastFocusedId
     {
@@ -130,7 +139,7 @@ namespace LatestMediaHandler
         pItem.ItemId = 1;
 
         //Add Watched/Unwatched Filter Menu Item
-        if (LatestMediaHandlerSetup.LatestMyFilmsWatched.Equals("False"))
+        if (LatestMediaHandlerSetup.LatestMyFilmsWatched.Equals("False", StringComparison.CurrentCulture))
         {
           pItem = new GUIListItem(Translation.ShowUnwatchedMovies);
           dlg.Add(pItem);
@@ -164,14 +173,7 @@ namespace LatestMediaHandler
           }
           case 2:
           {
-            if (LatestMediaHandlerSetup.LatestMyFilmsWatched.Equals("False"))
-            {
-              LatestMediaHandlerSetup.LatestMyFilmsWatched = "True";
-            }
-            else
-            {
-              LatestMediaHandlerSetup.LatestMyFilmsWatched = "False";
-            }
+            LatestMediaHandlerSetup.LatestMyFilmsWatched = (LatestMediaHandlerSetup.LatestMyFilmsWatched.Equals("False", StringComparison.CurrentCulture)) ? "True" : "False";
             MyFilmsUpdateLatest();
             break;
           }
@@ -194,7 +196,7 @@ namespace LatestMediaHandler
       try
       {
         GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(919199880);
+        GUIControl gc = gw.GetControl(ControlID);
         facade = gc as GUIFacadeControl;
         if (facade != null)
         {
@@ -204,11 +206,12 @@ namespace LatestMediaHandler
         {
           al.Clear();
         }
+        Utils.HasNewMyFilms = false;
+
         latestMovies = new Hashtable();
         int i0 = 1;
         int x0 = 0;
-        List<MFMovie> movies = BaseMesFilms.GetMostRecent(BaseMesFilms.MostRecentType.Added, 999, 10,
-          LatestMediaHandlerSetup.LatestMyFilmsWatched.Equals("True"));
+        List<MFMovie> movies = BaseMesFilms.GetMostRecent(BaseMesFilms.MostRecentType.Added, 999, 10, LatestMediaHandlerSetup.LatestMyFilmsWatched.Equals("True", StringComparison.CurrentCulture));
 
         if (movies != null)
         {
@@ -224,14 +227,22 @@ namespace LatestMediaHandler
             {
               DateTime dTmp = DateTime.Parse(tDate);
               tDate = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", dTmp);
+
+              if (dTmp > Utils.NewDateTime)
+                Utils.HasNewMyFilms = true;
             }
             catch
-            {
-            }
-            resultTmp.Add(new Latest(tDate, thumb, movie.Fanart, movie.Title, null, null, null, movie.Category,
-              movie.Rating.ToString(),
-              Math.Round(movie.Rating, MidpointRounding.AwayFromZero).ToString(CultureInfo.CurrentCulture), null,
-              movie.Length.ToString(), movie.Year.ToString(), null, null, null, movie, movie.ID.ToString(), null, null));
+            {   }
+            resultTmp.Add(new Latest(tDate, thumb, movie.Fanart, movie.Title, 
+                                     null, null, null, 
+                                     movie.Category,
+                                     movie.Rating.ToString(),
+                                     Math.Round(movie.Rating, MidpointRounding.AwayFromZero).ToString(CultureInfo.CurrentCulture), 
+                                     null,
+                                     movie.Length.ToString(), movie.Year.ToString(), 
+                                     null, null, null, 
+                                     movie, movie.ID.ToString(), 
+                                     null, null));
             if (result == null || result.Count == 0)
             {
               result = resultTmp;
@@ -268,7 +279,6 @@ namespace LatestMediaHandler
             {
               facade.FilmstripLayout.IsVisible = false;
             }
-
           }
           else if (facade.CoverFlowLayout != null)
           {
@@ -388,7 +398,7 @@ namespace LatestMediaHandler
           selectedFacadeItem1 = item.ItemId;
 
           GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          GUIControl gc = gw.GetControl(919199880);
+          GUIControl gc = gw.GetControl(ControlID);
           facade = gc as GUIFacadeControl;
           if (facade != null)
           {
@@ -407,9 +417,9 @@ namespace LatestMediaHandler
       try
       {
         GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(919199880);
+        GUIControl gc = gw.GetControl(ControlID);
         facade = gc as GUIFacadeControl;
-        if (facade != null && gw.GetFocusControlId() == 919199880 && facade.SelectedListItem != null)
+        if (facade != null && gw.GetFocusControlId() == ControlID && facade.SelectedListItem != null)
         {
           int _id = facade.SelectedListItem.ItemId;
           String _image = facade.SelectedListItem.DVDLabel;
@@ -420,7 +430,7 @@ namespace LatestMediaHandler
             {
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", _image);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "false");
               Thread.Sleep(1000);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", "");
               showFanart = 2;
@@ -429,7 +439,7 @@ namespace LatestMediaHandler
             {
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", _image);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "false");
               Thread.Sleep(1000);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", "");
               showFanart = 1;
@@ -442,8 +452,8 @@ namespace LatestMediaHandler
         {
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", " ");
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "true");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "");
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "false");
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "false");
           Utils.UnLoadImage(ref images);
           showFanart = 1;
           selectedFacadeItem2 = -1;
@@ -456,10 +466,37 @@ namespace LatestMediaHandler
       }
     }
 
-
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       UpdateSelectedProperties(item);
+    }
+
+    internal bool PlayMovie(GUIWindow fWindow)
+    {
+      try
+      {
+        if (fWindow.GetFocusControlId() == Play1ControlID)
+        {
+          PlayMovie(1);
+          return true;
+        }
+        else if (fWindow.GetFocusControlId() == Play2ControlID)
+        {
+          PlayMovie(2);
+          return true;
+        }
+        else if (fWindow.GetFocusControlId() == Play3ControlID)
+        {
+          PlayMovie(3);
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show("Unable to play film! " + ex.ToString());
+        return true;
+      }
+      return false;
     }
 
     internal void PlayMovie(int index)
@@ -471,11 +508,13 @@ namespace LatestMediaHandler
 
     internal void SetupMovieLatest()
     {
+      GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
       MyFilms.ImportComplete += new MyFilms.ImportCompleteEventDelegate(OnImportComplete);
     }
 
     internal void DisposeMovieLatest()
     {
+      GUIWindowManager.Receivers -= new SendMessageHandler(OnMessage);
       MyFilms.ImportComplete -= new MyFilms.ImportCompleteEventDelegate(OnImportComplete);
     }
 
@@ -484,12 +523,58 @@ namespace LatestMediaHandler
       MyFilmsUpdateLatest();
     }
 
+    private void OnMessage(GUIMessage message)
+    {
+      if (LatestMediaHandlerSetup.LatestMyFilms.Equals("True", StringComparison.CurrentCulture))
+      {
+        try
+        {
+          switch (message.Message)
+          {
+            case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
+            case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
+            {
+              logger.Debug("Playback End/Stop detected: Refreshing latest.");
+              try
+              {
+                MyFilmsUpdateLatest();
+              }
+              catch (Exception ex)
+              {
+                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
+              }
+              break;
+            }
+          }
+        }
+        catch { }
+      }
+    }
+
+    internal void EmptyLatestMediaPropsMyFilms()
+    {
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.label", Translation.LabelLatestAdded);
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest.enabled", "false");
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.hasnew", "false");
+      for (int z = 1; z < 4; z++)
+      {
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".poster", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".fanart", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".title", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".dateAdded", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".rating", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".roundedRating", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".year", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".id", string.Empty);
+      }
+    }
 
     internal void MyFilmsUpdateLatest()
     {
-      int z = 1;
       if (LatestMediaHandlerSetup.LatestMyFilms.Equals("True", StringComparison.CurrentCulture))
       {
+        EmptyLatestMediaPropsMyFilms();
+
         LatestMediaHandler.LatestsCollection ht = null;
         try
         {
@@ -507,38 +592,9 @@ namespace LatestMediaHandler
         {
           logger.Error("MyFilmsUpdateLatest: " + ex.ToString());
         }
-        for (int i = 0; i < 3; i++)
-        {
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".poster", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".fanart", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".title", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".dateAdded", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".rating", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".roundedRating", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".year", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".id", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".genre", string.Empty);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".runtime", string.Empty);
-          z++;
-        }
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest.enabled", "false");
         if (ht != null)
         {
-          /*for (int i = 0; i < ht.Count && i < 3; i++)
-                    {
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".poster", string.Empty);
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".fanart", string.Empty);
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".title", string.Empty);
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".dateAdded", string.Empty);                        
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".rating", string.Empty);
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".roundedRating", string.Empty);                        
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".year", string.Empty);
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".id", string.Empty);
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".genre", string.Empty);
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".runtime", string.Empty);
-                        z++;
-                    }*/
-          z = 1;
+          int z = 1;
           //ArrayList _al = new ArrayList();
           for (int i = 0; i < ht.Count && i < 3; i++)
           {
@@ -549,8 +605,7 @@ namespace LatestMediaHandler
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".title", ht[i].Title);
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".dateAdded", ht[i].DateAdded);
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".rating", ht[i].Rating);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".roundedRating",
-              ht[i].RoundedRating);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".roundedRating", ht[i].RoundedRating);
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".year", ht[i].Year);
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".id", ht[i].Id);
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".genre", ht[i].Genre);
@@ -564,18 +619,61 @@ namespace LatestMediaHandler
                     }
                     _al = null;                            */
           ht.Clear();
+          //
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest.enabled", "true");
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest.hasnew", Utils.HasNewMyFilms ? "true" : "false");
+          logger.Debug("Updating Latest Media Info: Latest MyFilms has new: " + (Utils.HasNewMyFilms ? "true" : "false"));
         }
         ht = null;
-        z = 1;
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest.enabled", "true");
-        logger.Debug("Updating Latest Media Info: Latest MyFilms has new: " + (Utils.HasNewMyFilms ? "true" : "false"));
       }
       else
       {
-        LatestMediaHandlerSetup.EmptyLatestMediaPropsMyFilms();
+        EmptyLatestMediaPropsMyFilms();
       }
     }
 
+    internal void UpdateImageTimer(GUIWindow fWindow, Object stateInfo, ElapsedEventArgs e)
+    {
+      if (LatestMediaHandlerSetup.LatestMyFilms.Equals("True", StringComparison.CurrentCulture))
+      {
+        try
+        {
+          if (fWindow.GetFocusControlId() == ControlID)
+          {
+            UpdateSelectedImageProperties();
+            NeedCleanup = true;
+          }
+          else
+          {
+            if (NeedCleanup && NeedCleanupCount >= 5)
+            {
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", " ");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", " ");
+              Utils.UnLoadImage(ref images);
+              ShowFanart = 1;
+              SelectedFacadeItem2 = -1;
+              SelectedFacadeItem2 = -1;
+              NeedCleanup = false;
+              NeedCleanupCount = 0;
+            }
+            else if (NeedCleanup && NeedCleanupCount == 0)
+            {
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "false");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "false");
+              NeedCleanupCount++;
+            }
+            else if (NeedCleanup)
+            {
+              NeedCleanupCount++;
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          logger.Error("UpdateImageTimer (myfilms): " + ex.ToString());
+        }
+      }
+    }
 
     /*private class LatestAddedComparer : IComparer<Latest>
     {

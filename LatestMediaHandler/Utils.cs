@@ -9,21 +9,22 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
+extern alias RealNLog;
+
+using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
+
+using RealNLog.NLog;
+
+using System;
+using System.Collections;
+using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace LatestMediaHandler
 {
-  extern alias RealNLog;
-  using MediaPortal.GUI.Library;
-  using MediaPortal.Configuration;
-  using RealNLog.NLog;
-  using System;
-  using System.Collections;
-  using System.Drawing;
-  using System.IO;
-  using System.Runtime.InteropServices;
-  using System.Reflection;
-
-
   /// <summary>
   /// Utility class used by the Latest Media Handler plugin.
   /// </summary>
@@ -76,7 +77,8 @@ namespace LatestMediaHandler
     public static bool HasNewMvCentral { get; set; }
 
     public static DateTime NewDateTime { get; set; }
-    public static DateTime TVSeriesLastUpdate { get; set; }
+
+    public static string[] PipesArray ;
 
     internal static DateTime LastRefreshRecording
     {
@@ -444,11 +446,26 @@ namespace LatestMediaHandler
       return (Box ? "[" : string.Empty) + (Value.Equals("True", StringComparison.CurrentCulture) ? "x" : " ") + (Box ? "]" : string.Empty) ;
     }
 
+    public static void HasNewInit()
+    {
+      HasNewPictures = false;
+      HasNewMusic = false;
+      HasNewMyVideos = false;
+      HasNewMovingPictures = false;
+      HasNewTVSeries = false;
+      HasNewTVRecordings = false;
+      HasNewMyFilms = false;
+      HasNewMvCentral = false;
+
+      NewDateTime = DateTime.Now;
+      PipesArray = new string[1] { "|" };
+   }
+    
     public static void LoadSettings(bool Conf = false)
     {
       latestPictures = "True";
       latestMusic = "True";
-      latestMusicType = "Latest Added Music";
+      latestMusicType = LatestMusicHandler.MusicTypeLatestAdded;
       latestMyVideos = "True";
       latestMyVideosWatched = "True";
       latestMovingPictures = "False";
@@ -467,18 +484,6 @@ namespace LatestMediaHandler
       reorgInterval = "1440";
 
       dateFormat = "yyyy-MM-dd";
-
-      HasNewPictures = false;
-      HasNewMusic = false;
-      HasNewMyVideos = false;
-      HasNewMovingPictures = false;
-      HasNewTVSeries = false;
-      HasNewTVRecordings = false;
-      HasNewMyFilms = false;
-      HasNewMvCentral = false;
-
-      NewDateTime = DateTime.Now;
-      TVSeriesLastUpdate = DateTime.Now;
 
       try
       {
@@ -559,6 +564,8 @@ namespace LatestMediaHandler
                             "Interval: " + reorgInterval);
       logger.Debug("Date Format: " + dateFormat) ;
       #endregion
+
+      HasNewInit();
     }
 
     public static void SaveSettings()

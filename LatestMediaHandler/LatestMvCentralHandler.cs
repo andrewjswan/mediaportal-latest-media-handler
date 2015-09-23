@@ -9,22 +9,27 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement. Thanks to MediaPortal that created many of the functions used here.
 //***********************************************************************
+extern alias RealCornerstone;
+extern alias RealNLog;
+
+using System;
+using System.Timers;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+
+using MediaPortal.Profile;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.TagReader;
+
+using RealNLog.NLog;
+
 using mvCentral.Database;
 
 namespace LatestMediaHandler
 {
-  extern alias RealNLog;
-  using System;
-  using System.Collections.Generic;
-  using MediaPortal.Profile;
-  using RealNLog.NLog;
-
   internal class LatestMvCentralHandler
   {
     #region declarations    
@@ -50,6 +55,8 @@ namespace LatestMediaHandler
     private int lastFocusedId = 0;
 
     #endregion
+
+    public const int ControlID = 919299280;
 
     public int LastFocusedId
     {
@@ -116,6 +123,23 @@ namespace LatestMediaHandler
       set { isInitialized = value; }
     }
 
+    internal void EmptyLatestMediaPropsMvCentral()
+    {
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.label", Translation.LabelLatestAdded);
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest.enabled", "false");
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.hasnew", "false");
+      for (int z = 1; z < 4; z++)
+      {
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".thumb", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artist", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".album", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".track", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", string.Empty);
+      }
+    }
+
     internal void GetLatestMediaInfo(bool _onStartUp)
     {
       try
@@ -123,31 +147,18 @@ namespace LatestMediaHandler
         int sync = Interlocked.CompareExchange(ref LatestMediaHandlerSetup.SyncPointMvCMusicUpdate, 1, 0);
         if (sync == 0)
         {
-          int z = 1;
+          EmptyLatestMediaPropsMvCentral() ;
           artistsWithImageMissing = new Hashtable();
           string windowId = GUIWindowManager.ActiveWindow.ToString();
           if (LatestMediaHandlerSetup.LatestMvCentral.Equals("True", StringComparison.CurrentCulture))
           {
-            //Music
+            //MvCentral
             try
             {
               GetLatestMusic(_onStartUp, LatestMediaHandlerSetup.LatestMusicType);
-              for (int i = 0; i < 3; i++)
-              {
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".thumb", string.Empty);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artist", string.Empty);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".album", string.Empty);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".track", string.Empty);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded", string.Empty);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart", string.Empty);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", string.Empty);
-                z++;
-              }
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest.enabled", "false");
-
               if (result != null)
               {
-                z = 1;
+                int z = 1;
                 for (int i = 0; i < result.Count && i < 3; i++)
                 {
                   logger.Info("Updating Latest Media Info: Latest MvCental " + z + ": " + result[i].Artist + " - " + result[i].Album);
@@ -162,10 +173,10 @@ namespace LatestMediaHandler
                 }
                 //hTable.Clear();
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest.enabled", "true");
+                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest.hasnew", Utils.HasNewMvCentral ? "true" : "false");
                 logger.Debug("Updating Latest Media Info: Latest MvCentral has new: " + (Utils.HasNewMvCentral ? "true" : "false"));
               }
               //hTable = null;
-              z = 1;
             }
             catch (FileNotFoundException)
             {
@@ -182,7 +193,7 @@ namespace LatestMediaHandler
           }
           else
           {
-            LatestMediaHandlerSetup.EmptyLatestMediaPropsMvCentral();
+            EmptyLatestMediaPropsMvCentral();
           }
           LatestMediaHandlerSetup.SyncPointMvCMusicUpdate = 0;
         }
@@ -224,7 +235,6 @@ namespace LatestMediaHandler
         if (dlg.SelectedLabel < 0)
         {
           return;
-
         }
 
         switch (dlg.SelectedId)
@@ -232,7 +242,7 @@ namespace LatestMediaHandler
           case 1:
           {
             GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            GUIControl gc = gw.GetControl(919299280);
+            GUIControl gc = gw.GetControl(ControlID);
             facade = gc as GUIFacadeControl;
             if (facade != null)
             {
@@ -261,7 +271,7 @@ namespace LatestMediaHandler
       try
       {
         GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(919299280);
+        GUIControl gc = gw.GetControl(ControlID);
         facade = gc as GUIFacadeControl;
         if (facade != null)
         {
@@ -274,6 +284,8 @@ namespace LatestMediaHandler
 
         latestMusicAlbums = new Hashtable();
         int i0 = 1;
+        Utils.HasNewMvCentral = false;
+
         List<DBTrackInfo> allTracks = DBTrackInfo.GetAll();
         if (allTracks.Count > 0)
         {
@@ -285,6 +297,8 @@ namespace LatestMediaHandler
             try
             {
               dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", allTrack.DateAdded);
+              if (allTrack.DateAdded > Utils.NewDateTime)
+                Utils.HasNewMvCentral = true;
             }
             catch { }
 
@@ -352,12 +366,12 @@ namespace LatestMediaHandler
             }
 
             resultTmp.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, allTrack.Track,
-                          allTrack.LocalMedia[0].File.FullName,
-                          tmpArtist, tmpAlbum,
-                          tmpGenre,
-                          allTrack.Rating.ToString(),
-                          allTrack.Rating.ToString(), 
-                          null, null, null, null, null, null, null, null, null, null));
+                                                        allTrack.LocalMedia[0].File.FullName,
+                                                        tmpArtist, tmpAlbum,
+                                                        tmpGenre,
+                                                        allTrack.Rating.ToString(),
+                                                        allTrack.Rating.ToString(), 
+                                                        null, null, null, null, null, null, null, null, null, null));
             if (result == null || result.Count == 0)
             {
               result = resultTmp;
@@ -500,7 +514,7 @@ namespace LatestMediaHandler
           selectedFacadeItem1 = item.ItemId;
 
           GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          GUIControl gc = gw.GetControl(919299280);
+          GUIControl gc = gw.GetControl(ControlID);
           facade = gc as GUIFacadeControl;
           if (facade != null)
           {
@@ -519,9 +533,9 @@ namespace LatestMediaHandler
       try
       {
         GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(919299280);
+        GUIControl gc = gw.GetControl(ControlID);
         facade = gc as GUIFacadeControl;
-        if (facade != null && gw.GetFocusControlId() == 919299280 && facade.SelectedListItem != null)
+        if (facade != null && gw.GetFocusControlId() == ControlID && facade.SelectedListItem != null)
         {
           int _id = facade.SelectedListItem.ItemId;
           String _image = facade.SelectedListItem.DVDLabel;
@@ -532,7 +546,7 @@ namespace LatestMediaHandler
             {
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", _image);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "false");
               Thread.Sleep(1000);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", "");
               showFanart = 2;
@@ -541,7 +555,7 @@ namespace LatestMediaHandler
             {
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", _image);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "false");
               Thread.Sleep(1000);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", "");
               showFanart = 1;
@@ -554,8 +568,8 @@ namespace LatestMediaHandler
         {
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", " ");
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "true");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "");
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "false");
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "false");
           Utils.UnLoadImage(ref images);
           showFanart = 1;
           selectedFacadeItem2 = -1;
@@ -567,8 +581,7 @@ namespace LatestMediaHandler
         logger.Error("UpdateSelectedImageProperties: " + ex.ToString());
       }
     }
-
-
+ 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       UpdateSelectedProperties(item);
@@ -582,7 +595,6 @@ namespace LatestMediaHandler
         LoadSongsFromFolder(_songFolder, false);
         StartPlayback(index);
       }
-
     }
 
     private void StartPlayback(int index)
@@ -593,6 +605,137 @@ namespace LatestMediaHandler
         playlistPlayer.CurrentPlaylistType = MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP;
         playlistPlayer.Reset();
         playlistPlayer.Play((index - 1));
+      }
+    }
+
+    internal void SetupMvCentralsLatest()
+    {
+      try
+      {
+        GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
+
+        // mvCentralCore.DatabaseManager.ObjectInserted += new RealCornerstone.Cornerstone.Database.DatabaseManager.ObjectAffectedDelegate(MvCentralOnObjectInserted);
+        // mvCentralCore.DatabaseManager.ObjectDeleted += new RealCornerstone.Cornerstone.Database.DatabaseManager.ObjectAffectedDelegate(MvCentralOnObjectDeleted);
+      }
+      catch (Exception ex)
+      {
+        logger.Error("SetupMvCentralsLatest: " + ex.ToString());
+      }
+    }
+
+    internal void DisposeMvCentralsLatest()
+    {
+      try
+      {
+        GUIWindowManager.Receivers -= new SendMessageHandler(OnMessage);
+
+        // mvCentralCore.DatabaseManager.ObjectInserted -= new RealCornerstone.Cornerstone.Database.DatabaseManager.ObjectAffectedDelegate(MvCentralOnObjectInserted);
+        // mvCentralCore.DatabaseManager.ObjectDeleted -= new RealCornerstone.Cornerstone.Database.DatabaseManager.ObjectAffectedDelegate(MvCentralOnObjectDeleted);
+      }
+      catch (Exception ex)
+      {
+        logger.Error("DisposeMvCentralsLatest: " + ex.ToString());
+      }
+    }
+/*
+    private void MvCentralOnObjectInserted(RealCornerstone.Cornerstone.Database.Tables.DatabaseTable obj)
+    {
+      try
+      {
+        if (obj.GetType() == typeof (DBMovieInfo) || obj.GetType() == typeof (DBWatchedHistory))
+        {
+          GetLatestMediaInfo(false);
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("MvCentralOnObjectInserted: " + ex.ToString());
+      }
+    }
+
+    private void MvCentralOnObjectDeleted(RealCornerstone.Cornerstone.Database.Tables.DatabaseTable obj)
+    {
+      try
+      {
+        if (obj.GetType() == typeof (DBMovieInfo) || obj.GetType() == typeof (DBWatchedHistory))
+        {
+          GetLatestMediaInfo(false);
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("MvCentralOnObjectDeleted: " + ex.ToString());
+      }
+    }
+*/
+    private void OnMessage(GUIMessage message)
+    {
+      if (LatestMediaHandlerSetup.LatestMvCentral.Equals("True", StringComparison.CurrentCulture))
+      {
+        try
+        {
+          switch (message.Message)
+          {
+          case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
+          case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
+            {
+              logger.Debug("Playback End/Stop detected: Refreshing latest.");
+              try
+              {
+                GetLatestMediaInfo(false);
+              }
+              catch (Exception ex)
+              {
+                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
+              }
+              break;
+            }
+          }
+        }
+        catch { }
+      }
+    }
+
+    internal void UpdateImageTimer(GUIWindow fWindow, Object stateInfo, ElapsedEventArgs e)
+    {
+      if (LatestMediaHandlerSetup.LatestMvCentral.Equals("True", StringComparison.CurrentCulture))
+      {
+        try
+        {
+          if (fWindow.GetFocusControlId() == ControlID)
+          {
+            UpdateSelectedImageProperties();
+            NeedCleanup = true;
+          }
+          else
+          {
+            if (NeedCleanup && NeedCleanupCount >= 5)
+            {
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", " ");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", " ");
+              Utils.UnLoadImage(ref images);
+              ShowFanart = 1;
+              SelectedFacadeItem2 = -1;
+              SelectedFacadeItem2 = -1;
+              NeedCleanup = false;
+              NeedCleanupCount = 0;
+            }
+            else if (NeedCleanup && NeedCleanupCount == 0)
+            {
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "false");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "false");
+              NeedCleanupCount++;
+            }
+            else if (NeedCleanup)
+            {
+              NeedCleanupCount++;
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          logger.Error("UpdateImageTimer (mvcentral): " + ex.ToString());
+        }
       }
     }
 

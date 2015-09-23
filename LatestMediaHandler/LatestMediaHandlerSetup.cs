@@ -9,30 +9,31 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
+extern alias RealNLog;
 
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 
+using RealNLog.NLog;
+using RealNLog.NLog.Config;
+using RealNLog.NLog.Targets;
+
+using System;
+using System.Collections;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Timers;
+using System.Windows.Forms;
+using System.Xml;
+using System.Xml.XPath;
 using System.Diagnostics;
+
 using Microsoft.Win32;
 
 namespace LatestMediaHandler
 {
-  extern alias RealNLog;
-  using MediaPortal.Configuration;
-  using MediaPortal.GUI.Library;
-  using MediaPortal.Services;
-  using RealNLog.NLog;
-  using RealNLog.NLog.Config;
-  using RealNLog.NLog.Targets;
-  using System;
-  using System.Collections;
-  using System.IO;
-  using System.Text;
-  using System.Threading;
-  using System.Timers;
-  using System.Windows.Forms;
-  using System.Xml;
-  using System.Xml.XPath;
-
   [PluginIcons("LatestMediaHandler.LatestMediaHandler_Icon.png", "LatestMediaHandler.LatestMediaHandler_Icon_Disabled.png")]
 
   public class LatestMediaHandlerSetup : IPlugin, ISetupForm
@@ -49,48 +50,48 @@ namespace LatestMediaHandler
     /*
          * All Threads and Timers
     */
-    private static string mpVersion = null;
-    private LatestTVRecordingsWorker MyLatestTVRecordingsWorker = null;
-    private LatestReorgWorker MyLatestReorgWorker = null;
     private static string fhThreadPriority = "Lowest";
-    //internal static System.Timers.Timer TVRecordingsTimer = null;
     internal static System.Timers.Timer ReorgTimer = null;
     private System.Timers.Timer refreshTimer = null;
-    private LatestMediaHandlerConfig xconfig = null;
 
-    private static int restricted = 0; //MovingPicture restricted property
+    private LatestMediaHandlerConfig xconfig = null;
+    private LatestReorgWorker MyLatestReorgWorker = null;
+
     private Hashtable windowsUsingFanartLatest; //used to know what skin files that supports latest media fanart     
 
-    internal static int SyncPointReorg /* = 0*/;
-    internal static int SyncPointTVRecordings /* = 0*/;
+    internal static int SyncPointReorg;
+    internal static int SyncPointTVRecordings;
     internal static int SyncPointMusicUpdate;
     internal static int SyncPointMvCMusicUpdate;
+
     internal int SyncPointRefresh;
 
-    private static LatestMyVideosHandler lmvh;
-    private static LatestMovingPicturesHandler lmph;
-    private static LatestTVSeriesHandler ltvsh;
-    private static LatestMusicHandler lmh;
-    private static LatestTVRecordingsHandler ltvrh = null;
-    private static Latest4TRRecordingsHandler l4trrh = null;
-    private static LatestArgusRecordingsHandler largusrh = null;
-    private static LatestPictureHandler lph;
+    private static LatestMyVideosHandler lmvh = null;
+    private static LatestMovingPicturesHandler lmph = null;
+    private static LatestTVSeriesHandler ltvsh = null;
+    private static LatestMusicHandler lmh = null;
+    private static LatestPictureHandler lph = null;
     private static LatestMyFilmsHandler lmfh = null;
     private static LatestMvCentralHandler lmch = null;
+    private static LatestTVAllRecordingsHandler ltvrh = null;
 
-    //private static int tVRecordingsTimerTick;
     private static int reorgTimerTick;
+
+    private static string mpVersion = null;
 
     #endregion
 
-    /**
-         * 919199910 Lmph
-         * 919199940 Ltvsh
-         * 919199970 Lmh
-         * 919199840 if (Utils.Used4TRTV) L4trrh else Ltvrh
-         * 919199710 Lph
-         * 919199880 Lmfh
-         **/
+    /*
+     * 919198710 Lmvh  - LatestMyVideosHandler.ControlID
+     * 919199970 Lmh   - LatestMusicHandler.ControlID
+     * 919199710 Lph   - LatestPictureHandler.ControlID
+     * 919199940 Ltvsh - LatestTVSeriesHandler.ControlID
+     * 919199910 Lmph  - LatestMovingPicturesHandler.ControlID
+     * 919199880 Lmfh  - LatestMyFilmsHandler.ControlID
+     * 919299280 lmch  - LatestMvCentralHandler.ControlID
+     * 919199840       - LatestTVAllRecordingsHandler.ControlID 
+                       - if (Utils.Used4TRTV) L4trrh else if (Utils.usedArgus) largusrh else Ltvrh
+    */
 
     internal static string DateFormat
     {
@@ -110,23 +111,19 @@ namespace LatestMediaHandler
       set { Utils.latestMusicType = value; }
     }
 
-    /*internal static int TVRecordingsTimerTick
-        {
-            get { return LatestMediaHandlerSetup.tVRecordingsTimerTick; }
-            set { LatestMediaHandlerSetup.tVRecordingsTimerTick = value; }
-        }*/
-
     internal static int ReorgTimerTick
     {
       get { return LatestMediaHandlerSetup.reorgTimerTick; }
       set { LatestMediaHandlerSetup.reorgTimerTick = value; }
     }
 
-/*        internal static string UseLatestMediaCache
+    /*
+    internal static string UseLatestMediaCache
         {
             get { return useLatestMediaCache; }
             set { useLatestMediaCache = value; }
-        }*/
+        }
+    */
 
     internal static LatestPictureHandler Lph
     {
@@ -134,22 +131,10 @@ namespace LatestMediaHandler
       set { lph = value; }
     }
 
-    internal static LatestTVRecordingsHandler Ltvrh
+    internal static LatestTVAllRecordingsHandler Ltvrh
     {
       get { return ltvrh; }
       set { ltvrh = value; }
-    }
-
-    internal static Latest4TRRecordingsHandler L4trrh
-    {
-      get { return l4trrh; }
-      set { l4trrh = value; }
-    }
-
-    internal static LatestArgusRecordingsHandler Largusrh
-    {
-      get { return largusrh; }
-      set { largusrh = value; }
     }
 
     internal static LatestMusicHandler Lmh
@@ -157,7 +142,6 @@ namespace LatestMediaHandler
       get { return lmh; }
       set { lmh = value; }
     }
-
 
     internal static LatestMyVideosHandler Lmvh
     {
@@ -205,12 +189,6 @@ namespace LatestMediaHandler
     {
       get { return Utils.refreshDbMusic; }
       set { Utils.refreshDbMusic = value; }
-    }
-
-    internal static int Restricted
-    {
-      get { return LatestMediaHandlerSetup.restricted; }
-      set { LatestMediaHandlerSetup.restricted = value; }
     }
 
     internal static string LatestTVRecordings
@@ -309,17 +287,6 @@ namespace LatestMediaHandler
       set { mpVersion = value; }
     }
 
-    /*internal static int GetTVRecordingsTimerInterval()
-        {
-            int newTick = Environment.TickCount - TVRecordingsTimerTick;
-            newTick = 300000 - newTick;
-            if (newTick < 0)
-            {
-                newTick = 2000;
-            }
-            return newTick;
-        }*/
-
     internal static int GetReorgTimerInterval()
     {
       int newTick = Environment.TickCount - ReorgTimerTick;
@@ -394,7 +361,6 @@ namespace LatestMediaHandler
         logger.Error("SetProperty: " + ex.ToString());
       }
     }
-
 
     /// <summary>
     /// Get value from xml node
@@ -567,37 +533,126 @@ namespace LatestMediaHandler
       }
     }
 
-    private void UpdateTVRecordingsTimer()
+    #region Init Handlers
+    private void InitHandlers()
     {
-      if (Utils.GetIsStopping() == false)
+      try // Music
       {
-        try
-        {
-          int sync = Interlocked.CompareExchange(ref SyncPointTVRecordings, 1, 0);
-          if (sync == 0)
-          {
-            // No other event was executing.                                   
-            if (MyLatestTVRecordingsWorker == null)
-            {
-              MyLatestTVRecordingsWorker = new LatestTVRecordingsWorker();
-              MyLatestTVRecordingsWorker.RunWorkerCompleted += MyLatestTVRecordingsWorker.OnRunWorkerCompleted;
-            }
-            MyLatestTVRecordingsWorker.RunWorkerAsync();
-          }
-        }
-        catch (Exception ex)
-        {
-          SyncPointTVRecordings = 0;
-          logger.Error("UpdateTVRecordingsTimer: " + ex.ToString());
-        }
+        Lmh.SetupMusicLatest();
       }
+      catch { }
 
+      try // MyVideo
+      {
+        Lmvh.SetupVideoLatest();
+      }
+      catch { }
+
+      try // TV Series
+      {
+        Ltvsh.SetupTVSeriesLatest();
+      }
+      catch { }
+
+      try // Pictures
+      {
+        Lph.SetupPicturesLatest();
+      }
+      catch { }
+
+      try // Moving Pictures
+      {
+        Lmph.SetupMovingPicturesLatest();
+      }
+      catch { }
+
+      try // My Films
+      {
+        Lmfh.SetupMovieLatest();
+      }
+      catch { }
+
+      try // mvCentral
+      {
+        Lmch.SetupMvCentralsLatest();
+      }
+      catch { }
+
+      try // TV Recordings
+      {
+        Ltvrh.SetupTVRecordingsLatest();
+      }
+      catch { }
+
+      try // Fanart Handler
+      {
+        UtilsFanartHandler.SetupFanartHandlerSubcribeScaperFinishedEvent();
+      }
+      catch (Exception ex)
+      {
+        logger.Error("SetupFanartHandlerSubcribeScaperFinishedEvent: " + ex.ToString());
+      }
     }
+    #endregion
 
-    private void UpdateTVRecordingsTimer(Object stateInfo, ElapsedEventArgs e)
+    #region Dispose Handlers
+    private void DisposeHandlers()
     {
-      UpdateTVRecordingsTimer();
+      try // Music
+      {
+        Lmh.DisposeMusicLatest();
+      }
+      catch { }
+
+      try // MyVideo
+      {
+        Lmvh.DisposeVideoLatest();
+      }
+      catch { }
+
+      try // TV Series
+      {
+        Ltvsh.DisposeTVSeriesLatest();
+      }
+      catch { }
+
+      try // Pictures
+      {
+        Lph.DisposePicturesLatest();
+      }
+      catch { }
+
+      try // Moving Pictures
+      {
+        Lmph.DisposeMovingPicturesLatest();
+      }
+      catch { }
+
+      try // My Films
+      {
+        Lmfh.DisposeMovieLatest();
+      }
+      catch { }
+
+      try // mvCentral
+      {
+        Lmch.DisposeMvCentralsLatest();
+      }
+      catch { }
+
+      try // TV Recordings
+      {
+        Ltvrh.DisposeTVRecordingsLatest();
+      }
+      catch { }
+
+      try // Fanart Handler
+      {
+        UtilsFanartHandler.DisposeFanartHandlerSubcribeScaperFinishedEvent();
+      }
+      catch { }
     }
+    #endregion
 
     /// <summary>
     /// Set start values on variables
@@ -605,7 +660,6 @@ namespace LatestMediaHandler
     private void SetupVariables()
     {
       Utils.SetIsStopping(false);
-      Restricted = 0;
 
       Lmvh  = new LatestMyVideosHandler();
       Lmph  = new LatestMovingPicturesHandler();
@@ -614,6 +668,7 @@ namespace LatestMediaHandler
       Lph   = new LatestPictureHandler();
       Lmfh  = new LatestMyFilmsHandler();
       Lmch  = new LatestMvCentralHandler();
+      ltvrh = new LatestTVAllRecordingsHandler();
 
       SyncPointReorg = 0;
       SyncPointTVRecordings = 0;
@@ -621,200 +676,17 @@ namespace LatestMediaHandler
       SyncPointMvCMusicUpdate = 0;
       SyncPointRefresh = 0;
 
-      //TVRecordingsTimerTick = Environment.TickCount;
       ReorgTimerTick = Environment.TickCount;
 
-      EmptyLatestMediaPropsMusic();
-      EmptyLatestMediaPropsMyVideos();
-      EmptyLatestMediaPropsPictures();
-      EmptyLatestMediaPropsTVRecordings();
-      EmptyLatestMediaPropsTVSeries();
-      EmptyLatestMediaPropsMyFilms();
-      EmptyLatestMediaPropsMovingPictures();
-      EmptyLatestMediaPropsMvCentral();
-      EmptyRecordingProps();
-    }
-
-    internal static void EmptyRecordingProps()
-    {
-      SetProperty("#latestMediaHandler.tvrecordings.label", Translation.LabelLatestAdded);
-      //Active Recordings
-      for (int z = 1; z < 4; z++)
-      {
-        SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".title", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".genre", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".startTime", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".startDate", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".endTime", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".endDate", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".channel", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".channelLogo", string.Empty);
-      }
-
-      //Scheduled recordings
-      for (int z = 1; z < 4; z++)
-      {
-        SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".title", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".startTime", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".startDate", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".endTime", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".endDate", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".channel", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".channelLogo", string.Empty);
-      }
-    }
-
-    internal static void EmptyLatestMediaPropsMovingPictures()
-    {
-      SetProperty("#latestMediaHandler.movingpicture.label", Translation.LabelLatestAdded);
-      SetProperty("#latestMediaHandler.movingpicture.latest.enabled", "false");
-      SetProperty("#latestMediaHandler.movingpicture.hasnew", "false");
-      for (int z = 1; z < 4; z++)
-      {
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".thumb", string.Empty);
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".fanart", string.Empty);
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".title", string.Empty);
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".dateAdded", string.Empty);
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".genre", string.Empty);
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".rating", string.Empty);
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".roundedRating", string.Empty);
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".classification", string.Empty);
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".runtime", string.Empty);
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".year", string.Empty);
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".id", string.Empty);
-        SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", string.Empty);
-      }
-    }
-
-    internal static void EmptyLatestMediaPropsMvCentral()
-    {
-      SetProperty("#latestMediaHandler.mvcentral.label", Translation.LabelLatestAdded);
-      SetProperty("#latestMediaHandler.mvcentral.hasnew", "false");
-      for (int z = 1; z < 4; z++)
-      {
-        SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".thumb", string.Empty);
-        SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artist", string.Empty);
-        SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".album", string.Empty);
-        SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".track", string.Empty);
-        SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded", string.Empty);
-        SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart", string.Empty);
-        SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", string.Empty);
-      }
-    }
-
-    internal static void EmptyLatestMediaPropsMusic()
-    {
-      SetProperty("#latestMediaHandler.music.label", Translation.LabelLatestAdded);
-      if (LatestMediaHandlerSetup.LatestMusicType.Equals("Most Played Music"))
-        SetProperty("#latestMediaHandler.music.label", Translation.LabelMostPlayed);
-      else if (LatestMediaHandlerSetup.LatestMusicType.Equals("Latest Played Music"))
-        SetProperty("#latestMediaHandler.music.label", Translation.LabelLatestPlayed);
-
-      SetProperty("#latestMediaHandler.music.latest.enabled", "false");
-      SetProperty("#latestMediaHandler.music.hasnew", "false");
-      for (int z = 1; z < 4; z++)
-      {
-        SetProperty("#latestMediaHandler.music.latest" + z + ".thumb", string.Empty);
-        SetProperty("#latestMediaHandler.music.latest" + z + ".artist", string.Empty);
-        SetProperty("#latestMediaHandler.music.latest" + z + ".album", string.Empty);
-        SetProperty("#latestMediaHandler.music.latest" + z + ".dateAdded", string.Empty);
-        SetProperty("#latestMediaHandler.music.latest" + z + ".fanart", string.Empty);
-        //SetProperty("#latestMediaHandler.music.latest" + z + ".fanart2", string.Empty);
-        SetProperty("#latestMediaHandler.music.latest" + z + ".genre", string.Empty);
-      }
-    }
-
-    internal static void EmptyLatestMediaPropsPictures()
-    {
-      SetProperty("#latestMediaHandler.picture.label", Translation.LabelLatestAdded);
-      SetProperty("#latestMediaHandler.picture.latest.enabled", "false");
-      SetProperty("#latestMediaHandler.picture.hasnew", "false");
-      for (int z = 1; z < 4; z++)
-      {
-        SetProperty("#latestMediaHandler.picture.latest" + z + ".title", string.Empty);
-        SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", string.Empty);
-        SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", string.Empty);
-        SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", string.Empty);
-      }
-    }
-
-    internal static void EmptyLatestMediaPropsMyFilms()
-    {
-      SetProperty("#latestMediaHandler.myfilms.label", Translation.LabelLatestAdded);
-      SetProperty("#latestMediaHandler.myfilms.latest.enabled", "false");
-      SetProperty("#latestMediaHandler.myfilms.hasnew", "false");
-      for (int z = 1; z < 4; z++)
-      {
-        SetProperty("#latestMediaHandler.myfilms.latest" + z + ".poster", string.Empty);
-        SetProperty("#latestMediaHandler.myfilms.latest" + z + ".fanart", string.Empty);
-        SetProperty("#latestMediaHandler.myfilms.latest" + z + ".title", string.Empty);
-        SetProperty("#latestMediaHandler.myfilms.latest" + z + ".dateAdded", string.Empty);
-        SetProperty("#latestMediaHandler.myfilms.latest" + z + ".rating", string.Empty);
-        SetProperty("#latestMediaHandler.myfilms.latest" + z + ".roundedRating", string.Empty);
-        SetProperty("#latestMediaHandler.myfilms.latest" + z + ".year", string.Empty);
-        SetProperty("#latestMediaHandler.myfilms.latest" + z + ".id", string.Empty);
-      }
-    }
-
-    internal static void EmptyLatestMediaPropsMyVideos()
-    {
-      SetProperty("#latestMediaHandler.myvideo.label", Translation.LabelLatestAdded);
-      SetProperty("#latestMediaHandler.myvideo.latest.enabled", "false");
-      SetProperty("#latestMediaHandler.myvideo.hasnew", "false");
-      for (int z = 1; z < 4; z++)
-      {
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".thumb", string.Empty);
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".fanart", string.Empty);
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".title", string.Empty);
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".dateAdded", string.Empty);
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".genre", string.Empty);
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".rating", string.Empty);
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".roundedRating", string.Empty);
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".classification", string.Empty);
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".runtime", string.Empty);
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".year", string.Empty);
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".id", string.Empty);
-        SetProperty("#latestMediaHandler.myvideo.latest" + z + ".plot", string.Empty);
-      }
-    }
-
-    internal static void EmptyLatestMediaPropsTVSeries()
-    {
-      SetProperty("#latestMediaHandler.tvseries.label", Translation.LabelLatestAdded);
-      SetProperty("#latestMediaHandler.tvseries.latest.enabled", "false");
-      SetProperty("#latestMediaHandler.tvseries.hasnew", "false");
-      for (int z = 1; z < 4; z++)
-      {
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".thumb", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieThumb", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".fanart", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieName", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".seasonIndex", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".episodeName", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".episodeIndex", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".dateAdded", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".genre", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".rating", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".roundedRating", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".classification", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".runtime", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".firstAired", string.Empty);
-        SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plot", string.Empty);
-      }
-    }
-
-    internal static void EmptyLatestMediaPropsTVRecordings()
-    {
-      SetProperty("#latestMediaHandler.tvrecordings.label", Translation.LabelLatestAdded);
-      SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "false");
-      SetProperty("#latestMediaHandler.tvrecordings.hasnew", "false");
-      for (int z = 1; z < 4; z++)
-      {
-        SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", string.Empty);
-        SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".genre", string.Empty);
-      }
+      Lmh.EmptyLatestMediaPropsMusic();
+      Lmvh.EmptyLatestMediaPropsMyVideos();
+      Lph.EmptyLatestMediaPropsPictures();
+      Ltvsh.EmptyLatestMediaPropsTVSeries();
+      Lmph.EmptyLatestMediaPropsMovingPictures();
+      Lmfh.EmptyLatestMediaPropsMyFilms();
+      Lmch.EmptyLatestMediaPropsMvCentral();
+      ltvrh.EmptyLatestMediaPropsTVRecordings();
+      ltvrh.EmptyRecordingProps();
     }
 
 /*
@@ -978,20 +850,16 @@ namespace LatestMediaHandler
         SetupWindowsUsingLatestMediaHandlerVisibility();
         SetupVariables();
 
-        LatestMediaHandlerSetup.Restricted = 0;
-        try
-        {
-          LatestMediaHandlerSetup.Restricted = Lmph.MovingPictureIsRestricted();
-        }
-        catch { }
-
         GetLatestMediaInfo();
 
-        GUIWindowManager.OnActivateWindow += new GUIWindowManager.WindowActivationHandler(GuiWindowManagerOnActivateWindow);
+        Thread.Sleep(1000);
+        
+        InitHandlers();
 
+        GUIWindowManager.OnActivateWindow += new GUIWindowManager.WindowActivationHandler(GuiWindowManagerOnActivateWindow);
         GUIGraphicsContext.OnNewAction += new OnActionHandler(OnNewAction);
         GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
-        SystemEvents.PowerModeChanged += OnSystemPowerModeChanged;
+        SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnSystemPowerModeChanged);
 
         ReorgTimer = new System.Timers.Timer((Int32.Parse(ReorgInterval)*60000));
         ReorgTimer.Elapsed += new ElapsedEventHandler(UpdateReorgTimer);
@@ -1002,15 +870,6 @@ namespace LatestMediaHandler
         refreshTimer.Elapsed += new ElapsedEventHandler(UpdateImageTimer);
         refreshTimer.Interval = 250;
         refreshTimer.Start();
-
-        try
-        {
-          UtilsFanartHandler.SetupFanartHandlerSubcribeScaperFinishedEvent();
-        }
-        catch (Exception ex)
-        {
-          logger.Error("SetupFanartHandlerSubcribeScaperFinishedEvent: " + ex.ToString());
-        }
 
         /*
         GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
@@ -1098,7 +957,7 @@ namespace LatestMediaHandler
       {
         try
         {
-          GetLatestTVRecMediaInfo();
+          Ltvrh.GetTVRecordings();
         }
         catch (Exception ex)
         {
@@ -1196,6 +1055,7 @@ namespace LatestMediaHandler
           // Start();
 
           // b: ajs
+          Utils.HasNewInit();
           GetLatestMediaInfo();
           // e: ajs
         }
@@ -1241,42 +1101,31 @@ namespace LatestMediaHandler
     private void DoContextMenu()
     {
       GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-      if (fWindow.GetFocusControlId() == 919199910)
+      if (fWindow.GetFocusControlId() == LatestMovingPicturesHandler.ControlID)
       {
         Lmph.MyContextMenu();
       }
-      else if (fWindow.GetFocusControlId() == 919198710)
+      else if (fWindow.GetFocusControlId() == LatestMyVideosHandler.ControlID)
       {
         Lmvh.MyContextMenu();
       }
-      else if (fWindow.GetFocusControlId() == 919299280)
+      else if (fWindow.GetFocusControlId() == LatestMvCentralHandler.ControlID)
       {
         Lmch.MyContextMenu();
       }
-      else if (fWindow.GetFocusControlId() == 919199940)
+      else if (fWindow.GetFocusControlId() == LatestTVSeriesHandler.ControlID)
       {
         Ltvsh.MyContextMenu();
       }
-      else if (fWindow.GetFocusControlId() == 919199880)
+      else if (fWindow.GetFocusControlId() == LatestMyFilmsHandler.ControlID)
       {
         Lmfh.MyContextMenu();
       }
-      else if (fWindow.GetFocusControlId() == 919199840)
+      else if (fWindow.GetFocusControlId() == LatestTVAllRecordingsHandler.ControlID)
       {
-        if (Utils.Used4TRTV && !Utils.UsedArgus)
-        {
-          L4trrh.MyContextMenu();
-        }
-        else if (Utils.Used4TRTV && Utils.UsedArgus)
-        {
-          Largusrh.MyContextMenu();
-        }
-        else
-        {
-          Ltvrh.MyContextMenu();
-        }
+        Ltvrh.MyContextMenu();
       }
-      else if (fWindow.GetFocusControlId() == 919199970)
+      else if (fWindow.GetFocusControlId() == LatestMusicHandler.ControlID)
       {
         Lmh.MyContextMenu();
       }
@@ -1286,92 +1135,102 @@ namespace LatestMediaHandler
     {
       try
       {
-
         if (message.Object is ShowLMHDialog)
         {
           DoContextMenu();
         }
-        switch (message.Message)
-        {
-          case GUIMessage.MessageType.GUI_MSG_NOTIFY_REC:
-          {
-            if (Utils.Used4TRTV && !Utils.UsedArgus)
-            {
-              L4trrh.UpdateActiveRecordings();
-            }
-            else if (Utils.Used4TRTV && Utils.UsedArgus)
-            {
-              Largusrh.UpdateActiveRecordings();
-            }
-            else
-            {
-              Ltvrh.UpdateActiveRecordings();
-            }
-            // GetLatestMediaInfoTV();
-            break;
-          }
-          case GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH:
-          {
-            logger.Debug("VideoInfo refresh detected: Refreshing fanarts.");
-            try
-            {
-              GetLatestMediaInfoVideo();
-              GetLatestMediaInfoPictures();
-            }
-            catch (Exception ex)
-            {
-              logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
-            }
-            break;
-          }
-        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
-        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
-          {
-            logger.Debug("Playback End/Stop detected: Refreshing latest.");
-            try
-            {
-              GetLatestMediaInfoVideo();
-              GetLatestMediaInfoMusic();
-              GetLatestMediaInfoPictures();
-            }
-            catch (Exception ex)
-            {
-              logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
-            }
-            break;
-          }
-          case GUIMessage.MessageType.GUI_MSG_DATABASE_SCAN_ENDED:
-          {
-            logger.Debug("DB Scan end detected: Refreshing latest.");
-            try
-            {
-              GetLatestMediaInfoMusic();
-              GetLatestMediaInfoPictures();
-            }
-            catch (Exception ex)
-            {
-              logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
-            }
-            break;
-          }
-          case GUIMessage.MessageType.GUI_MSG_START_SLIDESHOW:
-          {
-            logger.Debug("Slideshow detected: Refreshing latest.");
-            try
-            {
-              GetLatestMediaInfoPictures();
-            }
-            catch (Exception ex)
-            {
-              logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
-            }
-            break;
-          }
-        }
       }
       catch
+      {   }
+    }
+
+    private void SetActiveLatestControl(GUIWindow fWindow)
+    {
+      try
       {
-        //DO NOTHING!!
+        GUIControl gc = null ;
+
+        gc =fWindow.GetControl(LatestMovingPicturesHandler.Play1ControlID);
+        if ((gc != null) && (gc.Focusable) && (gc.IsVisible))
+          GUIControl.FocusControl(fWindow.GetID, gc.GetID) ;
+        /*
+        gc = fWindow.GetControl(LatestPictureHandler.Play1ControlID);
+        if ((gc != null) && (gc.Focusable) && (gc.IsVisible))
+          GUIControl.FocusControl(fWindow.GetID, gc.GetID) ;
+        */
+        gc = fWindow.GetControl(LatestTVSeriesHandler.Play1ControlID);
+        if ((gc != null) && (gc.Focusable) && (gc.IsVisible))
+          GUIControl.FocusControl(fWindow.GetID, gc.GetID) ;
+        
+        gc = fWindow.GetControl(LatestMusicHandler.Play1ControlID);
+        if ((gc != null) && (gc.Focusable) && (gc.IsVisible))
+          GUIControl.FocusControl(fWindow.GetID, gc.GetID) ;
+        
+        gc = fWindow.GetControl(LatestTVAllRecordingsHandler.Play1ControlID);
+        if ((gc != null) && (gc.Focusable) && (gc.IsVisible))
+          GUIControl.FocusControl(fWindow.GetID, gc.GetID) ;
+        
+        gc = fWindow.GetControl(LatestMyFilmsHandler.Play1ControlID);
+        if ((gc != null) && (gc.Focusable) && (gc.IsVisible))
+          GUIControl.FocusControl(fWindow.GetID, gc.GetID) ;
+        
+        gc = fWindow.GetControl(LatestMyVideosHandler.Play1ControlID);
+        if ((gc != null) && (gc.Focusable) && (gc.IsVisible))
+          GUIControl.FocusControl(fWindow.GetID, gc.GetID) ;
+        /*
+        gc = fWindow.GetControl(LatestMvCentralHandler.Play1ControlID);
+        if ((gc != null) && (gc.Focusable) && (gc.IsVisible))
+          fWindow.FocusControl(fWindow.GetID, gc.GetID) ;
+        */
+      }
+      catch (Exception ex)
+      {
+        logger.Error("SetActiveLatestControl: " + ex.ToString());
+      }
+    }
+
+    internal void OnAction(GUIWindow fWindow, ref MediaPortal.GUI.Library.Action action, bool ContextMenu) 
+    {
+      if (fWindow != null)
+      {
+        if (fWindow.GetFocusControlId() == LatestMovingPicturesHandler.ControlID || 
+            fWindow.GetFocusControlId() == LatestPictureHandler.ControlID ||
+            fWindow.GetFocusControlId() == LatestTVSeriesHandler.ControlID || 
+            fWindow.GetFocusControlId() == LatestMusicHandler.ControlID || 
+            fWindow.GetFocusControlId() == LatestTVAllRecordingsHandler.ControlID || 
+            fWindow.GetFocusControlId() == LatestMyFilmsHandler.ControlID ||
+            fWindow.GetFocusControlId() == LatestMyVideosHandler.ControlID || 
+            fWindow.GetFocusControlId() == LatestMvCentralHandler.ControlID)
+        {
+          if (action.IsUserAction())
+          {
+            GUIGraphicsContext.ResetLastActivity();
+          }
+          //action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;                                    
+          action.wID = 0;
+          //DoContextMenu();
+          ShowLMHDialog slmhd = new ShowLMHDialog();
+          GUIWindowManager.SendThreadMessage(new GUIMessage()
+                                             {
+                                               TargetWindowId = 35,
+                                               SendToTargetWindow = true,
+                                               Object = slmhd
+                                             });
+          //GUIWindowManager.SendMessage(new GUIMessage() { TargetWindowId = 35, SendToTargetWindow = true, Object = slmhd });
+          return;
+        }
+        if (ContextMenu) 
+        {
+          SetActiveLatestControl(fWindow);
+          return;
+        }
+
+        if (Lmh.PlayMusicAlbum(fWindow)) return;
+        if (lmvh.PlayMovie(fWindow)) return;
+        if (Ltvsh.PlayTVSeries(fWindow)) return;
+        if (Lmph.PlayMovingPicture(fWindow)) return;
+        if (lmfh.PlayMovie(fWindow)) return;
+        if (ltvrh.PlayRecording(fWindow, ref action)) return;
       }
     }
 
@@ -1385,298 +1244,17 @@ namespace LatestMediaHandler
 
           switch (action.wID)
           {
+            case MediaPortal.GUI.Library.Action.ActionType.ACTION_CONTEXT_MENU:
+            {
+              OnAction(fWindow, ref action, true);
+              break;
+            }
             case MediaPortal.GUI.Library.Action.ActionType.ACTION_MOUSE_CLICK:
             case MediaPortal.GUI.Library.Action.ActionType.ACTION_SELECT_ITEM:
-              if (fWindow != null)
-              {
-                if (fWindow.GetFocusControlId() == 919199910 || fWindow.GetFocusControlId() == 919199710 ||
-                    fWindow.GetFocusControlId() == 919199940 || fWindow.GetFocusControlId() == 919199970 || 
-                    fWindow.GetFocusControlId() == 919199840 || fWindow.GetFocusControlId() == 919199880 ||
-                    fWindow.GetFocusControlId() == 919198710 || fWindow.GetFocusControlId() == 919299280)
-                {
-                  if (action.IsUserAction())
-                  {
-                    GUIGraphicsContext.ResetLastActivity();
-                  }
-                  //action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;                                    
-                  action.wID = 0;
-                  //DoContextMenu();
-                  ShowLMHDialog slmhd = new ShowLMHDialog();
-                  GUIWindowManager.SendThreadMessage(new GUIMessage()
-                                                     {
-                                                       TargetWindowId = 35,
-                                                       SendToTargetWindow = true,
-                                                       Object = slmhd
-                                                     });
-                  //GUIWindowManager.SendMessage(new GUIMessage() { TargetWindowId = 35, SendToTargetWindow = true, Object = slmhd });
-                }
-                else if (fWindow.GetFocusControlId() == 91919991)
-                {
-                  try
-                  {
-                    Lmph.PlayMovingPicture(1);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play movie! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919992)
-                {
-                  try
-                  {
-                    Lmph.PlayMovingPicture(2);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play movie! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919993)
-                {
-                  try
-                  {
-                    Lmph.PlayMovingPicture(3);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play movie! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919994)
-                {
-                  try
-                  {
-                    Ltvsh.PlayTVSeries(1);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play episode! " + ex.ToString());
-                  }
-                  MediaPortal.Playlists.PlayListPlayer.SingletonPlayer.PlayNext();
-                }
-                else if (fWindow.GetFocusControlId() == 91919995)
-                {
-                  try
-                  {
-                    Ltvsh.PlayTVSeries(2);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play episode! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919996)
-                {
-                  try
-                  {
-                    Ltvsh.PlayTVSeries(3);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play episode! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919997)
-                {
-                  try
-                  {
-                    Lmh.PlayMusicAlbum(1);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play album! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919998)
-                {
-                  try
-                  {
-                    Lmh.PlayMusicAlbum(2);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play album! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919999)
-                {
-                  try
-                  {
-                    Lmh.PlayMusicAlbum(3);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play album! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919984)
-                {
-                  try
-                  {
-                    if (Utils.Used4TRTV && !Utils.UsedArgus)
-                    {
-                      action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-                      L4trrh.PlayRecording(1);
-                    }
-                    else if (Utils.Used4TRTV && Utils.UsedArgus)
-                    {
-                      action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-                      Largusrh.PlayRecording(1);
-                    }
-                    else
-                    {
-                      Ltvrh.PlayRecording(1);
-                    }
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play recording! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919985)
-                {
-                  try
-                  {
-                    if (Utils.Used4TRTV && !Utils.UsedArgus)
-                    {
-                      action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-                      L4trrh.PlayRecording(2);
-                    }
-                    else if (Utils.Used4TRTV && Utils.UsedArgus)
-                    {
-                      action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-                      Largusrh.PlayRecording(2);
-                    }
-                    else
-                    {
-                      Ltvrh.PlayRecording(2);
-                    }
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play recording! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919986)
-                {
-                  try
-                  {
-                    if (Utils.Used4TRTV && !Utils.UsedArgus)
-                    {
-                      action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-                      L4trrh.PlayRecording(3);
-                    }
-                    else if (Utils.Used4TRTV && Utils.UsedArgus)
-                    {
-                      action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-                      Largusrh.PlayRecording(3);
-                    }
-                    else
-                    {
-                      Ltvrh.PlayRecording(3);
-                    }
-
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play recording! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919987)
-                {
-                  try
-                  {
-                    if (Utils.Used4TRTV && !Utils.UsedArgus)
-                    {
-                      action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-                      L4trrh.PlayRecording(4);
-                    }
-                    else if (Utils.Used4TRTV && Utils.UsedArgus)
-                    {
-                      action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-                      Largusrh.PlayRecording(4);
-                    }
-                    else
-                    {
-                      Ltvrh.PlayRecording(4);
-                    }
-
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play recording! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919988)
-                {
-                  try
-                  {
-                    lmfh.PlayMovie(1);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play film! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919989)
-                {
-                  try
-                  {
-                    lmfh.PlayMovie(2);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play film! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91919990)
-                {
-                  try
-                  {
-                    lmfh.PlayMovie(3);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play film! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91915991)
-                {
-                  try
-                  {
-                    lmvh.PlayMovie(1);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play film! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91915992)
-                {
-                  try
-                  {
-                    lmvh.PlayMovie(2);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play film! " + ex.ToString());
-                  }
-                }
-                else if (fWindow.GetFocusControlId() == 91915993)
-                {
-                  try
-                  {
-                    lmvh.PlayMovie(3);
-                  }
-                  catch (Exception ex)
-                  {
-                    MessageBox.Show("Unable to play film! " + ex.ToString());
-                  }
-                }
-              }
-
+            {
+              OnAction(fWindow, ref action, false);
               break;
+            }
             default:
               break;
           }
@@ -1688,193 +1266,6 @@ namespace LatestMediaHandler
       }
     }
 
-    internal static void GetLatestTVRecMediaInfo()
-    {
-      int z = 1;
-      if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
-      {
-        //TV Recordings
-        LatestMediaHandler.LatestsCollection latestTVRecordings = null;
-        try
-        {
-          MediaPortal.Profile.Settings xmlreader =  new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
-
-          string use4TR = xmlreader.GetValue("plugins", "For The Record TV");
-          string dllFile = Config.GetFile(Config.Dir.Plugins, @"Windows\ForTheRecord.UI.MediaPortal.dll");
-          string dllFileArgus = Config.GetFile(Config.Dir.Plugins, @"Windows\ArgusTV.UI.MediaPortal.dll");
-
-          if (use4TR != null && use4TR.Equals("yes", StringComparison.CurrentCulture) && File.Exists(dllFile))
-          {
-            FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(dllFile);
-            logger.Debug("ForTheRecord version = {0}", myFileVersionInfo.FileVersion);
-
-            if (L4trrh == null)
-            {
-              L4trrh = new Latest4TRRecordingsHandler();
-              try
-              {
-                //this can be removed when 1.6.0.2/1.6.1.0 is out for a while
-                if (myFileVersionInfo.FileVersion == "1.6.0.1" || myFileVersionInfo.FileVersion == "1.6.0.0" || myFileVersionInfo.FileVersion == "1.5.0.3")
-                {
-                  l4trrh.Is4TRversion1602orAbove = false;
-                } else {
-                  l4trrh.Is4TRversion1602orAbove = true;
-                }
-              }
-              catch
-              {
-                l4trrh.Is4TRversion1602orAbove = false;
-              }
-            }
-
-            ResolveEventHandler assemblyResolve = L4trrh.OnAssemblyResolve;
-            try
-            {
-              AppDomain currentDomain = AppDomain.CurrentDomain;
-              currentDomain.AssemblyResolve += new ResolveEventHandler(L4trrh.OnAssemblyResolve);
-              L4trrh.IsGetTypeRunningOnThisThread = true;
-              latestTVRecordings = L4trrh.Get4TRRecordings();
-              L4trrh.UpdateActiveRecordings();
-              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
-              Utils.Used4TRTV = true;
-              Utils.UsedArgus = false;
-            }
-            catch (FileNotFoundException)
-            {
-              //do nothing    
-            }
-            catch (MissingMethodException)
-            {
-              //do nothing    
-            }
-            catch (Exception ex)
-            {
-              logger.Error("GetLatestMediaInfo (TV 4TR Recordings): " + ex.ToString());
-              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
-            }
-          }
-          else if (use4TR != null && use4TR.Equals("yes", StringComparison.CurrentCulture) && File.Exists(dllFileArgus))
-          {
-            FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(dllFileArgus);
-            logger.Debug("Argus version = {0}", myFileVersionInfo.FileVersion);
-
-            if (Largusrh == null)
-            {
-              Largusrh = new LatestArgusRecordingsHandler();
-            }
-
-            ResolveEventHandler assemblyResolve = Largusrh.OnAssemblyResolve;
-            try
-            {
-              AppDomain currentDomain = AppDomain.CurrentDomain;
-              currentDomain.AssemblyResolve += new ResolveEventHandler(Largusrh.OnAssemblyResolve);
-              Largusrh.IsGetTypeRunningOnThisThread = true;
-              latestTVRecordings = Largusrh.Get4TRRecordings();
-              Largusrh.UpdateActiveRecordings();
-              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
-              Utils.Used4TRTV = true;
-              Utils.UsedArgus = true;
-            }
-            catch (FileNotFoundException)
-            {
-              //do nothing    
-            }
-            catch (MissingMethodException)
-            {
-              //do nothing    
-            }
-            catch (Exception ex)
-            {
-              logger.Error("GetLatestMediaInfo (TV Argus Recordings): " + ex.ToString());
-              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
-            }
-          }
-          else
-          {
-            if (Ltvrh == null)
-            {
-              Ltvrh = new LatestTVRecordingsHandler();
-            }
-            latestTVRecordings = Ltvrh.GetTVRecordings();
-            Ltvrh.UpdateActiveRecordings();
-            Utils.Used4TRTV = false;
-            Utils.UsedArgus = false;
-          }
-        }
-        catch (FileNotFoundException)
-        {
-          //do nothing    
-        }
-        catch (MissingMethodException)
-        {
-          //do nothing    
-        }
-        catch (Exception ex)
-        {
-          logger.Error("GetLatestMediaInfo (TV Recordings): " + ex.ToString());
-        }
-        bool noNewRecordings = false;
-        if ((latestTVRecordings != null && latestTVRecordings.Count > 1) && GUIPropertyManager.GetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title").Equals(latestTVRecordings[0].Title))
-        {
-          noNewRecordings = true;
-          logger.Info("Updating Latest Media Info: Latest tv recording: No new recordings since last check!");
-        }
-
-        if (latestTVRecordings != null && latestTVRecordings.Count > 1)
-        {
-          /*if (GUIPropertyManager.GetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title").Equals(latestTVRecordings[0].Title))
-                    {
-                        logger.Info("Updating Latest Media Info: Latest tv recording: No new recordings since last check!");
-                    }
-                    else*/
-          if (!noNewRecordings)
-          {
-            for (int i = 0; i < 4; i++)
-            {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", string.Empty);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".genre", string.Empty);
-              z++;
-            }
-
-            z = 1;
-            for (int i = 0; i < latestTVRecordings.Count && i < 4; i++)
-            {
-              logger.Info("Updating Latest Media Info: Latest tv recording " + z + ": " + latestTVRecordings[i].Title);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", latestTVRecordings[i].Thumb);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", latestTVRecordings[i].Title);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", latestTVRecordings[i].DateAdded);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".genre", latestTVRecordings[i].Genre);
-              z++;
-            }
-            //latestTVRecordings.Clear();
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "true");
-            logger.Debug("Updating Latest Media Info: Latest tv recording has new: " + (Utils.HasNewTVRecordings ? "true" : "false"));
-          }
-        }
-        else
-        {
-          for (int i = 0; i < 4; i++)
-          {
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", string.Empty);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", string.Empty);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", string.Empty);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".genre", string.Empty);
-            z++;
-          }
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "false");
-          logger.Info("Updating Latest Media Info: Latest tv recording: No recordings found!");
-        }
-        //latestTVRecordings = null;
-        z = 1;
-      }
-      else
-      {
-        LatestMediaHandlerSetup.EmptyLatestMediaPropsTVRecordings();
-      }
-    }
-
     private void InitFacade(object obj, int windowId)
     {
       try
@@ -1883,39 +1274,39 @@ namespace LatestMediaHandler
         int x = 0;
         if (obj is LatestMovingPicturesHandler)
         {
-          x = 919199910;
+          x = LatestMovingPicturesHandler.ControlID;
         }
         else if (obj is LatestMyVideosHandler)
         {
-          x = 919198710;
+          x = LatestMyVideosHandler.ControlID;
         }
         else if (obj is LatestMvCentralHandler)
         {
-          x = 919299280;
+          x = LatestMvCentralHandler.ControlID;
         }
         else if (obj is LatestTVSeriesHandler)
         {
-          x = 919199940;
+          x = LatestTVSeriesHandler.ControlID;
         }
         else if (obj is LatestMusicHandler)
         {
-          x = 919199970;
+          x = LatestMusicHandler.ControlID;
         }
         else if (obj is LatestTVRecordingsHandler)
         {
-          x = 919199840;
+          x = LatestTVAllRecordingsHandler.ControlID;
         }
         else if (obj is Latest4TRRecordingsHandler)
         {
-          x = 919199840;
+          x = LatestTVAllRecordingsHandler.ControlID;
         }
         else if (obj is LatestPictureHandler)
         {
-          x = 919199710;
+          x = LatestPictureHandler.ControlID;
         }
         else if (obj is LatestMyFilmsHandler)
         {
-          x = 919199880;
+          x = LatestMyFilmsHandler.ControlID;
         }
 
         GUIFacadeControl facade = gw.GetControl(x) as GUIFacadeControl;
@@ -1923,7 +1314,7 @@ namespace LatestMediaHandler
         if (facade != null)
         {
           facade.Clear();
-          if (x == 919199910)
+          if (x == LatestMovingPicturesHandler.ControlID)
           {
             if (Lmph != null && Lmph.Al != null)
             {
@@ -1935,7 +1326,7 @@ namespace LatestMediaHandler
               }
             }
           }
-          else if (x == 919198710)
+          else if (x == LatestMyVideosHandler.ControlID)
           {
             if (Lmvh != null && Lmvh.Al != null)
             {
@@ -1947,7 +1338,7 @@ namespace LatestMediaHandler
               }
             }
           }
-          else if (x == 919299280)
+          else if (x == LatestMvCentralHandler.ControlID)
           {
             if (Lmch != null && Lmch.Al != null)
             {
@@ -1959,7 +1350,7 @@ namespace LatestMediaHandler
               }
             }
           }
-          else if (x == 919199940)
+          else if (x == LatestTVSeriesHandler.ControlID)
           {
             if (Ltvsh != null && Ltvsh.Al != null)
             {
@@ -1971,7 +1362,7 @@ namespace LatestMediaHandler
               }
             }
           }
-          else if (x == 919199970)
+          else if (x == LatestMusicHandler.ControlID)
           {
             if (Lmh != null && Lmh.Al != null)
             {
@@ -1983,43 +1374,12 @@ namespace LatestMediaHandler
               }
             }
           }
-          else if (x == 919199840 && Utils.Used4TRTV && !Utils.UsedArgus)
+          else if (x == LatestTVAllRecordingsHandler.ControlID)
           {
-            if (L4trrh != null && L4trrh.Al != null)
-            {
-              for (int i = 0; i < L4trrh.Al.Count; i++)
-              {
-                GUIListItem _gc = L4trrh.Al[i] as GUIListItem;
-                Utils.LoadImage(_gc.IconImage, ref L4trrh.imagesThumbs);
-                facade.Add(_gc);
-              }
-            }
+            if (Ltvrh != null)
+              Ltvrh.InitFacade(ref facade) ;
           }
-          else if (x == 919199840 && Utils.Used4TRTV && Utils.UsedArgus)
-          {
-            if (L4trrh != null && Largusrh.Al != null)
-            {
-              for (int i = 0; i < Largusrh.Al.Count; i++)
-              {
-                GUIListItem _gc = Largusrh.Al[i] as GUIListItem;
-                Utils.LoadImage(_gc.IconImage, ref Largusrh.imagesThumbs);
-                facade.Add(_gc);
-              }
-            }
-          }
-          else if (x == 919199840 && !Utils.Used4TRTV)
-          {
-            if (Ltvrh != null && Ltvrh.Al != null)
-            {
-              for (int i = 0; i < Ltvrh.Al.Count; i++)
-              {
-                GUIListItem _gc = Ltvrh.Al[i] as GUIListItem;
-                facade.Add(_gc);
-                Utils.LoadImage(_gc.IconImage, ref Ltvrh.imagesThumbs);
-              }
-            }
-          }
-          else if (x == 919199710)
+          else if (x == LatestPictureHandler.ControlID)
           {
             if (Lph != null && Lph.Al != null)
             {
@@ -2031,7 +1391,7 @@ namespace LatestMediaHandler
               }
             }
           }
-          else if (x == 919199880)
+          else if (x == LatestMyFilmsHandler.ControlID)
           {
             if (Lmfh != null && Lmfh.Al != null)
             {
@@ -2048,28 +1408,18 @@ namespace LatestMediaHandler
           if (facade.ListLayout != null)
           {
             facade.CurrentLayout = GUIFacadeControl.Layout.List;
-            if (!facade.Focus)
-            {
-              facade.ListLayout.IsVisible = false;
-            }
+            facade.ListLayout.IsVisible = (!facade.Focus) ? false : facade.ListLayout.IsVisible;
           }
           else if (facade.FilmstripLayout != null)
           {
             facade.CurrentLayout = GUIFacadeControl.Layout.Filmstrip;
-            if (!facade.Focus)
-            {
-              facade.FilmstripLayout.IsVisible = false;
-            }
+            facade.FilmstripLayout.IsVisible = (!facade.Focus) ? false : facade.FilmstripLayout.IsVisible;
           }
           else if (facade.CoverFlowLayout != null)
           {
             facade.CurrentLayout = GUIFacadeControl.Layout.CoverFlow;
-            if (!facade.Focus)
-            {
-              facade.CoverFlowLayout.IsVisible = false;
-            }
+            facade.CoverFlowLayout.IsVisible = (!facade.Focus) ? false : facade.CoverFlowLayout.IsVisible;
           }
-
           facade.Visible = false;
         }
       }
@@ -2081,75 +1431,45 @@ namespace LatestMediaHandler
 
     internal void SetFocusOnFacade(GUIFacadeControl facade, int x)
     {
-      if (x == 919199910)
+      if (x == LatestMovingPicturesHandler.ControlID)
       {
         if (Lmph != null)
-        {
           facade.SelectedListItemIndex = Lmph.LastFocusedId;
-        }
       }
-      else if (x == 919198710)
+      else if (x == LatestMyVideosHandler.ControlID)
       {
         if (Lmvh != null)
-        {
           facade.SelectedListItemIndex = Lmvh.LastFocusedId;
-        }
       }
-      else if (x == 919299280)
+      else if (x == LatestMvCentralHandler.ControlID)
       {
         if (Lmch != null)
-        {
           facade.SelectedListItemIndex = Lmch.LastFocusedId;
-        }
       }
-      else if (x == 919199940)
+      else if (x == LatestTVSeriesHandler.ControlID)
       {
         if (Ltvsh != null)
-        {
           facade.SelectedListItemIndex = Ltvsh.LastFocusedId;
-        }
       }
-      else if (x == 919199970)
+      else if (x == LatestMusicHandler.ControlID)
       {
         if (Lmh != null)
-        {
           facade.SelectedListItemIndex = Lmh.LastFocusedId;
-        }
       }
-      else if (x == 919199840 && Utils.Used4TRTV && !Utils.UsedArgus)
-      {
-        if (L4trrh != null)
-        {
-          facade.SelectedListItemIndex = L4trrh.LastFocusedId;
-        }
-      }
-      else if (x == 919199840 && Utils.Used4TRTV && Utils.UsedArgus)
-      {
-        if (Largusrh != null)
-        {
-          facade.SelectedListItemIndex = Largusrh.LastFocusedId;
-        }
-      }
-      else if (x == 919199840 && !Utils.Used4TRTV)
+      else if (x == LatestTVAllRecordingsHandler.ControlID)
       {
         if (Ltvrh != null)
-        {
           facade.SelectedListItemIndex = Ltvrh.LastFocusedId;
-        }
       }
-      else if (x == 919199710)
+      else if (x == LatestPictureHandler.ControlID)
       {
         if (Lph != null)
-        {
           facade.SelectedListItemIndex = Lph.LastFocusedId;
-        }
       }
-      else if (x == 919199880)
+      else if (x == LatestMyFilmsHandler.ControlID)
       {
         if (Lmfh != null)
-        {
           facade.SelectedListItemIndex = Lmfh.LastFocusedId;
-        }
       }
     }
 
@@ -2160,134 +1480,99 @@ namespace LatestMediaHandler
         string windowId = String.Empty + GUIWindowManager.ActiveWindow;
         if (Utils.GetIsStopping() == false && WindowsUsingFanartLatest.ContainsKey(windowId))
         {
-          /*if (TVRecordingsTimer != null && !TVRecordingsTimer.Enabled)
-                    {                        
-                        TVRecordingsTimer.Interval = GetTVRecordingsTimerInterval();
-                        TVRecordingsTimer.Start();
-                    }*/
+          InitFacade(Lmph, activeWindowId);
+          InitFacade(Ltvsh, activeWindowId);
+          InitFacade(Lmh, activeWindowId);
+          InitFacade(Ltvrh, activeWindowId);
+          InitFacade(Lph, activeWindowId);
+          InitFacade(Lmfh, activeWindowId);
+          InitFacade(Lmvh, activeWindowId);
+          InitFacade(Lmch, activeWindowId);
+          //
           if (ReorgTimer != null && !ReorgTimer.Enabled)
           {
             ReorgTimer.Interval = GetReorgTimerInterval();
             ReorgTimer.Start();
           }
-          //Thread thread = new Thread(new ThreadStart(ReloadLatestCache));
-          //thread.Start();
-
-          InitFacade(Lmph, activeWindowId);
-          InitFacade(Ltvsh, activeWindowId);
-          InitFacade(Lmh, activeWindowId);
-          if (Utils.Used4TRTV && !Utils.UsedArgus)
-          {
-            InitFacade(L4trrh, activeWindowId);
-          }
-          else if (Utils.Used4TRTV && Utils.UsedArgus)
-          {
-            InitFacade(Largusrh, activeWindowId);
-          }
-          else
-          {
-            InitFacade(Ltvrh, activeWindowId);
-          }
-          InitFacade(Lph, activeWindowId);
-          InitFacade(Lmfh, activeWindowId);
-          InitFacade(Lmvh, activeWindowId);
-          InitFacade(Lmch, activeWindowId);
+          //
           if (refreshTimer != null && !refreshTimer.Enabled)
-          {
             refreshTimer.Start();
-          }
-          UpdateTVRecordingsTimer();
+          //
+          GetLatestMediaInfoTV("WindowActivate");
         }
         else
         {
           if (refreshTimer != null && refreshTimer.Enabled)
-          {
             refreshTimer.Stop();
-          }
           if (ReorgTimer != null && ReorgTimer.Enabled)
-          {
             ReorgTimer.Stop();
-          }
+
           GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          GUIFacadeControl facade = gw.GetControl(919199910) as GUIFacadeControl;
+          GUIFacadeControl facade = gw.GetControl(LatestMovingPicturesHandler.ControlID) as GUIFacadeControl;
           if (facade != null)
           {
             facade.Clear();
             Utils.UnLoadImage(ref Lmph.images);
             Utils.UnLoadImage(ref Lmph.imagesThumbs);
           }
-          facade = gw.GetControl(919198710) as GUIFacadeControl;
+          facade = gw.GetControl(LatestMyVideosHandler.ControlID) as GUIFacadeControl;
           if (facade != null)
           {
             facade.Clear();
             Utils.UnLoadImage(ref Lmvh.images);
             Utils.UnLoadImage(ref Lmvh.imagesThumbs);
           }
-          facade = gw.GetControl(919299280) as GUIFacadeControl;
+          facade = gw.GetControl(LatestMvCentralHandler.ControlID) as GUIFacadeControl;
           if (facade != null)
           {
             facade.Clear();
             Utils.UnLoadImage(ref Lmch.images);
             Utils.UnLoadImage(ref Lmch.imagesThumbs);
           }
-          facade = gw.GetControl(919199940) as GUIFacadeControl;
+          facade = gw.GetControl(LatestTVSeriesHandler.ControlID) as GUIFacadeControl;
           if (facade != null)
           {
             facade.Clear();
             Utils.UnLoadImage(ref Ltvsh.images);
             Utils.UnLoadImage(ref Ltvsh.imagesThumbs);
           }
-          facade = gw.GetControl(919199970) as GUIFacadeControl;
+          facade = gw.GetControl(LatestMusicHandler.ControlID) as GUIFacadeControl;
           if (facade != null)
           {
             facade.Clear();
             Utils.UnLoadImage(ref Lmh.images);
             Utils.UnLoadImage(ref Lmh.imagesThumbs);
           }
-          facade = gw.GetControl(919199840) as GUIFacadeControl;
+          facade = gw.GetControl(LatestTVAllRecordingsHandler.ControlID) as GUIFacadeControl;
           if (facade != null)
           {
-            facade.Clear();
-            if (Utils.Used4TRTV && !Utils.UsedArgus)
-            {
-              Utils.UnLoadImage(ref L4trrh.images);
-              Utils.UnLoadImage(ref L4trrh.imagesThumbs);
-            }
-            else if (Utils.Used4TRTV && Utils.UsedArgus)
-            {
-              Utils.UnLoadImage(ref Largusrh.images);
-              Utils.UnLoadImage(ref Largusrh.imagesThumbs);
-            }
-            else
-            {
-              Utils.UnLoadImage(ref Ltvrh.images);
-              Utils.UnLoadImage(ref Ltvrh.imagesThumbs);
-            }
+            Ltvrh.ClearFacade(ref facade) ;
           }
-          facade = gw.GetControl(919199710) as GUIFacadeControl;
+          facade = gw.GetControl(LatestPictureHandler.ControlID) as GUIFacadeControl;
           if (facade != null)
           {
             facade.Clear();
             Utils.UnLoadImage(ref Lph.images);
             Utils.UnLoadImage(ref Lph.imagesThumbs);
           }
-          facade = gw.GetControl(919199880) as GUIFacadeControl;
+          facade = gw.GetControl(LatestMyFilmsHandler.ControlID) as GUIFacadeControl;
           if (facade != null)
           {
             facade.Clear();
             Utils.UnLoadImage(ref Lmfh.images);
             Utils.UnLoadImage(ref Lmfh.imagesThumbs);
           }
-
-          //Thread thread = new Thread(new ThreadStart(UnloadLatestCache));
-          //thread.Start();                    
         }
-
       }
       catch (Exception ex)
       {
         logger.Error("GUIWindowManager_OnActivateWindow: " + ex.ToString());
       }
+    }
+
+    internal static void UpdateLatestMediaInfo()
+    {
+      Ltvrh.UpdateLatestMediaInfo();
     }
 
     private void UpdateImageTimer(Object stateInfo, ElapsedEventArgs e)
@@ -2302,431 +1587,32 @@ namespace LatestMediaHandler
             GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
             if (fWindow != null)
             {
-              /*                            Utils.LogDevMsg("*******************************");
-                                                        Utils.LogDevMsg("Lmvh.images.Count:" + Lmvh.images.Count);
-                                                         Utils.LogDevMsg("Lmch.images.Count:" + Lmch.images.Count);
-                                                        Utils.LogDevMsg("Lmvh.imagesThumbs.Count:" + Lmvh.imagesThumbs.Count);
-                                                        Utils.LogDevMsg("Lmph.images.Count:" + Lmph.images.Count);
-                                                        Utils.LogDevMsg("Lmph.imagesThumbs.Count:" + Lmph.imagesThumbs.Count);
-                                                        Utils.LogDevMsg("Ltvsh.images.Count:" + Ltvsh.images.Count);
-                                                        Utils.LogDevMsg("Ltvsh.imagesThumbs.Count:" + Ltvsh.imagesThumbs.Count);
-                                                        Utils.LogDevMsg("Lmh.images.Count:" + Lmh.images.Count);
-                                                        Utils.LogDevMsg("Lmh.imagesThumbs.Count:" + Lmh.imagesThumbs.Count);
-                                                        Utils.LogDevMsg("Lph.images.Count:" + Lph.images.Count);
-                                                        Utils.LogDevMsg("Lph.imagesThumbs.Count:" + Lph.imagesThumbs.Count);
-                                                        Utils.LogDevMsg("Lmfh.images.Count:" + Lmfh.images.Count);
-                                                        Utils.LogDevMsg("Lmfh.imagesThumbs.Count:" + Lmfh.imagesThumbs.Count);
-                                                        Utils.LogDevMsg("L4trrh.images.Count:" + L4trrh.images.Count);
-                                                        Utils.LogDevMsg("L4trrh.imagesThumbs.Count:" + L4trrh.imagesThumbs.Count);*/
-
-              if (LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
-              {
-                try
-                {
-                  if (fWindow.GetFocusControlId() == 919198710)
-                  {
-                    Lmvh.UpdateSelectedImageProperties();
-                    Lmvh.NeedCleanup = true;
-                  }
-                  else
-                  {
-                    if (Lmvh.NeedCleanup && Lmvh.NeedCleanupCount >= 5)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.fanart1", " ");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.fanart2", " ");
-                      Utils.UnLoadImage(ref Lmvh.images);
-                      Lmvh.ShowFanart = 1;
-                      Lmvh.SelectedFacadeItem2 = -1;
-                      Lmvh.SelectedFacadeItem2 = -1;
-                      Lmvh.NeedCleanup = false;
-                      Lmvh.NeedCleanupCount = 0;
-                    }
-                    else if (Lmvh.NeedCleanup && Lmvh.NeedCleanupCount == 0)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart1", "");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.selected.showfanart2", "");
-                      Lmvh.NeedCleanupCount++;
-                    }
-                    else if (Lmvh.NeedCleanup)
-                    {
-                      Lmvh.NeedCleanupCount++;
-                    }
-                  }
-                }
-                catch (Exception ex)
-                {
-                  logger.Error("UpdateImageTimer (myvideo): " + ex.ToString());
-                }
-              }
-              if (LatestMvCentral.Equals("True", StringComparison.CurrentCulture))
-              {
-                try
-                {
-                  if (fWindow.GetFocusControlId() == 919299280)
-                  {
-                    Lmch.UpdateSelectedImageProperties();
-                    Lmch.NeedCleanup = true;
-                  }
-                  else
-                  {
-                    if (Lmch.NeedCleanup && Lmch.NeedCleanupCount >= 5)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", " ");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", " ");
-                      Utils.UnLoadImage(ref Lmch.images);
-                      Lmch.ShowFanart = 1;
-                      Lmch.SelectedFacadeItem2 = -1;
-                      Lmch.SelectedFacadeItem2 = -1;
-                      Lmch.NeedCleanup = false;
-                      Lmch.NeedCleanupCount = 0;
-                    }
-                    else if (Lmch.NeedCleanup && Lmch.NeedCleanupCount == 0)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "");
-                      Lmch.NeedCleanupCount++;
-                    }
-                    else if (Lmch.NeedCleanup)
-                    {
-                      Lmch.NeedCleanupCount++;
-                    }
-                  }
-                }
-                catch (Exception ex)
-                {
-                  logger.Error("UpdateImageTimer (mvcentral): " + ex.ToString());
-                }
-              }
-              if (LatestMovingPictures.Equals("True", StringComparison.CurrentCulture))
-              {
-                try
-                {
-                  if (fWindow.GetFocusControlId() == 919199910)
-                  {
-                    Lmph.UpdateSelectedImageProperties();
-                    Lmph.NeedCleanup = true;
-                  }
-                  else
-                  {
-                    if (Lmph.NeedCleanup && Lmph.NeedCleanupCount >= 5)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.fanart1", " ");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.fanart2", " ");
-                      Utils.UnLoadImage(ref Lmph.images);
-                      Lmph.ShowFanart = 1;
-                      Lmph.SelectedFacadeItem2 = -1;
-                      Lmph.SelectedFacadeItem2 = -1;
-                      Lmph.NeedCleanup = false;
-                      Lmph.NeedCleanupCount = 0;
-                    }
-                    else if (Lmph.NeedCleanup && Lmph.NeedCleanupCount == 0)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart1", "");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart2", "");
-                      Lmph.NeedCleanupCount++;
-                    }
-                    else if (Lmph.NeedCleanup)
-                    {
-                      Lmph.NeedCleanupCount++;
-                    }
-                  }
-                }
-                catch (Exception ex)
-                {
-                  logger.Error("UpdateImageTimer (movingpicture): " + ex.ToString());
-                }
-              }
-              if (LatestTVSeries.Equals("True", StringComparison.CurrentCulture))
-              {
-                try
-                {
-                  if (fWindow.GetFocusControlId() == 919199940)
-                  {
-                    Ltvsh.UpdateSelectedImageProperties();
-                    Ltvsh.NeedCleanup = true;
-                  }
-                  else
-                  {
-                    if (Ltvsh.NeedCleanup && Ltvsh.NeedCleanupCount >= 5)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.fanart1", " ");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.fanart2", " ");
-                      Utils.UnLoadImage(ref Ltvsh.images);
-                      Ltvsh.ShowFanart = 1;
-                      Ltvsh.SelectedFacadeItem2 = -1;
-                      Ltvsh.SelectedFacadeItem2 = -1;
-                      Ltvsh.NeedCleanup = false;
-                      Ltvsh.NeedCleanupCount = 0;
-                    }
-                    else if (Ltvsh.NeedCleanup && Ltvsh.NeedCleanupCount == 0)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.showfanart1", "");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.showfanart2", "");
-                      Ltvsh.NeedCleanupCount++;
-                    }
-                    else if (Ltvsh.NeedCleanup)
-                    {
-                      Ltvsh.NeedCleanupCount++;
-                    }
-                  }
-                }
-                catch (Exception ex)
-                {
-                  logger.Error("UpdateImageTimer (tvseries latest): " + ex.ToString());
-                }
-              }
-              if (LatestMusic.Equals("True", StringComparison.CurrentCulture))
-              {
-                try
-                {
-                  if (fWindow.GetFocusControlId() == 919199970)
-                  {
-                    Lmh.UpdateSelectedImageProperties();
-                    Lmh.NeedCleanup = true;
-                  }
-                  else
-                  {
-                    if (Lmh.NeedCleanup && Lmh.NeedCleanupCount >= 5)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.selected.fanart1", " ");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.selected.fanart2", " ");
-                      Utils.UnLoadImage(ref Lmh.images);
-                      Lmh.ShowFanart = 1;
-                      Lmh.SelectedFacadeItem2 = -1;
-                      Lmh.SelectedFacadeItem2 = -1;
-                      Lmh.NeedCleanup = false;
-                      Lmh.NeedCleanupCount = 0;
-                    }
-                    else if (Lmh.NeedCleanup && Lmh.NeedCleanupCount == 0)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.selected.showfanart1", "");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.selected.showfanart2", "");
-                      Lmh.NeedCleanupCount++;
-                    }
-                    else if (Lmh.NeedCleanup)
-                    {
-                      Lmh.NeedCleanupCount++;
-                    }
-                  }
-                }
-                catch (Exception ex)
-                {
-                  logger.Error("UpdateImageTimer (music): " + ex.ToString());
-                }
-              }
-              if (LatestPictures.Equals("True", StringComparison.CurrentCulture))
-              {
-                try
-                {
-                  if (fWindow.GetFocusControlId() == 919199710)
-                  {
-                    Lph.UpdateSelectedImageProperties();
-                    Lph.NeedCleanup = true;
-                  }
-                  else
-                  {
-                    if (Lph.NeedCleanup && Lph.NeedCleanupCount >= 5)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart1", " ");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart2", " ");
-                      Utils.UnLoadImage(ref Lph.images);
-                      Lph.ShowFanart = 1;
-                      Lph.SelectedFacadeItem2 = -1;
-                      Lph.SelectedFacadeItem2 = -1;
-                      Lph.NeedCleanup = false;
-                      Lph.NeedCleanupCount = 0;
-                    }
-                    else if (Lph.NeedCleanup && Lph.NeedCleanupCount == 0)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "");
-                      Lph.NeedCleanupCount++;
-                    }
-                    else if (Lph.NeedCleanup)
-                    {
-                      Lph.NeedCleanupCount++;
-                    }
-                  }
-                }
-                catch (Exception ex)
-                {
-                  logger.Error("UpdateImageTimer (picture): " + ex.ToString());
-                }
-              }
-              if (LatestMyFilms.Equals("True", StringComparison.CurrentCulture))
-              {
-                try
-                {
-                  if (fWindow.GetFocusControlId() == 919199880)
-                  {
-                    Lmfh.UpdateSelectedImageProperties();
-                    Lmfh.NeedCleanup = true;
-                  }
-                  else
-                  {
-                    if (Lmfh.NeedCleanup && Lmfh.NeedCleanupCount >= 5)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", " ");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", " ");
-                      Utils.UnLoadImage(ref Lmfh.images);
-                      Lmfh.ShowFanart = 1;
-                      Lmfh.SelectedFacadeItem2 = -1;
-                      Lmfh.SelectedFacadeItem2 = -1;
-                      Lmfh.NeedCleanup = false;
-                      Lmfh.NeedCleanupCount = 0;
-                    }
-                    else if (Lmfh.NeedCleanup && Lmfh.NeedCleanupCount == 0)
-                    {
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "");
-                      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "");
-                      Lmfh.NeedCleanupCount++;
-                    }
-                    else if (Lmfh.NeedCleanup)
-                    {
-                      Lmfh.NeedCleanupCount++;
-                    }
-                  }
-                }
-                catch (Exception ex)
-                {
-                  logger.Error("UpdateImageTimer (myfilms): " + ex.ToString());
-                }
-              }
-              if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
-              {
-                try
-                {
-                  if (fWindow.GetFocusControlId() == 919199840)
-                  {
-                    if (Utils.Used4TRTV && !Utils.UsedArgus)
-                    {
-                      L4trrh.UpdateSelectedImageProperties();
-                      L4trrh.NeedCleanup = true;
-                    }
-                    else if (Utils.Used4TRTV && Utils.UsedArgus)
-                    {
-                      Largusrh.UpdateSelectedImageProperties();
-                      Largusrh.NeedCleanup = true;
-                    }
-                    else
-                    {
-                      Ltvrh.UpdateSelectedImageProperties();
-                      Ltvrh.NeedCleanup = true;
-                    }
-                  }
-                  else
-                  {
-                    if (Utils.Used4TRTV && !Utils.UsedArgus)
-                    {
-                      if (L4trrh.NeedCleanup && L4trrh.NeedCleanupCount >= 5)
-                      {
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
-                        Utils.UnLoadImage(ref L4trrh.images);
-                        L4trrh.ShowFanart = 1;
-                        L4trrh.SelectedFacadeItem2 = -1;
-                        L4trrh.SelectedFacadeItem2 = -1;
-                        L4trrh.NeedCleanup = false;
-                        L4trrh.NeedCleanupCount = 0;
-                      }
-                      else if (L4trrh.NeedCleanup && L4trrh.NeedCleanupCount == 0)
-                      {
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "");
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "");
-                        L4trrh.NeedCleanupCount++;
-                      }
-                      else if (L4trrh.NeedCleanup)
-                      {
-                        L4trrh.NeedCleanupCount++;
-                      }
-                    }
-                    else if (Utils.Used4TRTV && Utils.UsedArgus)
-                    {
-                      if (Largusrh.NeedCleanup && Largusrh.NeedCleanupCount >= 5)
-                      {
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
-                        Utils.UnLoadImage(ref Largusrh.images);
-                        Largusrh.ShowFanart = 1;
-                        Largusrh.SelectedFacadeItem2 = -1;
-                        Largusrh.SelectedFacadeItem2 = -1;
-                        Largusrh.NeedCleanup = false;
-                        Largusrh.NeedCleanupCount = 0;
-                      }
-                      else if (Largusrh.NeedCleanup && Largusrh.NeedCleanupCount == 0)
-                      {
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "");
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "");
-                        Largusrh.NeedCleanupCount++;
-                      }
-                      else if (Largusrh.NeedCleanup)
-                      {
-                        Largusrh.NeedCleanupCount++;
-                      }
-                    }
-                    else
-                    {
-                      if (Ltvrh.NeedCleanup && Ltvrh.NeedCleanupCount >= 5)
-                      {
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
-                        Utils.UnLoadImage(ref Ltvrh.images);
-                        Ltvrh.ShowFanart = 1;
-                        Ltvrh.SelectedFacadeItem2 = -1;
-                        Ltvrh.SelectedFacadeItem2 = -1;
-                        Ltvrh.NeedCleanup = false;
-                        Ltvrh.NeedCleanupCount = 0;
-                      }
-                      else if (Ltvrh.NeedCleanup && Ltvrh.NeedCleanupCount == 0)
-                      {
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "");
-                        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "");
-                        Ltvrh.NeedCleanupCount++;
-                      }
-                      else if (Ltvrh.NeedCleanup)
-                      {
-                        Ltvrh.NeedCleanupCount++;
-                      }
-                    }
-                  }
-                }
-                catch (Exception ex)
-                {
-                  logger.Error("UpdateImageTimer (recordings): " + ex.ToString());
-                }
-              }
-            }
-
-            // Check TV Series need update ...
-            if (LatestTVSeries.Equals("True", StringComparison.CurrentCulture))
-            {
-              try
-              {
-                string sLastOnlineUpdate = GUIPropertyManager.GetProperty("#TVSeries.LastOnlineUpdate");
-                if (!string.IsNullOrEmpty(sLastOnlineUpdate))
-                  try
-                  {
-                    DateTime dTmp = DateTime.Parse(sLastOnlineUpdate);
-                    if (dTmp > Utils.TVSeriesLastUpdate)
-                    {
-                      try
-                      {
-                        Ltvsh.TVSeriesUpdateLatest(LatestTVSeriesHandler.Types.Latest, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True"));
-                        Utils.TVSeriesLastUpdate = DateTime.Now ;
-                      }
-                      catch (Exception ex)
-                      {
-                        logger.Error("UpdateImageTimer (TV Series Online Update): " + ex.ToString());
-                      }
-                    }
-                  }
-                  catch
-                  {   }
-              }
-              catch (Exception ex)
-              {
-                logger.Error("UpdateImageTimer (TV Series Online Update): " + ex.ToString());
-              }
+              /*                            
+              Utils.LogDevMsg("*******************************");
+              Utils.LogDevMsg("Lmvh.images.Count:" + Lmvh.images.Count);
+              Utils.LogDevMsg("Lmch.images.Count:" + Lmch.images.Count);
+              Utils.LogDevMsg("Lmvh.imagesThumbs.Count:" + Lmvh.imagesThumbs.Count);
+              Utils.LogDevMsg("Lmph.images.Count:" + Lmph.images.Count);
+              Utils.LogDevMsg("Lmph.imagesThumbs.Count:" + Lmph.imagesThumbs.Count);
+              Utils.LogDevMsg("Ltvsh.images.Count:" + Ltvsh.images.Count);
+              Utils.LogDevMsg("Ltvsh.imagesThumbs.Count:" + Ltvsh.imagesThumbs.Count);
+              Utils.LogDevMsg("Lmh.images.Count:" + Lmh.images.Count);
+              Utils.LogDevMsg("Lmh.imagesThumbs.Count:" + Lmh.imagesThumbs.Count);
+              Utils.LogDevMsg("Lph.images.Count:" + Lph.images.Count);
+              Utils.LogDevMsg("Lph.imagesThumbs.Count:" + Lph.imagesThumbs.Count);
+              Utils.LogDevMsg("Lmfh.images.Count:" + Lmfh.images.Count);
+              Utils.LogDevMsg("Lmfh.imagesThumbs.Count:" + Lmfh.imagesThumbs.Count);
+              Utils.LogDevMsg("L4trrh.images.Count:" + L4trrh.images.Count);
+              Utils.LogDevMsg("L4trrh.imagesThumbs.Count:" + L4trrh.imagesThumbs.Count);
+              */
+              Lmh.UpdateImageTimer(fWindow, stateInfo, e);
+              Lph.UpdateImageTimer(fWindow, stateInfo, e);
+              Lmvh.UpdateImageTimer(fWindow, stateInfo, e);
+              Ltvsh.UpdateImageTimer(fWindow, stateInfo, e);
+              Lmph.UpdateImageTimer(fWindow, stateInfo, e);
+              Lmfh.UpdateImageTimer(fWindow, stateInfo, e);
+              Lmch.UpdateImageTimer(fWindow, stateInfo, e);
+              Ltvrh.UpdateImageTimer(fWindow, stateInfo, e);
             }
           }
           SyncPointRefresh = 0;
@@ -2799,41 +1685,28 @@ namespace LatestMediaHandler
       try
       {
         Utils.SetIsStopping(true);
-        GUIWindowManager.OnActivateWindow -=
-          new GUIWindowManager.WindowActivationHandler(GuiWindowManagerOnActivateWindow);
-        /*if (LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
-                {
-                    GUIWindowManager.Receivers -= new SendMessageHandler(GUIWindowManager_OnNewMessage);
-                }*/
+        GUIWindowManager.OnActivateWindow -=  new GUIWindowManager.WindowActivationHandler(GuiWindowManagerOnActivateWindow);
         GUIGraphicsContext.OnNewAction -= new OnActionHandler(OnNewAction);
         GUIWindowManager.Receivers -= new SendMessageHandler(OnMessage);
-        int ix = 0;
         try
         {
-          UtilsFanartHandler.DisposeFanartHandlerSubcribeScaperFinishedEvent();
+          if (!suspending)
+            SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(OnSystemPowerModeChanged);
         }
-        catch
-        {
-        }
+        catch { }
+
+        int ix = 0;
+
         while (Utils.GetDelayStop() && ix < 20)
         {
           System.Threading.Thread.Sleep(500);
           ix++;
         }
-        /*if (TVRecordingsTimer != null)
-                {
-                    TVRecordingsTimer.Stop();
-                    TVRecordingsTimer.Dispose();
-                }*/
+
         if (ReorgTimer != null)
         {
           ReorgTimer.Stop();
           ReorgTimer.Dispose();
-        }
-        if (MyLatestTVRecordingsWorker != null)
-        {
-          MyLatestTVRecordingsWorker.CancelAsync();
-          MyLatestTVRecordingsWorker.Dispose();
         }
         if (MyLatestReorgWorker != null)
         {
@@ -2845,37 +1718,9 @@ namespace LatestMediaHandler
           refreshTimer.Stop();
           refreshTimer.Dispose();
         }
-        try
-        {
-          Lmph.DisposeMovingPicturesLatest();
-        }
-        catch
-        {
-        }
-        try
-        {
-          Ltvsh.DisposeTVSeriesLatest();
-        }
-        catch
-        {
-        }
-        try
-        {
-          Lmfh.DisposeMovieLatest();
-        }
-        catch
-        {
-        }
-        try
-        {
-          if (!suspending)
-          {
-            SystemEvents.PowerModeChanged -= OnSystemPowerModeChanged;
-          }
-        }
-        catch
-        {
-        }
+
+        DisposeHandlers();
+
         Utils.DelayStop = new Hashtable();
       }
       catch (Exception ex)
@@ -2959,6 +1804,5 @@ namespace LatestMediaHandler
     }
 
     #endregion
-
   }
 }

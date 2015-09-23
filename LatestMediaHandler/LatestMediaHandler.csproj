@@ -193,6 +193,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LatestTVRecordingsHandler.cs" />
+    <Compile Include="LatestTVAllRecordingsHandler.cs" />
     <Compile Include="LatestTVRecordingsWorker.cs">
       <SubType>Component</SubType>
     </Compile>

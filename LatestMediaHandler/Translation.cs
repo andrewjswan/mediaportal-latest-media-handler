@@ -1,4 +1,5 @@
-﻿using System;
+﻿extern alias RealNLog;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -6,13 +7,14 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Text.RegularExpressions;
+
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 
+using RealNLog.NLog;
+
 namespace LatestMediaHandler
 {
-  extern alias RealNLog;
-  using RealNLog.NLog;
 
   internal class Translation
   {

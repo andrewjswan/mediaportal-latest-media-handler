@@ -1,5 +1,7 @@
 ﻿extern alias RealNLog;
+
 using System;
+
 using RealNLog.NLog;
 
 namespace LatestMediaHandler

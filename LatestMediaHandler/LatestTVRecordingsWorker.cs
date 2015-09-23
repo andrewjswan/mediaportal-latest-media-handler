@@ -9,21 +9,21 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
+extern alias RealNLog;
+
+using System;
+using System.ComponentModel;
+using System.Threading;
+
+using RealNLog.NLog;
 
 namespace LatestMediaHandler
 {
-  extern alias RealNLog;
-  using RealNLog.NLog;
-  using System;
-  using System.ComponentModel;
-  using System.Threading;
-
-
-    internal class LatestTVRecordingsWorker : BackgroundWorker
+  internal class LatestTVRecordingsWorker : BackgroundWorker
   {
     #region declarations
 
-    private static Logger logger = LogManager.GetCurrentClassLogger();
+      private static Logger logger = LogManager.GetCurrentClassLogger();
 
     #endregion
 
@@ -40,26 +40,15 @@ namespace LatestMediaHandler
         try
         {
           if (LatestMediaHandlerSetup.FHThreadPriority.Equals("Lowest", StringComparison.CurrentCulture))
-          {
             Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-          }
           else
-          {
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
-          }
+
           Thread.CurrentThread.Name = "LatestTVRecordingsWorker";
           Utils.AllocateDelayStop("LatestTVRecordingsWorker-OnDoWork");
           logger.Info("Refreshing latest TV Recordings is starting.");
-          LatestMediaHandlerSetup.Restricted = 0;
-          try
-          {
-            LatestMediaHandlerSetup.Restricted = LatestMediaHandlerSetup.Lmph.MovingPictureIsRestricted();
-          }
-          catch
-          {
-          }
 
-          LatestMediaHandlerSetup.GetLatestTVRecMediaInfo();
+          LatestMediaHandlerSetup.UpdateLatestMediaInfo();
         }
         catch (Exception ex)
         {

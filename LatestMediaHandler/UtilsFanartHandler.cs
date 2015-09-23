@@ -14,8 +14,9 @@ extern alias RealNLog;
 
 using System;
 using System.Collections;
-using RealNLog.NLog;
 using System.Threading;
+
+using RealNLog.NLog;
 
 namespace LatestMediaHandler
 {
@@ -68,6 +69,19 @@ namespace LatestMediaHandler
       }
     }
 
+    internal static Hashtable GetMusicFanartForLatest(string artist, string albumartist, string album)
+    {
+      try
+      {
+        return FanartHandler.ExternalAccess.GetMusicFanartForLatestMedia(artist, albumartist, album);
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetMusicFanartForLatest: Possible: Update Fanart Handler plugin.");
+        logger.Debug("GetMusicFanartForLatest: New: " + ex.ToString());
+      }
+      return GetMusicFanartForLatest(albumartist, album);
+    }
 
     internal static Hashtable GetMusicFanartForLatest(string artist, string album = (string) null)
     {

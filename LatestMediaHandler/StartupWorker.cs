@@ -9,17 +9,18 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
+extern alias RealNLog;
+
+using RealNLog.NLog;
+
+using System;
+using System.ComponentModel;
+using System.Threading;
 
 namespace LatestMediaHandler
 {
-  extern alias RealNLog;
-  using RealNLog.NLog;
-  using System;
-  using System.ComponentModel;
-  using System.Threading;
 
-
-    internal class StartupWorker : BackgroundWorker
+  internal class StartupWorker : BackgroundWorker
   {
     #region declarations
 
@@ -40,13 +41,10 @@ namespace LatestMediaHandler
         try
         {
           if (LatestMediaHandlerSetup.FHThreadPriority.Equals("Lowest", StringComparison.CurrentCulture))
-          {
             Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-          }
           else
-          {
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
-          }
+
           Thread.CurrentThread.Name = "StartupWorker";
           Utils.AllocateDelayStop("StartupWorker-OnDoWork");
 
@@ -63,21 +61,21 @@ namespace LatestMediaHandler
           else if (e.Argument is LatestMovingPicturesHandler)
           {
             LatestMediaHandlerSetup.Lmph.MovingPictureUpdateLatest();
-            LatestMediaHandlerSetup.Lmph.SetupMovingPicturesLatest();
+            // LatestMediaHandlerSetup.Lmph.SetupMovingPicturesLatest();
           }
           else if (e.Argument is LatestTVSeriesHandler)
           {
             if (LatestMediaHandlerSetup.Ltvsh.CurrentType == LatestTVSeriesHandler.Types.Latest)
             {
-              LatestMediaHandlerSetup.Ltvsh.TVSeriesUpdateLatest(LatestTVSeriesHandler.Types.Latest, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True"));
+              LatestMediaHandlerSetup.Ltvsh.TVSeriesUpdateLatest(LatestTVSeriesHandler.Types.Latest, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture));
             }
             LatestMediaHandlerSetup.Ltvsh.ChangedEpisodeCount();
-            LatestMediaHandlerSetup.Ltvsh.SetupTVSeriesLatest();
+            // LatestMediaHandlerSetup.Ltvsh.SetupTVSeriesLatest();
           }
           else if (e.Argument is LatestMyFilmsHandler)
           {
             LatestMediaHandlerSetup.Lmfh.MyFilmsUpdateLatest();
-            LatestMediaHandlerSetup.Lmfh.SetupMovieLatest();
+            // LatestMediaHandlerSetup.Lmfh.SetupMovieLatest();
           }
           else if (e.Argument is LatestMyVideosHandler)
           {

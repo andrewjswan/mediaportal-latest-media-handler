@@ -9,24 +9,27 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
+extern alias RealNLog;
+
+using RealNLog.NLog;
+
+using SQLite.NET;
+
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Collections;
+using System.Threading;
+using System.Timers;
+
+using MediaPortal.Picture.Database;
+using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace LatestMediaHandler
 {
-  extern alias RealNLog;
-  using MediaPortal.Configuration;
-  using RealNLog.NLog;
-  using SQLite.NET;
-  using System;
-  using System.IO;
-  using System.Collections.Generic;
-  using System.Collections;
-  using MediaPortal.Picture.Database;
-  using MediaPortal.Util;
-  using MediaPortal.Profile;
-  using MediaPortal.GUI.Library;
-  using System.Threading;
-
-
   /// <summary>
   /// Class handling all external (not Latest Media Handler db) database access.
   /// </summary>
@@ -50,6 +53,8 @@ namespace LatestMediaHandler
     private int lastFocusedId = 0;
 
     #endregion
+
+    public const int ControlID = 919199710;
 
     public int LastFocusedId
     {
@@ -190,13 +195,10 @@ namespace LatestMediaHandler
           CreateThumbsAndAddPictureToDB(file);
           count++;
         }
-
         logger.Info("Scanning picture collection for new pictures - done");
       }
       catch
-      {
-      }
-
+      {   }
     }
 
     private void CountFiles(string path, ref ArrayList availableFiles)
@@ -238,11 +240,8 @@ namespace LatestMediaHandler
 
       if (!File.Exists(thumbnailImage))
       {
-        if (MediaPortal.Util.Picture.CreateThumbnail(file, thumbnailImage, (int) Thumbs.ThumbResolution,
-          (int) Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
-        {
-
-        }
+        if (MediaPortal.Util.Picture.CreateThumbnail(file, thumbnailImage, (int) Thumbs.ThumbResolution, (int) Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
+        {  }
       }
 
       if (!noLargeThumbnails)
@@ -251,18 +250,14 @@ namespace LatestMediaHandler
         //if (recreateThumbs || !File.Exists(thumbnailImage))
         if (!File.Exists(thumbnailImage))
         {
-          if (MediaPortal.Util.Picture.CreateThumbnail(file, thumbnailImage, (int) Thumbs.ThumbLargeResolution,
-            (int) Thumbs.ThumbLargeResolution, iRotate,
-            Thumbs.SpeedThumbsLarge))
-          {
-            //
-          }
+          if (MediaPortal.Util.Picture.CreateThumbnail(file, thumbnailImage, (int) Thumbs.ThumbLargeResolution, (int) Thumbs.ThumbLargeResolution, iRotate, Thumbs.SpeedThumbsLarge))
+          {  }
         }
       }
     }
 
     /// <summary>
-    /// Returns latest added movie thumbs from MovingPictures db.
+    /// Returns latest added Pictures db.
     /// </summary>
     /// <param name="type">Type of data to fetch</param>
     /// <returns>Resultset of matching data</returns>
@@ -275,7 +270,7 @@ namespace LatestMediaHandler
       try
       {
         GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(919199710);
+        GUIControl gc = gw.GetControl(ControlID);
         facade = gc as GUIFacadeControl;
         if (facade != null)
         {
@@ -285,8 +280,9 @@ namespace LatestMediaHandler
         {
           al.Clear();
         }
-        sqlQuery = "select strFile, strDateTaken from picture where strFile not like '%kindgirls%' order by strDateTaken desc limit 10;";
+        Utils.HasNewPictures = false;
 
+        sqlQuery = "select strFile, strDateTaken from picture where strFile not like '%kindgirls%' order by strDateTaken desc limit 10;";
         SQLiteResultSet resultSet = dbClient.Execute(sqlQuery);
         if (resultSet != null)
         {
@@ -295,8 +291,7 @@ namespace LatestMediaHandler
             for (int i = 0; i < resultSet.Rows.Count; i++)
             {
               string tmpThumb = resultSet.GetField(i, 0);
-              string thumb = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures,
-                MediaPortal.Util.Utils.EncryptLine(tmpThumb));
+              string thumb = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(tmpThumb));
               if (!File.Exists(thumb))
               {
                 thumb = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(tmpThumb));
@@ -311,6 +306,9 @@ namespace LatestMediaHandler
               {
                 DateTime dTmp = DateTime.Parse(dateAdded);
                 dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", dTmp);
+
+                if (dTmp > Utils.NewDateTime)
+                  Utils.HasNewPictures = true;
               }
               catch {   }
 
@@ -320,7 +318,9 @@ namespace LatestMediaHandler
                 if (File.Exists(thumb))
                 {
                   result.Add(new LatestMediaHandler.Latest(dateAdded, thumb, tmpThumb, title, 
-                             null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                                                           null, null, null, null, null, null, 
+                                                           null, null, null, null, null, null, 
+                                                           null, null, null, null));
                   //                   if (facade != null)
                   //                 {
                   AddToFilmstrip(result[x], i);
@@ -353,7 +353,6 @@ namespace LatestMediaHandler
             {
               facade.FilmstripLayout.IsVisible = false;
             }
-
           }
           else if (facade.CoverFlowLayout != null)
           {
@@ -422,7 +421,7 @@ namespace LatestMediaHandler
           selectedFacadeItem1 = item.ItemId;
 
           GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          GUIControl gc = gw.GetControl(919199710);
+          GUIControl gc = gw.GetControl(ControlID);
           facade = gc as GUIFacadeControl;
           if (facade != null)
           {
@@ -441,9 +440,9 @@ namespace LatestMediaHandler
       try
       {
         GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(919199710);
+        GUIControl gc = gw.GetControl(ControlID);
         facade = gc as GUIFacadeControl;
-        if (facade != null && gw.GetFocusControlId() == 919199710 && facade.SelectedListItem != null)
+        if (facade != null && gw.GetFocusControlId() == ControlID && facade.SelectedListItem != null)
         {
           int _id = facade.SelectedListItem.ItemId;
           String _image = facade.SelectedListItem.DVDLabel;
@@ -454,7 +453,7 @@ namespace LatestMediaHandler
             {
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart1", _image);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "false");
               Thread.Sleep(1000);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart2", "");
               showFanart = 2;
@@ -463,7 +462,7 @@ namespace LatestMediaHandler
             {
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart2", _image);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "false");
               Thread.Sleep(1000);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart1", "");
               showFanart = 1;
@@ -476,8 +475,8 @@ namespace LatestMediaHandler
         {
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart1", " ");
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart2", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "true");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "");
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "false");
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "false");
           Utils.UnLoadImage(ref images);
           showFanart = 1;
           selectedFacadeItem2 = -1;
@@ -489,40 +488,163 @@ namespace LatestMediaHandler
         logger.Error("UpdateSelectedImageProperties: " + ex.ToString());
       }
     }
+ 
+    internal void SetupPicturesLatest()
+    {
+      try
+      {
+        GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
+      }
+      catch (Exception ex)
+      {
+        logger.Error("SetupPicturesLatest: " + ex.ToString());
+      }
+    }
 
+    internal void DisposePicturesLatest()
+    {
+      try
+      {
+        GUIWindowManager.Receivers -= new SendMessageHandler(OnMessage);
+      }
+      catch (Exception ex)
+      {
+        logger.Error("DisposePicturesLatest: " + ex.ToString());
+      }
+    }
+
+    private void OnMessage(GUIMessage message)
+    {
+      if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture))
+      {
+        try
+        {
+          switch (message.Message)
+          {
+            case GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH:
+            {
+              logger.Debug("VideoInfo refresh detected: Refreshing Latest.");
+              try
+              {
+                GetLatestMediaInfo();
+              }
+              catch (Exception ex)
+              {
+                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
+              }
+              break;
+            }
+          case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
+          case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
+            {
+              logger.Debug("Playback End/Stop detected: Refreshing latest.");
+              try
+              {
+                GetLatestMediaInfo();
+              }
+              catch (Exception ex)
+              {
+                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
+              }
+              break;
+            }
+            case GUIMessage.MessageType.GUI_MSG_START_SLIDESHOW:
+            {
+              logger.Debug("Slideshow detected: Refreshing latest.");
+              try
+              {
+                GetLatestMediaInfo();
+              }
+              catch (Exception ex)
+              {
+                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
+              }
+              break;
+            }
+          }
+        }
+        catch { }
+      }
+    }
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       UpdateSelectedProperties(item);
     }
 
+    internal void EmptyLatestMediaPropsPictures()
+    {
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.label", Translation.LabelLatestAdded);
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "false");
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.hasnew", "false");
+      for (int z = 1; z < 4; z++)
+      {
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", string.Empty);
+      }
+    }
+
+    internal void UpdateImageTimer(GUIWindow fWindow, Object stateInfo, ElapsedEventArgs e)
+    {
+      if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture))
+      {
+        try
+        {
+          if (fWindow.GetFocusControlId() == ControlID)
+          {
+            UpdateSelectedImageProperties();
+            NeedCleanup = true;
+          }
+          else
+          {
+            if (NeedCleanup && NeedCleanupCount >= 5)
+            {
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart1", " ");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart2", " ");
+              Utils.UnLoadImage(ref images);
+              ShowFanart = 1;
+              SelectedFacadeItem2 = -1;
+              SelectedFacadeItem2 = -1;
+              NeedCleanup = false;
+              NeedCleanupCount = 0;
+            }
+            else if (NeedCleanup && NeedCleanupCount == 0)
+            {
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "false");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "false");
+              NeedCleanupCount++;
+            }
+            else if (NeedCleanup)
+            {
+              NeedCleanupCount++;
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          logger.Error("UpdateImageTimer (picture): " + ex.ToString());
+        }
+      }
+    }
 
     internal void GetLatestMediaInfo()
     {
-      int z = 1;
       string windowId = GUIWindowManager.ActiveWindow.ToString();
 
-      if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture) &&
-          !(windowId.Equals("2", StringComparison.CurrentCulture)))
+      if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture) && !(windowId.Equals("2", StringComparison.CurrentCulture)))
       {
         try
         {
           //Pictures            
-          for (int i = 0; i < 3; i++)
-          {
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", string.Empty);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", string.Empty);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", string.Empty);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", string.Empty);
-            z++;
-          }
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "false");
+          EmptyLatestMediaPropsPictures();
           if (InitDB("PictureDatabase.db3"))
           {
             LatestMediaHandler.LatestsCollection ht = GetLatestPictures();
             if (ht != null)
             {
-              z = 1;
+              int z = 1;
               for (int i = 0; i < ht.Count && i < 3; i++)
               {
                 logger.Info("Updating Latest Media Info: Latest picture " + z + ": " + ht[i].Thumb);
@@ -533,6 +655,10 @@ namespace LatestMediaHandler
                 z++;
               }
               ht.Clear();
+
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "true");
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.hasnew", Utils.HasNewPictures ? "true" : "false");
+              logger.Debug("Updating Latest Media Info: Latest Pictures has new: " + (Utils.HasNewPictures ? "true" : "false"));
             }
             ht = null;
           }
@@ -541,11 +667,7 @@ namespace LatestMediaHandler
             Close();
           }
           catch
-          {
-          }
-          z = 1;
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "true");
-          logger.Debug("Updating Latest Media Info: Latest Pictures has new: " + (Utils.HasNewPictures ? "true" : "false"));
+          {   }
         }
         catch (FileNotFoundException)
         {
@@ -562,7 +684,7 @@ namespace LatestMediaHandler
       }
       else
       {
-        LatestMediaHandlerSetup.EmptyLatestMediaPropsPictures();
+        EmptyLatestMediaPropsPictures();
       }
     }
   }

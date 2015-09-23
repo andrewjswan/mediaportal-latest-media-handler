@@ -14,7 +14,7 @@ namespace LatestMediaHandler
 {
   extern alias RealNLog;
 
-    /// <summary>
+  /// <summary>
   /// Container for fanart data.
   /// </summary>
   internal class FanartImage
