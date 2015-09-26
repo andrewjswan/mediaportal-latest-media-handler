@@ -263,6 +263,7 @@ namespace LatestMediaHandler
                                                          String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.StopTime),
                                                          rec.Program.StopTime.ToString("HH:mm", CultureInfo.CurrentCulture),
                                                          rec.Program.Channel.DisplayName, logoImagePath));
+                Utils.ThreadToSleep();
               }
             }
           }
@@ -325,9 +326,8 @@ namespace LatestMediaHandler
           {
             UpcomingRecording[] recordings = null;
             recordings = null;
-            recordings =
-              _tvControlAgent.GetAllUpcomingRecordings(
-                UpcomingRecordingsFilter.Recordings | UpcomingRecordingsFilter.CancelledByUser, false);
+            recordings = _tvControlAgent.GetAllUpcomingRecordings(UpcomingRecordingsFilter.Recordings | UpcomingRecordingsFilter.CancelledByUser, false);
+
             int i = 1;
             RecordingsCollection latestRecordings = new RecordingsCollection();
             if (recordings != null)
@@ -336,12 +336,9 @@ namespace LatestMediaHandler
 
               foreach (UpcomingRecording rec in recordings)
               {
-                string logoImagePath = ChannelLogosCache.GetLogoPath(_tvSchedulerAgent, rec.Program.Channel.ChannelId,
-                  rec.Program.Channel.DisplayName, 84, 84);
+                string logoImagePath = ChannelLogosCache.GetLogoPath(_tvSchedulerAgent, rec.Program.Channel.ChannelId, rec.Program.Channel.DisplayName, 84, 84);
                 if (logoImagePath == null || !System.IO.File.Exists(logoImagePath))
-                {
                   logoImagePath = "defaultVideoBig.png";
-                }
 
                 latestRecordings.Add(new LatestRecording(rec.Program.Title, null, rec.Program.ActualStartTime,
                                                          String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStartTime),
@@ -349,6 +346,7 @@ namespace LatestMediaHandler
                                                          String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStopTime),
                                                          rec.Program.ActualStopTime.ToString("HH:mm", CultureInfo.CurrentCulture),
                                                          rec.Program.Channel.DisplayName, logoImagePath));
+                Utils.ThreadToSleep();
               }
 
               latestRecordings.Sort(new LatestRecordingsComparer());
@@ -361,10 +359,9 @@ namespace LatestMediaHandler
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".endDate", latestRecordings[x0].EndDate);
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channel", latestRecordings[x0].Channel);
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channelLogo", latestRecordings[x0].ChannelLogo);
+
                 if (i == 3)
-                {
                   break;
-                }
                 i++;
               }
 
@@ -439,6 +436,7 @@ namespace LatestMediaHandler
                         rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture)));
                     }
                   }
+                  Utils.ThreadToSleep();
                 }
               }
               _time = _time.AddDays(-1);
@@ -482,52 +480,16 @@ namespace LatestMediaHandler
             }
           }
         }
-        if (facade != null)
-        {
-          facade.SelectedListItemIndex = LastFocusedId;
-          if (facade.ListLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.List;
-            if (!facade.Focus)
-            {
-              facade.ListLayout.IsVisible = false;
-            }
-          }
-          else if (facade.FilmstripLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.Filmstrip;
-            if (!facade.Focus)
-            {
-              facade.FilmstripLayout.IsVisible = false;
-            }
-
-          }
-          else if (facade.CoverFlowLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.CoverFlow;
-            if (!facade.Focus)
-            {
-              facade.CoverFlowLayout.IsVisible = false;
-            }
-          }
-          if (!facade.Focus)
-          {
-            facade.Visible = false;
-          }
-        }
+        Utils.UpdateFacade(ref facade, LastFocusedId);
 
         if (latests != null)
-        {
           latests.Clear();
-        }
         latests = null;
       }
       catch
       {
         if (latests != null)
-        {
           latests.Clear();
-        }
         latests = null;
       }
       result = resultTmp;

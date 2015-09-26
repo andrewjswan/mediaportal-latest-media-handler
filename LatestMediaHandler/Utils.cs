@@ -3,8 +3,8 @@
 // Author           : cul8er
 // Created          : 05-09-2010
 //
-// Last Modified By : cul8er
-// Last Modified On : 10-05-2010
+// Last Modified By : ajs
+// Last Modified On : 24-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -22,6 +22,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Threading;
 
 namespace LatestMediaHandler
 {
@@ -59,6 +60,7 @@ namespace LatestMediaHandler
     public static string latestTVSeriesRatings { get; set; }
     public static string latestTVRecordings { get; set; }
     public static string latestTVRecordingsWatched { get; set; }
+    public static string latestTVRecordingsUnfinished { get; set; }
     public static string latestMyFilms { get; set; }
     public static string latestMyFilmsWatched { get; set; }
     public static string latestMvCentral { get; set; }
@@ -79,6 +81,21 @@ namespace LatestMediaHandler
     public static DateTime NewDateTime { get; set; }
 
     public static string[] PipesArray ;
+
+    // SyncPoint
+    internal static int SyncPointReorg;
+    internal static int SyncPointRefresh;
+
+    internal static int SyncPointMusicUpdate;
+    internal static int SyncPointPicturesUpdate;
+    internal static int SyncPointMyVideosUpdate;
+    internal static int SyncPointTVSeriesUpdate;
+    internal static int SyncPointMovingPicturesUpdate;
+    internal static int SyncPointMyFilmsUpdate;
+    internal static int SyncPointTVRecordings;
+    internal static int SyncPointMvCMusicUpdate;
+    //
+    public const int ThreadSleep = 0;
 
     internal static DateTime LastRefreshRecording
     {
@@ -120,24 +137,6 @@ namespace LatestMediaHandler
       return s;
     }
 
-    internal static bool GetDelayStop()
-    {
-      if (DelayStop.Count == 0)
-      {
-        return false;
-      }
-      else
-      {
-        int i = 0;
-        foreach (DictionaryEntry de in DelayStop)
-        {
-          logger.Debug("DelayStop (" + i + "):" + de.Key.ToString());
-          i++;
-        }
-        return true;
-      }
-    }
-
     internal static void LogDevMsg(string msg)
     {
       logger.Debug("DEV MSG: " + msg);
@@ -146,23 +145,34 @@ namespace LatestMediaHandler
     internal static void AllocateDelayStop(string key)
     {
       if (DelayStop.Contains(key))
-      {
-        DelayStop[key] = "1";
-      }
+        DelayStop[key] = (int)DelayStop[key] + 1;
       else
+        DelayStop.Add(key, 1);
+    }
+
+    internal static bool GetDelayStop()
+    {
+      if (DelayStop.Count == 0)
+        return false;
+
+      int i = 0;
+      foreach (DictionaryEntry de in DelayStop)
       {
-        DelayStop.Add(key, "1");
+        i++;
+        logger.Debug("DelayStop (" + i + "):" + de.Key.ToString() + " [" + de.Value.ToString() + "]");
       }
+      return true;
     }
 
     internal static void ReleaseDelayStop(string key)
     {
       if (DelayStop.Contains(key))
       {
-        DelayStop.Remove(key);
+        DelayStop[key] = (int)DelayStop[key] - 1;
+        if ((int)DelayStop[key] <= 0)
+          DelayStop.Remove(key);
       }
     }
-
 
     /// <summary>
     /// Return value.
@@ -178,6 +188,12 @@ namespace LatestMediaHandler
     internal static void SetIsStopping(bool b)
     {
       isStopping = b;
+    }
+
+    internal static void ThreadToSleep()
+    {
+      Thread.Sleep(Utils.ThreadSleep); 
+      // Application.DoEvents();
     }
 
     /// <summary>
@@ -386,6 +402,36 @@ namespace LatestMediaHandler
       }
     }
 
+    internal static void UpdateFacade(ref GUIFacadeControl facade, int LastFocusedId = -1000)
+    {
+      if (facade != null)
+      {
+        if (LastFocusedId != -1000)
+          facade.SelectedListItemIndex = LastFocusedId;
+
+        if (facade.ListLayout != null)
+        {
+          facade.CurrentLayout = GUIFacadeControl.Layout.List;
+          if (!facade.Focus)
+            facade.ListLayout.IsVisible = false;
+        }
+        else if (facade.FilmstripLayout != null)
+        {
+          facade.CurrentLayout = GUIFacadeControl.Layout.Filmstrip;
+          if (!facade.Focus)
+            facade.FilmstripLayout.IsVisible = false;
+        }
+        else if (facade.CoverFlowLayout != null)
+        {
+          facade.CurrentLayout = GUIFacadeControl.Layout.CoverFlow;
+          if (!facade.Focus)
+            facade.CoverFlowLayout.IsVisible = false;
+        }
+        if (!facade.Focus)
+          facade.Visible = false;
+      }
+    }
+
     internal static bool IsIdle()
     {
       try
@@ -446,6 +492,21 @@ namespace LatestMediaHandler
       return (Box ? "[" : string.Empty) + (Value.Equals("True", StringComparison.CurrentCulture) ? "x" : " ") + (Box ? "]" : string.Empty) ;
     }
 
+    public static void SyncPointInit()
+    {
+      SyncPointReorg = 0;
+      SyncPointRefresh = 0;
+
+      SyncPointMusicUpdate = 0;
+      SyncPointPicturesUpdate = 0;
+      SyncPointMyVideosUpdate = 0;
+      SyncPointTVSeriesUpdate = 0;
+      SyncPointMovingPicturesUpdate = 0;
+      SyncPointMyFilmsUpdate = 0;
+      SyncPointTVRecordings = 0;
+      SyncPointMvCMusicUpdate = 0;
+    }
+
     public static void HasNewInit()
     {
       HasNewPictures = false;
@@ -475,6 +536,7 @@ namespace LatestMediaHandler
       latestTVSeriesRatings = "1;1;1;1;1;1";
       latestTVRecordings = "False";
       latestTVRecordingsWatched = "True";
+      latestTVRecordingsUnfinished = "True";
       latestMyFilms = "False";
       latestMyFilmsWatched = "True";
       latestMvCentral = "False";
@@ -503,6 +565,7 @@ namespace LatestMediaHandler
           latestTVSeriesRatings = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVSeriesRatings", latestTVSeriesRatings);
           latestTVRecordings = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVRecordings", latestTVRecordings);
           latestTVRecordingsWatched = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVRecordingsWatched", latestTVRecordingsWatched);
+          latestTVRecordingsUnfinished = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVRecordingsUnfinished", latestTVRecordingsUnfinished);
           latestMyFilms = xmlreader.GetValueAsString("LatestMediaHandler", "latestMyFilms", latestMyFilms);
           latestMyFilmsWatched = xmlreader.GetValueAsString("LatestMediaHandler", "latestMyFilmsWatched", latestMyFilmsWatched);
           latestMvCentral = xmlreader.GetValueAsString("LatestMediaHandler", "latestMvCentral", latestMvCentral);
@@ -588,6 +651,7 @@ namespace LatestMediaHandler
           xmlwriter.SetValue("LatestMediaHandler", "latestTVSeriesRatings", latestTVSeriesRatings);
           xmlwriter.SetValue("LatestMediaHandler", "latestTVRecordings", latestTVRecordings);
           xmlwriter.SetValue("LatestMediaHandler", "latestTVRecordingsWatched", latestTVRecordingsWatched);
+          xmlwriter.SetValue("LatestMediaHandler", "latestTVRecordingsUnfinished", latestTVRecordingsUnfinished);
           xmlwriter.SetValue("LatestMediaHandler", "latestMyFilms", latestMyFilms);
           xmlwriter.SetValue("LatestMediaHandler", "latestMyFilmsWatched", latestMyFilmsWatched);
           xmlwriter.SetValue("LatestMediaHandler", "latestMvCentral", latestMvCentral);

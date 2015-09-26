@@ -3,8 +3,8 @@
 // Author           : cul8er
 // Created          : 05-09-2010
 //
-// Last Modified By : cul8er
-// Last Modified On : 10-05-2010
+// Last Modified By : ajs
+// Last Modified On : 24-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -64,6 +64,12 @@ namespace LatestMediaHandler
     {
       get { return Utils.latestTVRecordingsWatched; }
       set { Utils.latestTVRecordingsWatched = value; }
+    }
+
+    private string LatestTVRecordingsUnfinished
+    {
+      get { return Utils.latestTVRecordingsUnfinished; }
+      set { Utils.latestTVRecordingsUnfinished = value; }
     }
 
     private string LatestTVSeries
@@ -215,6 +221,7 @@ namespace LatestMediaHandler
         LatestTVSeriesRatings = GetTVSeriesRatings();
         LatestTVRecordings = checkBox3.Checked ? "True" : "False";
         LatestTVRecordingsWatched = checkBox14.Checked ? "True" : "False";
+        LatestTVRecordingsUnfinished = checkBoxRecordingsUnfinished.Checked ? "True" : "False";
         LatestMyFilms = checkBox1.Checked ? "True" : "False";
         LatestMyFilmsWatched = checkBox4.Checked ? "True" : "False";
         RefreshDbPicture = checkBox12.Checked ? "True" : "False";
@@ -236,18 +243,18 @@ namespace LatestMediaHandler
         logger.Error("DoSave: " + ex);
       }
 
-      if (LatestMusicType == Translation.LabelMostPlayed)
+
+      if (LatestMusicType == Translation.PrefsMostPlayedMusic)
         LatestMusicType = LatestMusicHandler.MusicTypeMostPlayed;
-      else if (LatestMusicType == Translation.LabelLatestPlayed)
+      else if (LatestMusicType == Translation.PrefsLatestPlayedMusic)
         LatestMusicType = LatestMusicHandler.MusicTypeLatestPlayed;
-      else // if (LatestMusicType == Translation.LabelLatestAdded)
+      else // if (LatestMusicType == Translation.PrefsLatestAddedMusic)
         LatestMusicType = LatestMusicHandler.MusicTypeLatestAdded;
 
       Utils.SaveSettings();
 
       // MessageBox.Show("Settings is stored in memory. Make sure to press Ok when exiting MP Configuration. Pressing Cancel when exiting MP Configuration will result in these setting NOT being saved!");
       MessageBox.Show(Translation.PrefsSaveChangesMsgBox);
-
     }
 
     private void buttonSave_Click(object sender, EventArgs e)
@@ -319,7 +326,7 @@ namespace LatestMediaHandler
       // 
       tabPage20.Text = Translation.PrefsTabLMH;
       tabPage4.Text = Translation.PrefsTabAbout;
-      richTextBox1.Text = Translation.PrefsDescription.Replace("\n", "" + System.Environment.NewLine);
+      richTextBox1.Text = Translation.PrefsDescription;
       //
       groupBox11.Text = Translation.PrefsLMHOptions ;
       groupBox13.Text = Translation.PrefsUpdateDB;
@@ -341,6 +348,7 @@ namespace LatestMediaHandler
       checkBox5.Text =  Translation.PrefsPictures;
       checkBox3.Text =  Translation.PrefsRecordings;
       checkBox14.Text =  Translation.PrefsRecordingsWatched;
+      checkBoxRecordingsUnfinished.Text = Translation.PrefsRecordingsUnfinished;
       label1.Text =  Translation.PrefsRefreshInterval;
       checkBox2.Text =  Translation.PrefsTVSeries;
       checkBox11.Text =  Translation.PrefsTVSeriesWatched;
@@ -424,7 +432,6 @@ namespace LatestMediaHandler
         LatestMyFilms = "True";
         checkBox1.Checked = true;
       }
-
 
       if (LatestPictures != null && LatestPictures.Length > 0)
       {
@@ -584,7 +591,6 @@ namespace LatestMediaHandler
         checkBox13.Checked = false;
       }
 
-
       if (LatestTVRecordings != null && LatestTVRecordings.Length > 0)
       {
         if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
@@ -600,15 +606,22 @@ namespace LatestMediaHandler
 
       if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture) && LatestTVRecordingsWatched != null && LatestTVRecordingsWatched.Length > 0)
       {
-        if (LatestTVRecordingsWatched.Equals("True", StringComparison.CurrentCulture))
-          checkBox14.Checked = true;
-        else
-          checkBox14.Checked = false;
+        checkBox14.Checked = LatestTVRecordingsWatched.Equals("True", StringComparison.CurrentCulture) ;
       }
       else
       {
         LatestTVRecordingsWatched = "False";
         checkBox14.Checked = true;
+      }
+
+      if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture) && LatestTVRecordingsUnfinished != null && LatestTVRecordingsUnfinished.Length > 0)
+      {
+        checkBoxRecordingsUnfinished.Checked = LatestTVRecordingsUnfinished.Equals("True", StringComparison.CurrentCulture);
+      }
+      else
+      {
+        LatestTVRecordingsUnfinished = "True";
+        checkBoxRecordingsUnfinished.Checked = true;
       }
 
       if (LatestMyFilms.Equals("True", StringComparison.CurrentCulture) && LatestMyFilmsWatched != null && LatestMyFilmsWatched.Length > 0)

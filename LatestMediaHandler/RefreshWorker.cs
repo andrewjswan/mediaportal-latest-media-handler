@@ -3,8 +3,8 @@
 // Author           : cul8er
 // Created          : 05-09-2010
 //
-// Last Modified By : cul8er
-// Last Modified On : 10-05-2010
+// Last Modified By : ajs
+// Last Modified On : 24-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -20,7 +20,7 @@ using System.Threading;
 namespace LatestMediaHandler
 {
 
-  internal class StartupWorker : BackgroundWorker
+  internal class RefreshWorker : BackgroundWorker
   {
     #region declarations
 
@@ -28,7 +28,7 @@ namespace LatestMediaHandler
 
     #endregion
 
-    public StartupWorker()
+    public RefreshWorker()
     {
       WorkerReportsProgress = true;
       WorkerSupportsCancellation = true;
@@ -40,19 +40,19 @@ namespace LatestMediaHandler
       {
         try
         {
-          if (LatestMediaHandlerSetup.FHThreadPriority.Equals("Lowest", StringComparison.CurrentCulture))
+          if (LatestMediaHandlerSetup.LMHThreadPriority.Equals("Lowest", StringComparison.CurrentCulture))
             Thread.CurrentThread.Priority = ThreadPriority.Lowest;
           else
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
 
-          Thread.CurrentThread.Name = "StartupWorker";
-          Utils.AllocateDelayStop("StartupWorker-OnDoWork");
+          Thread.CurrentThread.Name = "RefreshWorker";
+          Utils.AllocateDelayStop("RefreshWorker-OnDoWork");
 
-          logger.Debug("StartupWorker: "+e.Argument.ToString());
+          logger.Debug("RefreshWorker: "+e.Argument.ToString());
 
           if (e.Argument is LatestMusicHandler)
           {
-            LatestMediaHandlerSetup.Lmh.GetLatestMediaInfo(true);
+            LatestMediaHandlerSetup.Lmh.GetLatestMediaInfo(LatestMediaHandlerSetup.Starting);
           }
           else if (e.Argument is LatestPictureHandler)
           {
@@ -65,10 +65,13 @@ namespace LatestMediaHandler
           }
           else if (e.Argument is LatestTVSeriesHandler)
           {
+            /*
             if (LatestMediaHandlerSetup.Ltvsh.CurrentType == LatestTVSeriesHandler.Types.Latest)
             {
               LatestMediaHandlerSetup.Ltvsh.TVSeriesUpdateLatest(LatestTVSeriesHandler.Types.Latest, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture));
             }
+            */
+            LatestMediaHandlerSetup.Ltvsh.TVSeriesUpdateLatest(LatestMediaHandlerSetup.Ltvsh.CurrentType, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture));
             LatestMediaHandlerSetup.Ltvsh.ChangedEpisodeCount();
             // LatestMediaHandlerSetup.Ltvsh.SetupTVSeriesLatest();
           }
@@ -83,12 +86,12 @@ namespace LatestMediaHandler
           }
           else if (e.Argument is LatestMvCentralHandler)
           {
-            LatestMediaHandlerSetup.Lmch.GetLatestMediaInfo(true);
+            LatestMediaHandlerSetup.Lmch.GetLatestMediaInfo(LatestMediaHandlerSetup.Starting);
           }
         }
         catch (Exception ex)
         {
-          Utils.ReleaseDelayStop("StartupWorker-OnDoWork");
+          Utils.ReleaseDelayStop("RefreshWorker-OnDoWork");
           logger.Error("OnDoWork: " + ex.ToString());
         }
       }
@@ -98,7 +101,7 @@ namespace LatestMediaHandler
     {
       try
       {
-        Utils.ReleaseDelayStop("StartupWorker-OnDoWork");
+        Utils.ReleaseDelayStop("RefreshWorker-OnDoWork");
       }
       catch (Exception ex)
       {

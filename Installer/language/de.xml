@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Deutsch (DE) -->
+<!-- English (US) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<!-- Last Updated: 19th September 2015 by Catavolt -->
+<!-- Last Updated: 26th January 2015 -->
 <strings>
  
  <!-- EPISODES-->
-  <string Field="EpisodeDetails">Episoden Details</string>
-  <string Field="DisplayNextEpisodes">Zeige nächte Episode für die zuletzt gesehene Episode</string>
+  <string Field="EpisodeDetails">Episoden-Details</string>
+  <string Field="DisplayNextEpisodes">Zeige nächste Episode für die zuletzt gesehene Episode</string>
   <string Field="DisplayLatestEpisodes">Zeige zuletzt hinzugefügte Episoden</string>
   <string Field="ShowUnwatchedEpisodes">Zeige nur ungesehene Episoden</string>
   <string Field="ShowAllEpisodes">Zeige alle Episoden</string>
   
  <!-- MOVIES-->
-  <string Field="MovieDetails">Film Details</string>
+  <string Field="MovieDetails">Film-Details</string>
   <string Field="ShowUnwatchedMovies">Zeige nur ungesehene Filme</string>
   <string Field="ShowAllMovies">Zeige alle Filme</string>
   
@@ -21,28 +21,32 @@
   <string Field="ShowAllRecordings">Zeige alle Aufnahmen</string>  
   
   <!-- LABEL -->
-  <string Field="LabelLatestAdded">Zuletzt hinzugefügt</string>
-  <string Field="LabelLatestPlayed">Zuletzt gespielt</string>
-  <string Field="LabelMostPlayed">Häufig gespielt</string>
+  <string Field="LabelLatestAdded">Zuletzt hinzugefügt:</string>
+  <string Field="LabelLatestPlayed">Zuletzt gehört:</string>
+  <string Field="LabelMostPlayed">Häufig gehört:</string>
 
  <!-- MUSIC-->
-  <string Field="ArtistDetails">Künstler Details</string>  
-  <string Field="AlbumDetails">Album Details</string>    
+  <string Field="ArtistDetails">Künstler-Details</string>  
+  <string Field="AlbumDetails">Album-Details</string>
+  
+  <string Field="MostPlayedMusic">Häufig gehört</string>
+  <string Field="LatestPlayedMusic">Zuletzt gehört</string>
+  <string Field="LatestAddedMusic">Zuletzt hinzugefügt</string>    
   
  <!-- ALL-->
   <string Field="Play">Abspielen</string>
 
  <!-- SETTINGS-->
   <string Field="PrefsDateFormat">Datumsformat</string>
-  <string Field="PrefsDescription">Latest Media Handller ist ein Plugin für MediaPortal 1.2 (oder neuer).\nDer Zweck dieses Plugins ist Information über die letzten Medien von:\n* Bildern\n* Musik Alben\n* Moving Pictures\n* TV Serien\n* Aufnahmen\nfür die MediaPortal Skins zu liefern so dass diese Dinge wie die letzten Film Title, Poster und Backdrops anzeigen können.</string>;
-  <string Field="PrefsLatestAddedMusic">neueste Musik</string>
-  <string Field="PrefsLatestPlayedMusic">letzt gespielte Musik</string>
+  <string Field="PrefsDescription">Latest Media Handller ist ein Plugin für MediaPortal.\r\nDer Zweck dieses Plugins ist Information über die letzten Medien von:\r\n* Bildern\r\n* Musik Alben\r\n* Moving Pictures\r\n* TV Serien\r\n* Aufnahmen\r\nfür die MediaPortal Skins zu liefern so dass diese Dinge wie die letzten Film Title, Poster und Backdrops anzeigen können.</string>
+  <string Field="PrefsLatestAddedMusic">Zuletzt hinzugefügt</string>
+  <string Field="PrefsLatestPlayedMusic">Zuletzt gehört</string>
   <string Field="PrefsLMHOptions">Latest Media Handler Optionen</string>
   <string Field="PrefsLMHOptionsDesc">Aktiviere Latest Media Unterstützung für:</string>
-  <string Field="PrefsMinutes">Minuten aktualisieren</string>
+  <string Field="PrefsMinutes">Minuten</string>
   <string Field="PrefsMiscOptions">Weitere Optionen</string>
-  <string Field="PrefsMostPlayedMusic">häufigst gespielte Musik</string>
-  <string Field="PerfsMovingPictures">Moving Pictures</string>
+  <string Field="PrefsMostPlayedMusic">Häufig gehört</string>
+  <string Field="PrefsMovingPictures">Moving Pictures</string>
   <string Field="PrefsMovingPicturesWatched">Nur ungesehene Filme berücksichtigen</string>
   <string Field="PrefsMusic">Musik</string>
   <string Field="PrefsMvCentral">MvCentral</string>
@@ -62,7 +66,7 @@
   <string Field="PrefsRecordings">Aufnahmen</string>
   <string Field="PrefsRecordingsWatched">Nur ungesehene Aufnahmen berücksichtigen</string>
   <string Field="PrefsRecordingsUnfinished">Laufende Aufnahmen anzeigen</string>
-  <string Field="PrefsRefreshInterval">Alle</string>
+  <string Field="PrefsRefreshInterval">Aktualisieren alle</string>
   <string Field="PrefsSaveChanges">Änderungen speichen?</string>
   <string Field="PrefsSaveChangesMsgBox">Die Einstellungen werden im Speicher gehalten. Drücken Sie vor dem Verlassen der MP-Konfiguration 'Ok', um diese Einstellungen dauerhaft zu speichern. Wenn Sie die MP-Konfiguration durch Drücken von 'Cancel' verlassen, werden diese Einstellungen NICHT gespeichert!</string>
   <string Field="PrefsSaveChangesDialog">Wollen Sie Ihre Änderungen speichern?</string>

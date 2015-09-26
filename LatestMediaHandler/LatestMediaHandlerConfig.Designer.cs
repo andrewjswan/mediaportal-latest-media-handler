@@ -53,6 +53,7 @@
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox14 = new System.Windows.Forms.CheckBox();
+            this.checkBoxRecordingsUnfinished = new System.Windows.Forms.CheckBox();
             this.checkBox11 = new System.Windows.Forms.CheckBox();
             this.checkBox10 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
@@ -224,6 +225,7 @@
             this.groupBox11.Controls.Add(this.checkBox4);
             this.groupBox11.Controls.Add(this.checkBox1);
             this.groupBox11.Controls.Add(this.checkBox14);
+            this.groupBox11.Controls.Add(this.checkBoxRecordingsUnfinished);
             this.groupBox11.Controls.Add(this.checkBox11);
             this.groupBox11.Controls.Add(this.checkBox10);
             this.groupBox11.Controls.Add(this.checkBox2);
@@ -349,6 +351,19 @@
             this.checkBox14.TabIndex = 13;
             this.checkBox14.Text = "Only Return Unwatched Recordings";
             this.checkBox14.UseVisualStyleBackColor = true;
+            //
+            // checkBoxRecordingsUnfinished
+            //
+            this.checkBoxRecordingsUnfinished.AutoSize = true;
+            this.checkBoxRecordingsUnfinished.Checked = true;
+            this.checkBoxRecordingsUnfinished.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxRecordingsUnfinished.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBoxRecordingsUnfinished.Location = new System.Drawing.Point(500, 318);
+            this.checkBoxRecordingsUnfinished.Name = "checkBoxRecordingsUnfinished";
+            this.checkBoxRecordingsUnfinished.Size = new System.Drawing.Size(239, 20);
+            this.checkBoxRecordingsUnfinished.TabIndex = 21;
+            this.checkBoxRecordingsUnfinished.Text = "Return Unfinished Recordings";
+            this.checkBoxRecordingsUnfinished.UseVisualStyleBackColor = true;
             // 
             // checkBox11
             // 
@@ -498,7 +513,7 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(383, 24);
             this.label10.TabIndex = 2;
-            this.label10.Text = "Created by cul8er (maintaind by yoavain, ajs)";
+            this.label10.Text = "Maintained by yoavain, ajs\r\nOriginal Version created by cul8er, Thanks BPoH_Voodoo.";
             // 
             // label9
             // 
@@ -583,6 +598,7 @@
         private System.Windows.Forms.CheckBox checkBox13;
         private System.Windows.Forms.CheckBox checkBox10;
         private System.Windows.Forms.CheckBox checkBox14;
+        private System.Windows.Forms.CheckBox checkBoxRecordingsUnfinished;
         private System.Windows.Forms.CheckBox checkBox11;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label1;

@@ -3,8 +3,8 @@
 // Author           : cul8er
 // Created          : 05-09-2010
 //
-// Last Modified By : cul8er
-// Last Modified On : 10-05-2010
+// Last Modified By : ajs
+// Last Modified On : 24-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -303,6 +303,17 @@ namespace LatestMediaHandler
               thumb = "DefaultFolderBig.png";
             }
 
+            bool isnew = false;
+            try
+            {
+              DateTime dTmp = DateTime.Parse(sTimestamp);
+              isnew = (dTmp > Utils.NewDateTime);
+              if (isnew)
+                Utils.HasNewMyVideos = true;
+            }
+            catch 
+            { }
+
             latests.Add(new Latest(sTimestamp, thumb, GetFanart(item.Title, item.ID), item.Title, 
                                    null, null, null, 
                                    item.Genre.Replace("/", ","),
@@ -313,16 +324,10 @@ namespace LatestMediaHandler
                                    item.Year.ToString(CultureInfo.CurrentCulture), 
                                    null, null, null, 
                                    item, item.ID.ToString(), item.Plot, 
-                                   null));
-            try
-            {
-              DateTime dTmp = DateTime.Parse(sTimestamp);
-              if (dTmp > Utils.NewDateTime)
-                Utils.HasNewMyVideos = true;
-            }
-            catch 
-            { }
+                                   null,
+                                   isnew));
 
+            Utils.ThreadToSleep();
             x++;
             if (x == 10)
             {
@@ -364,40 +369,7 @@ namespace LatestMediaHandler
             break;
           }
         }
-
-        if (facade != null)
-        {
-          facade.SelectedListItemIndex = LastFocusedId;
-          if (facade.ListLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.List;
-            if (!facade.Focus)
-            {
-              facade.ListLayout.IsVisible = false;
-            }
-          }
-          else if (facade.FilmstripLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.Filmstrip;
-            if (!facade.Focus)
-            {
-              facade.FilmstripLayout.IsVisible = false;
-            }
-
-          }
-          else if (facade.CoverFlowLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.CoverFlow;
-            if (!facade.Focus)
-            {
-              facade.CoverFlowLayout.IsVisible = false;
-            }
-          }
-          if (!facade.Focus)
-          {
-            facade.Visible = false;
-          }
-        }
+        Utils.UpdateFacade(ref facade, LastFocusedId);
       }
       catch (FileNotFoundException)
       {
@@ -617,6 +589,24 @@ namespace LatestMediaHandler
       UpdateSelectedProperties(item);
     }
 
+    internal void MyVideosUpdateLatestThread()
+    {
+      // MyVideo
+      if (LatestMediaHandlerSetup.LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
+      {
+        try
+        {
+          RefreshWorker MyRefreshWorker = new RefreshWorker();
+          MyRefreshWorker.RunWorkerCompleted += MyRefreshWorker.OnRunWorkerCompleted;
+          MyRefreshWorker.RunWorkerAsync(this);
+        }
+        catch (Exception ex)
+        {
+          logger.Error("MyVideosUpdateLatestThread: " + ex.ToString());
+        }
+      }
+    }
+
     internal void EmptyLatestMediaPropsMyVideos()
     {
       LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.label", Translation.LabelLatestAdded);
@@ -636,6 +626,7 @@ namespace LatestMediaHandler
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".year", string.Empty);
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".id", string.Empty);
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".plot", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".new", "false");
       }
     }
 
@@ -645,6 +636,10 @@ namespace LatestMediaHandler
       {
         if (LatestMediaHandlerSetup.LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
         {
+          int sync = Interlocked.CompareExchange(ref Utils.SyncPointMyVideosUpdate, 1, 0);
+          if (sync != 0)
+            return;
+
           try
           {
             GetLatestMyVideos();
@@ -673,6 +668,7 @@ namespace LatestMediaHandler
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".year", result[i].Year);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".id", result[i].Id);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".plot", result[i].Summary);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".new", result[i].New);
               z++;
             }
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myvideo.latest.enabled", "true");
@@ -690,6 +686,7 @@ namespace LatestMediaHandler
         EmptyLatestMediaPropsMyVideos();
         logger.Error("MyVideosUpdateLatest: " + ex.ToString());
       }
+      Utils.SyncPointMyVideosUpdate=0;
     }
 
     internal void SetupVideoLatest()
@@ -718,6 +715,7 @@ namespace LatestMediaHandler
 
     private void OnMessage(GUIMessage message)
     {
+      bool Update = false;
       if (LatestMediaHandlerSetup.LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
       {
         try
@@ -727,33 +725,30 @@ namespace LatestMediaHandler
             case GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH:
             {
               logger.Debug("VideoInfo refresh detected: Refreshing latest.");
-              try
-              {
-                MyVideosUpdateLatest() ;
-              }
-              catch (Exception ex)
-              {
-                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
-              }
+              Update = true;
               break;
             }
             case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
             case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
             {
               logger.Debug("Playback End/Stop detected: Refreshing latest.");
-              try
-              {
-                MyVideosUpdateLatest() ;
-              }
-              catch (Exception ex)
-              {
-                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
-              }
+              Update = true;
               break;
             }
           }
         }
         catch { }
+        if (Update)
+        {
+          try
+          {
+            MyVideosUpdateLatestThread() ;
+          }
+          catch (Exception ex)
+          {
+            logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
+          }
+        }
       }
     }
 

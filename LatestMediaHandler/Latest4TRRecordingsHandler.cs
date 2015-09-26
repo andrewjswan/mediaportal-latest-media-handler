@@ -271,6 +271,7 @@ namespace LatestMediaHandler
                                                          String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.StopTime),
                                                          rec.Program.StopTime.ToString("HH:mm", CultureInfo.CurrentCulture), 
                                                          rec.Program.Channel.DisplayName, logoImagePath));
+                Utils.ThreadToSleep();
               }
             }
           }
@@ -353,6 +354,7 @@ namespace LatestMediaHandler
                                                          String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStopTime),
                                                          rec.Program.ActualStopTime.ToString("HH:mm", CultureInfo.CurrentCulture),
                                                          rec.Program.Channel.DisplayName, logoImagePath));
+                Utils.ThreadToSleep();
               }
 
               latestRecordings.Sort(new LatestRecordingsComparer());
@@ -416,33 +418,27 @@ namespace LatestMediaHandler
                     Recording recording = _tvControlAgent.GetRecordingById(rec.RecordingId);
                     string _summary = string.Empty;
                     if (recording != null)
-                    {
                       _summary = recording.Description;
-                    }
+
                     string thumbNail = rec.ThumbnailFileName;
                     if (!File.Exists(thumbNail))
-                    {
                       thumbNail = "defaultTVBig.png";
-                    }
-                    if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("True", StringComparison.CurrentCulture))
-                    {
-                      if (!rec.LastWatchedTime.HasValue)
-                      {
-                        latests.Add(new Latest(
-                          rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail, null,
-                          rec.Title, rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), null,
-                          null, rec.Category, null, null, null, null, null, null, null, null, rec, null, _summary,
-                          rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture)));
-                      }
-                    }
-                    else if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False", StringComparison.CurrentCulture))
-                    {
-                      latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture),
-                        thumbNail, null, rec.Title,
-                        rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), null, null,
-                        rec.Category, null, null, null, null, null, null, null, null, rec, null, _summary,
-                        rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture)));
-                    }
+
+                    if (LatestMediaHandlerSetup.LatestTVRecordingsUnfinished.Equals("False", StringComparison.CurrentCulture) && rec.IsPartialRecording)
+                      continue ;
+                    if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("True", StringComparison.CurrentCulture) && (rec.LastWatchedTime.HasValue))
+                      continue ;
+
+                    latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail, 
+                                           null, 
+                                           rec.Title, rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), 
+                                           null, null,
+                                           rec.Category, 
+                                           null, null, null, null, null, null, null, null, 
+                                           rec, 
+                                           null, 
+                                           _summary, rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture)));
+                  Utils.ThreadToSleep();
                   }
                 }
               }
@@ -487,52 +483,16 @@ namespace LatestMediaHandler
             }
           }
         }
-        if (facade != null)
-        {
-          facade.SelectedListItemIndex = LastFocusedId;
-          if (facade.ListLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.List;
-            if (!facade.Focus)
-            {
-              facade.ListLayout.IsVisible = false;
-            }
-          }
-          else if (facade.FilmstripLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.Filmstrip;
-            if (!facade.Focus)
-            {
-              facade.FilmstripLayout.IsVisible = false;
-            }
-
-          }
-          else if (facade.CoverFlowLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.CoverFlow;
-            if (!facade.Focus)
-            {
-              facade.CoverFlowLayout.IsVisible = false;
-            }
-          }
-          if (!facade.Focus)
-          {
-            facade.Visible = false;
-          }
-        }
+        Utils.UpdateFacade(ref facade, LastFocusedId);
 
         if (latests != null)
-        {
           latests.Clear();
-        }
         latests = null;
       }
       catch
       {
         if (latests != null)
-        {
           latests.Clear();
-        }
         latests = null;
       }
       result = resultTmp;

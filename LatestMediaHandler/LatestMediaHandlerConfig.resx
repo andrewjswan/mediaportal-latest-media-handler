@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Latest Media Handller is a plugin for MediaPortal 1.2 (or later). 
+    <value>Latest Media Handller is a plugin for MediaPortal. 
 The purpose of the plugin is to deliver information about latest:
 * Pictures
 * Music Albums
@@ -127,7 +127,7 @@ The purpose of the plugin is to deliver information about latest:
 * My Films
 * Moving Pictures
 * MvCentral
-* Recordings
+* TV Recordings
 to MediaPortal skins so that they can display things like latest movie title, poster and backdrops.</value>
   </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">

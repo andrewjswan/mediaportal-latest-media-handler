@@ -3,8 +3,8 @@
 // Author           : cul8er
 // Created          : 05-09-2010
 //
-// Last Modified By : cul8er
-// Last Modified On : 10-05-2010
+// Last Modified By : ajs
+// Last Modified On : 24-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -302,12 +302,14 @@ namespace LatestMediaHandler
               }
 
               string dateAdded = resultSet.GetField(i, 1);
+              bool isnew = false;
               try
               {
                 DateTime dTmp = DateTime.Parse(dateAdded);
                 dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", dTmp);
 
-                if (dTmp > Utils.NewDateTime)
+                isnew = (dTmp > Utils.NewDateTime);
+                if (isnew)
                   Utils.HasNewPictures = true;
               }
               catch {   }
@@ -320,11 +322,13 @@ namespace LatestMediaHandler
                   result.Add(new LatestMediaHandler.Latest(dateAdded, thumb, tmpThumb, title, 
                                                            null, null, null, null, null, null, 
                                                            null, null, null, null, null, null, 
-                                                           null, null, null, null));
+                                                           null, null, null, null,
+                                                           isnew));
                   //                   if (facade != null)
                   //                 {
                   AddToFilmstrip(result[x], i);
                   //               }
+                  Utils.ThreadToSleep();
                   x++;
                 }
               }
@@ -335,38 +339,7 @@ namespace LatestMediaHandler
             }
           }
         }
-        if (facade != null)
-        {
-          facade.SelectedListItemIndex = LastFocusedId;
-          if (facade.ListLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.List;
-            if (!facade.Focus)
-            {
-              facade.ListLayout.IsVisible = false;
-            }
-          }
-          else if (facade.FilmstripLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.Filmstrip;
-            if (!facade.Focus)
-            {
-              facade.FilmstripLayout.IsVisible = false;
-            }
-          }
-          else if (facade.CoverFlowLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.CoverFlow;
-            if (!facade.Focus)
-            {
-              facade.CoverFlowLayout.IsVisible = false;
-            }
-          }
-          if (!facade.Focus)
-          {
-            facade.Visible = false;
-          }
-        }
+        Utils.UpdateFacade(ref facade, LastFocusedId);
         resultSet = null;
       }
       catch //(Exception ex)
@@ -515,6 +488,7 @@ namespace LatestMediaHandler
 
     private void OnMessage(GUIMessage message)
     {
+      bool Update = false;
       if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture))
       {
         try
@@ -524,66 +498,42 @@ namespace LatestMediaHandler
             case GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH:
             {
               logger.Debug("VideoInfo refresh detected: Refreshing Latest.");
-              try
-              {
-                GetLatestMediaInfo();
-              }
-              catch (Exception ex)
-              {
-                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
-              }
+              Update = true;
               break;
             }
           case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
           case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
             {
               logger.Debug("Playback End/Stop detected: Refreshing latest.");
-              try
-              {
-                GetLatestMediaInfo();
-              }
-              catch (Exception ex)
-              {
-                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
-              }
+              Update = true;
               break;
             }
             case GUIMessage.MessageType.GUI_MSG_START_SLIDESHOW:
             {
               logger.Debug("Slideshow detected: Refreshing latest.");
-              try
-              {
-                GetLatestMediaInfo();
-              }
-              catch (Exception ex)
-              {
-                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
-              }
+              Update = true;
               break;
             }
           }
         }
         catch { }
+        if (Update)
+        {
+          try
+          {
+            GetLatestMediaInfoThread();
+          }
+          catch (Exception ex)
+          {
+            logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
+          }
+        }
       }
     }
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       UpdateSelectedProperties(item);
-    }
-
-    internal void EmptyLatestMediaPropsPictures()
-    {
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.label", Translation.LabelLatestAdded);
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "false");
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.hasnew", "false");
-      for (int z = 1; z < 4; z++)
-      {
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", string.Empty);
-      }
     }
 
     internal void UpdateImageTimer(GUIWindow fWindow, Object stateInfo, ElapsedEventArgs e)
@@ -629,8 +579,45 @@ namespace LatestMediaHandler
       }
     }
 
+    internal void GetLatestMediaInfoThread()
+    {
+      // Pictures
+      if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture))
+      {
+        try
+        {
+          RefreshWorker MyRefreshWorker = new RefreshWorker();
+          MyRefreshWorker.RunWorkerCompleted += MyRefreshWorker.OnRunWorkerCompleted;
+          MyRefreshWorker.RunWorkerAsync(this);
+        }
+        catch (Exception ex)
+        {
+          logger.Error("GetLatestMediaInfoThread: " + ex.ToString());
+        }
+      }
+    }
+
+    internal void EmptyLatestMediaPropsPictures()
+    {
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.label", Translation.LabelLatestAdded);
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "false");
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.hasnew", "false");
+      for (int z = 1; z < 4; z++)
+      {
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".new", "false");
+      }
+    }
+
     internal void GetLatestMediaInfo()
     {
+      int sync = Interlocked.CompareExchange(ref Utils.SyncPointPicturesUpdate, 1, 0);
+      if (sync != 0)
+        return;
+
       string windowId = GUIWindowManager.ActiveWindow.ToString();
 
       if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture) && !(windowId.Equals("2", StringComparison.CurrentCulture)))
@@ -652,6 +639,7 @@ namespace LatestMediaHandler
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", ht[i].Thumb);
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", ht[i].Thumb);
                 LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", ht[i].DateAdded);
+                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".new", ht[i].New);
                 z++;
               }
               ht.Clear();
@@ -686,6 +674,7 @@ namespace LatestMediaHandler
       {
         EmptyLatestMediaPropsPictures();
       }
+      Utils.SyncPointPicturesUpdate=0;
     }
   }
 }

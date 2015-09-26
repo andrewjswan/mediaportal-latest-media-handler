@@ -3,8 +3,8 @@
 // Author           : cul8er
 // Created          : 05-09-2010
 //
-// Last Modified By : cul8er
-// Last Modified On : 10-05-2010
+// Last Modified By : ajs
+// Last Modified On : 24-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -36,6 +36,7 @@ namespace LatestMediaHandler
     //string fanart2;
     private string id;
     private string summary;
+    private bool isnew;
 
     internal string Summary
     {
@@ -157,10 +158,16 @@ namespace LatestMediaHandler
       set { episodeIndex = value; }
     }
 
+    internal string New
+    {
+      get { return (isnew ? "true" : "false"); }
+      set { isnew = value.ToLower().Equals("true"); }
+    }
+
     internal Latest(string dateAdded, string thumb, string fanart, string title, string subtitle, string artist,
       string album, string genre, string rating, string roundedRating, string classification, string runtime,
       string year, string seasonIndex, string episodeIndex, string thumbSeries, object playable, string id,
-      string summary, string seriesIndex)
+      string summary, string seriesIndex, bool isnew = false)
     {
       this.dateAdded = dateAdded;
       this.thumb = thumb;
@@ -191,6 +198,7 @@ namespace LatestMediaHandler
       //this.fanart2 = fanart2;
       this.id = id;
       this.summary = summary;
+      this.isnew = isnew;
     }
 
   }

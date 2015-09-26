@@ -4,7 +4,7 @@
 // Created          : 21-09-2015
 //
 // Last Modified By : ajs
-// Last Modified On : 21-09-2015
+// Last Modified On : 24-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -167,32 +167,7 @@ namespace LatestMediaHandler
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", string.Empty);
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", string.Empty);
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".genre", string.Empty);
-      }
-    }
-
-    internal void GetTVRecordings()
-    {
-      if (Utils.GetIsStopping() == false)
-      {
-        try
-        {
-          int sync = Interlocked.CompareExchange(ref LatestMediaHandlerSetup.SyncPointTVRecordings, 1, 0);
-          if (sync == 0)
-          {
-            // No other event was executing.                                   
-            if (MyLatestTVRecordingsWorker == null)
-            {
-              MyLatestTVRecordingsWorker = new LatestTVRecordingsWorker();
-              MyLatestTVRecordingsWorker.RunWorkerCompleted += MyLatestTVRecordingsWorker.OnRunWorkerCompleted;
-            }
-            MyLatestTVRecordingsWorker.RunWorkerAsync();
-          }
-        }
-        catch (Exception ex)
-        {
-          LatestMediaHandlerSetup.SyncPointTVRecordings = 0;
-          logger.Error("GetTVRecordings: " + ex.ToString());
-        }
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".new", "false");
       }
     }
 
@@ -217,6 +192,43 @@ namespace LatestMediaHandler
       {
         logger.Error("MyContextMenu: " + ex.ToString());
       }
+    }
+
+    internal void GetTVRecordings(int Mode = 0) // 0 - UpdateLatestMediaInfo(); 1 - UpdateActiveRecordings();
+    {
+      if (!LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
+        return ;
+
+      if (Utils.GetIsStopping() == false)
+      {
+        try
+        {
+          int sync = Interlocked.CompareExchange(ref Utils.SyncPointTVRecordings, 1, 0);
+          if (sync == 0)
+          {
+            // No other event was executing.                                   
+            if (MyLatestTVRecordingsWorker == null)
+            {
+              MyLatestTVRecordingsWorker = new LatestTVRecordingsWorker();
+              MyLatestTVRecordingsWorker.RunWorkerCompleted += MyLatestTVRecordingsWorker.OnRunWorkerCompleted;
+            }
+            if (MyLatestTVRecordingsWorker.IsBusy)
+              return;
+
+            MyLatestTVRecordingsWorker.RunWorkerAsync(Mode);
+          }
+        }
+        catch (Exception ex)
+        {
+          Utils.SyncPointTVRecordings = 0;
+          logger.Error("GetTVRecordings: [" + ((Mode == 0) ? "GET" : "UPDATE") + "] " + ex.ToString());
+        }
+      }
+    }
+
+    internal void UpdateActiveRecordingsThread()
+    {
+      GetTVRecordings(1);
     }
 
     internal void UpdateActiveRecordings()
@@ -250,6 +262,198 @@ namespace LatestMediaHandler
         {
           logger.Error("UpdateActiveRecordings: " + ex.ToString());
         }
+      }
+    }
+
+    internal void UpdateLatestMediaInfo()
+    {
+      if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
+      {
+        try
+        {
+          GetLatestMediaInfo();
+        }
+        catch (FileNotFoundException)
+        {
+          //do nothing    
+        }
+        catch (MissingMethodException)
+        {
+          //do nothing    
+        }
+        catch (Exception ex)
+        {
+          logger.Error("UpdateLatestMediaInfo: " + ex.ToString());
+        }
+      }
+    }
+
+    internal void GetLatestMediaInfo()
+    {
+      int z = 1;
+      if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
+      {
+        //TV Recordings
+        LatestMediaHandler.LatestsCollection latestTVRecordings = null;
+        try
+        {
+          MediaPortal.Profile.Settings xmlreader =  new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+
+          string use4TR = xmlreader.GetValue("plugins", "For The Record TV");
+          string dllFile = Config.GetFile(Config.Dir.Plugins, @"Windows\ForTheRecord.UI.MediaPortal.dll");
+          string dllFileArgus = Config.GetFile(Config.Dir.Plugins, @"Windows\ArgusTV.UI.MediaPortal.dll");
+
+          if (use4TR != null && use4TR.Equals("yes", StringComparison.CurrentCulture) && File.Exists(dllFile))
+          {
+            FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(dllFile);
+            logger.Debug("ForTheRecord version = {0}", myFileVersionInfo.FileVersion);
+
+            if (L4trrh == null)
+            {
+              L4trrh = new Latest4TRRecordingsHandler();
+              try
+              {
+                //this can be removed when 1.6.0.2/1.6.1.0 is out for a while
+                if (myFileVersionInfo.FileVersion == "1.6.0.1" || myFileVersionInfo.FileVersion == "1.6.0.0" || myFileVersionInfo.FileVersion == "1.5.0.3")
+                {
+                  l4trrh.Is4TRversion1602orAbove = false;
+                } else {
+                  l4trrh.Is4TRversion1602orAbove = true;
+                }
+              }
+              catch
+              {
+                l4trrh.Is4TRversion1602orAbove = false;
+              }
+            }
+
+            ResolveEventHandler assemblyResolve = L4trrh.OnAssemblyResolve;
+            try
+            {
+              AppDomain currentDomain = AppDomain.CurrentDomain;
+              currentDomain.AssemblyResolve += new ResolveEventHandler(L4trrh.OnAssemblyResolve);
+              L4trrh.IsGetTypeRunningOnThisThread = true;
+              latestTVRecordings = L4trrh.Get4TRRecordings();
+              L4trrh.UpdateActiveRecordings();
+              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
+              Utils.Used4TRTV = true;
+              Utils.UsedArgus = false;
+            }
+            catch (FileNotFoundException)
+            {
+              //do nothing    
+            }
+            catch (MissingMethodException)
+            {
+              //do nothing    
+            }
+            catch (Exception ex)
+            {
+              logger.Error("GetLatestMediaInfo (TV 4TR Recordings): " + ex.ToString());
+              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
+            }
+          }
+          else if (use4TR != null && use4TR.Equals("yes", StringComparison.CurrentCulture) && File.Exists(dllFileArgus))
+          {
+            FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(dllFileArgus);
+            logger.Debug("Argus version = {0}", myFileVersionInfo.FileVersion);
+
+            if (Largusrh == null)
+            {
+              Largusrh = new LatestArgusRecordingsHandler();
+            }
+
+            ResolveEventHandler assemblyResolve = Largusrh.OnAssemblyResolve;
+            try
+            {
+              AppDomain currentDomain = AppDomain.CurrentDomain;
+              currentDomain.AssemblyResolve += new ResolveEventHandler(Largusrh.OnAssemblyResolve);
+              Largusrh.IsGetTypeRunningOnThisThread = true;
+              latestTVRecordings = Largusrh.GetArgusRecordings();
+              Largusrh.UpdateActiveRecordings();
+              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
+              Utils.Used4TRTV = true;
+              Utils.UsedArgus = true;
+            }
+            catch (FileNotFoundException)
+            {
+              //do nothing    
+            }
+            catch (MissingMethodException)
+            {
+              //do nothing    
+            }
+            catch (Exception ex)
+            {
+              logger.Error("GetLatestMediaInfo (TV Argus Recordings): " + ex.ToString());
+              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
+            }
+          }
+          else
+          {
+            if (Ltvrh == null)
+            {
+              Ltvrh = new LatestTVRecordingsHandler();
+            }
+            latestTVRecordings = Ltvrh.GetTVRecordings();
+            Ltvrh.UpdateActiveRecordings();
+            Utils.Used4TRTV = false;
+            Utils.UsedArgus = false;
+          }
+        }
+        catch (FileNotFoundException)
+        {
+          //do nothing    
+        }
+        catch (MissingMethodException)
+        {
+          //do nothing    
+        }
+        catch (Exception ex)
+        {
+          logger.Error("GetLatestMediaInfo (TV Recordings): " + ex.ToString());
+        }
+        bool noNewRecordings = false;
+        if ((latestTVRecordings != null && latestTVRecordings.Count > 1) && 
+            GUIPropertyManager.GetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title").Equals(latestTVRecordings[0].Title, StringComparison.CurrentCulture))
+        {
+          noNewRecordings = true;
+          logger.Info("Updating Latest Media Info: Latest tv recording: No new recordings since last check!");
+        }
+
+        if (latestTVRecordings != null && latestTVRecordings.Count > 1)
+        {
+          if (!noNewRecordings)
+          {
+            EmptyLatestMediaPropsTVRecordings();
+            z = 1;
+            for (int i = 0; i < latestTVRecordings.Count && i < 4; i++)
+            {
+              logger.Info("Updating Latest Media Info: Latest tv recording " + z + ": " + latestTVRecordings[i].Title);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", latestTVRecordings[i].Thumb);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", latestTVRecordings[i].Title);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", latestTVRecordings[i].DateAdded);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".genre", latestTVRecordings[i].Genre);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".new", latestTVRecordings[i].New);
+              z++;
+            }
+            //latestTVRecordings.Clear();
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "true");
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest.hasnew", Utils.HasNewTVRecordings ? "true" : "false");
+            logger.Debug("Updating Latest Media Info: Latest tv recording has new: " + (Utils.HasNewTVRecordings ? "true" : "false"));
+          }
+        }
+        else
+        {
+          EmptyLatestMediaPropsTVRecordings();
+          logger.Info("Updating Latest Media Info: Latest tv recording: No recordings found!");
+        }
+        //latestTVRecordings = null;
+        z = 1;
+      }
+      else
+      {
+        EmptyLatestMediaPropsTVRecordings();
       }
     }
 
@@ -452,6 +656,7 @@ namespace LatestMediaHandler
 
     private void OnMessage(GUIMessage message)
     {
+      bool Update = false;
       if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
       {
         try
@@ -462,216 +667,29 @@ namespace LatestMediaHandler
             case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
             {
               logger.Debug("Playback End/Stop detected: Refreshing latest.");
-              try
-              {
-                UpdateActiveRecordings();
-              }
-              catch (Exception ex)
-              {
-                logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
-              }
+              Update = true;
               break;
             }
             case GUIMessage.MessageType.GUI_MSG_NOTIFY_REC:
             {
               logger.Debug("TV Recordings notify detected: Refreshing latest.");
-              UpdateActiveRecordings();
+              Update = true;
               break;
             }
           }
         }
         catch { }
-      }
-    }
-
-    internal void UpdateLatestMediaInfo()
-    {
-      if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
-      {
-        try
+        if (Update)
         {
-          GetLatestMediaInfo();
-        }
-        catch (FileNotFoundException)
-        {
-          //do nothing    
-        }
-        catch (MissingMethodException)
-        {
-          //do nothing    
-        }
-        catch (Exception ex)
-        {
-          logger.Error("UpdateLatestMediaInfo: " + ex.ToString());
-        }
-      }
-    }
-
-    internal void GetLatestMediaInfo()
-    {
-      int z = 1;
-      if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
-      {
-        //TV Recordings
-        LatestMediaHandler.LatestsCollection latestTVRecordings = null;
-        try
-        {
-          MediaPortal.Profile.Settings xmlreader =  new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
-
-          string use4TR = xmlreader.GetValue("plugins", "For The Record TV");
-          string dllFile = Config.GetFile(Config.Dir.Plugins, @"Windows\ForTheRecord.UI.MediaPortal.dll");
-          string dllFileArgus = Config.GetFile(Config.Dir.Plugins, @"Windows\ArgusTV.UI.MediaPortal.dll");
-
-          if (use4TR != null && use4TR.Equals("yes", StringComparison.CurrentCulture) && File.Exists(dllFile))
+          try
           {
-            FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(dllFile);
-            logger.Debug("ForTheRecord version = {0}", myFileVersionInfo.FileVersion);
-
-            if (L4trrh == null)
-            {
-              L4trrh = new Latest4TRRecordingsHandler();
-              try
-              {
-                //this can be removed when 1.6.0.2/1.6.1.0 is out for a while
-                if (myFileVersionInfo.FileVersion == "1.6.0.1" || myFileVersionInfo.FileVersion == "1.6.0.0" || myFileVersionInfo.FileVersion == "1.5.0.3")
-                {
-                  l4trrh.Is4TRversion1602orAbove = false;
-                } else {
-                  l4trrh.Is4TRversion1602orAbove = true;
-                }
-              }
-              catch
-              {
-                l4trrh.Is4TRversion1602orAbove = false;
-              }
-            }
-
-            ResolveEventHandler assemblyResolve = L4trrh.OnAssemblyResolve;
-            try
-            {
-              AppDomain currentDomain = AppDomain.CurrentDomain;
-              currentDomain.AssemblyResolve += new ResolveEventHandler(L4trrh.OnAssemblyResolve);
-              L4trrh.IsGetTypeRunningOnThisThread = true;
-              latestTVRecordings = L4trrh.Get4TRRecordings();
-              L4trrh.UpdateActiveRecordings();
-              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
-              Utils.Used4TRTV = true;
-              Utils.UsedArgus = false;
-            }
-            catch (FileNotFoundException)
-            {
-              //do nothing    
-            }
-            catch (MissingMethodException)
-            {
-              //do nothing    
-            }
-            catch (Exception ex)
-            {
-              logger.Error("GetLatestMediaInfo (TV 4TR Recordings): " + ex.ToString());
-              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
-            }
+            UpdateActiveRecordingsThread();
           }
-          else if (use4TR != null && use4TR.Equals("yes", StringComparison.CurrentCulture) && File.Exists(dllFileArgus))
+          catch (Exception ex)
           {
-            FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(dllFileArgus);
-            logger.Debug("Argus version = {0}", myFileVersionInfo.FileVersion);
-
-            if (Largusrh == null)
-            {
-              Largusrh = new LatestArgusRecordingsHandler();
-            }
-
-            ResolveEventHandler assemblyResolve = Largusrh.OnAssemblyResolve;
-            try
-            {
-              AppDomain currentDomain = AppDomain.CurrentDomain;
-              currentDomain.AssemblyResolve += new ResolveEventHandler(Largusrh.OnAssemblyResolve);
-              Largusrh.IsGetTypeRunningOnThisThread = true;
-              latestTVRecordings = Largusrh.GetArgusRecordings();
-              Largusrh.UpdateActiveRecordings();
-              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
-              Utils.Used4TRTV = true;
-              Utils.UsedArgus = true;
-            }
-            catch (FileNotFoundException)
-            {
-              //do nothing    
-            }
-            catch (MissingMethodException)
-            {
-              //do nothing    
-            }
-            catch (Exception ex)
-            {
-              logger.Error("GetLatestMediaInfo (TV Argus Recordings): " + ex.ToString());
-              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
-            }
-          }
-          else
-          {
-            if (Ltvrh == null)
-            {
-              Ltvrh = new LatestTVRecordingsHandler();
-            }
-            latestTVRecordings = Ltvrh.GetTVRecordings();
-            Ltvrh.UpdateActiveRecordings();
-            Utils.Used4TRTV = false;
-            Utils.UsedArgus = false;
+            logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
           }
         }
-        catch (FileNotFoundException)
-        {
-          //do nothing    
-        }
-        catch (MissingMethodException)
-        {
-          //do nothing    
-        }
-        catch (Exception ex)
-        {
-          logger.Error("GetLatestMediaInfo (TV Recordings): " + ex.ToString());
-        }
-        bool noNewRecordings = false;
-        if ((latestTVRecordings != null && latestTVRecordings.Count > 1) && 
-            GUIPropertyManager.GetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title").Equals(latestTVRecordings[0].Title, StringComparison.CurrentCulture))
-        {
-          noNewRecordings = true;
-          logger.Info("Updating Latest Media Info: Latest tv recording: No new recordings since last check!");
-        }
-
-        if (latestTVRecordings != null && latestTVRecordings.Count > 1)
-        {
-          if (!noNewRecordings)
-          {
-            EmptyLatestMediaPropsTVRecordings();
-            z = 1;
-            for (int i = 0; i < latestTVRecordings.Count && i < 4; i++)
-            {
-              logger.Info("Updating Latest Media Info: Latest tv recording " + z + ": " + latestTVRecordings[i].Title);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", latestTVRecordings[i].Thumb);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", latestTVRecordings[i].Title);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", latestTVRecordings[i].DateAdded);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".genre", latestTVRecordings[i].Genre);
-              z++;
-            }
-            //latestTVRecordings.Clear();
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "true");
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest.hasnew", Utils.HasNewTVRecordings ? "true" : "false");
-            logger.Debug("Updating Latest Media Info: Latest tv recording has new: " + (Utils.HasNewTVRecordings ? "true" : "false"));
-          }
-        }
-        else
-        {
-          EmptyLatestMediaPropsTVRecordings();
-          logger.Info("Updating Latest Media Info: Latest tv recording: No recordings found!");
-        }
-        //latestTVRecordings = null;
-        z = 1;
-      }
-      else
-      {
-        EmptyLatestMediaPropsTVRecordings();
       }
     }
 

@@ -37,7 +37,7 @@
   
  <!-- SETTINGS-->
   <string Field="PrefsDateFormat">Date format</string>
-  <string Field="PrefsDescription">Latest Media Handller is a plugin for MediaPortal 1.2 (or later).\nThe purpose of the plugin is to deliver information about latest\n* Pictures\n* Music Albums\n* Moving Pictures\n* TVSeries\n* Recordings\nto MediaPortal skins so that they can display things like latest movie title, poster and backdrops.</string>;
+  <string Field="PrefsDescription">Latest Media Handller is a plugin for MediaPortal.\r\nThe purpose of the plugin is to deliver information about latest\r\n* Pictures\r\n* Music Albums\r\n* Moving Pictures\r\n* TVSeries\r\n* TV Recordings\r\nto MediaPortal skins so that they can display things like latest movie title, poster and backdrops.</string>
   <string Field="PrefsLatestAddedMusic">Latest Added Music</string>
   <string Field="PrefsLatestPlayedMusic">Latest Played Music</string>
   <string Field="PrefsLMHOptions">Latest Media Handler Options</string>

@@ -3,8 +3,8 @@
 // Author           : cul8er
 // Created          : 05-09-2010
 //
-// Last Modified By : cul8er
-// Last Modified On : 10-05-2010
+// Last Modified By : ajs
+// Last Modified On : 24-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -23,7 +23,7 @@ namespace LatestMediaHandler
   {
     #region declarations
 
-      private static Logger logger = LogManager.GetCurrentClassLogger();
+    private static Logger logger = LogManager.GetCurrentClassLogger();
 
     #endregion
 
@@ -39,7 +39,7 @@ namespace LatestMediaHandler
       {
         try
         {
-          if (LatestMediaHandlerSetup.FHThreadPriority.Equals("Lowest", StringComparison.CurrentCulture))
+          if (LatestMediaHandlerSetup.LMHThreadPriority.Equals("Lowest", StringComparison.CurrentCulture))
             Thread.CurrentThread.Priority = ThreadPriority.Lowest;
           else
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
@@ -48,16 +48,19 @@ namespace LatestMediaHandler
           Utils.AllocateDelayStop("LatestTVRecordingsWorker-OnDoWork");
           logger.Info("Refreshing latest TV Recordings is starting.");
 
-          LatestMediaHandlerSetup.UpdateLatestMediaInfo();
+          int arg = (int) e.Argument;
+          if (arg == 0)
+            LatestMediaHandlerSetup.Ltvrh.UpdateLatestMediaInfo();
+          else
+            LatestMediaHandlerSetup.Ltvrh.UpdateActiveRecordings();
         }
         catch (Exception ex)
         {
           Utils.ReleaseDelayStop("LatestTVRecordingsWorker-OnDoWork");
-          LatestMediaHandlerSetup.SyncPointTVRecordings = 0;
+          Utils.SyncPointTVRecordings = 0;
           logger.Error("OnDoWork: " + ex.ToString());
         }
       }
-
     }
 
     internal void OnRunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
@@ -66,7 +69,7 @@ namespace LatestMediaHandler
       {
         logger.Info("Refreshing latest TV Recordings is done.");
         Utils.ReleaseDelayStop("LatestTVRecordingsWorker-OnDoWork");
-        LatestMediaHandlerSetup.SyncPointTVRecordings = 0;
+        Utils.SyncPointTVRecordings = 0;
       }
       catch (Exception ex)
       {

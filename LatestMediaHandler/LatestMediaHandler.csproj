@@ -210,7 +210,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ShowLMHDialog.cs" />
-    <Compile Include="StartupWorker.cs">
+    <Compile Include="RefreshWorker.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Translation.cs" />

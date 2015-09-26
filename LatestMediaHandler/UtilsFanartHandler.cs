@@ -3,8 +3,8 @@
 // Author           : cul8er
 // Created          : 05-09-2010
 //
-// Last Modified By : cul8er
-// Last Modified On : 10-05-2010
+// Last Modified By : ajs
+// Last Modified On : 23-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -107,7 +107,6 @@ namespace LatestMediaHandler
         logger.Error("GetFHArtistName: " + ex.ToString());
         return null;
       }
-
     }
 
     internal static void ScrapeFanartAndThumb(string artist, string album)
@@ -115,10 +114,13 @@ namespace LatestMediaHandler
       try
       {
         int i = 0;
-        while (!FanartHandler.ExternalAccess.ScrapeFanart(artist, album) && i < 12)
+        while (!FanartHandler.ExternalAccess.ScrapeFanart(artist, album) && i < 60)
         {
-          logger.Info("Waiting for new attempt to get fanart and thumb for artist/album (will retry in 5 seconds).");
-          Thread.Sleep(5000);
+          if ((i % 5) == 0)
+            logger.Info("Waiting for fanart and thumb for artist/album ... (" + i + "/60 seconds).");
+
+          Thread.Sleep(1000);
+          Utils.ThreadToSleep();
           i++;
         }
       }

@@ -21,9 +21,18 @@
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\config\LatestMediaHandler.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d7d746d5-0e97-4660-b732-22a8d22bdec9}-LatestMediaHandler.org</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{d7d746d5-0e97-4660-b732-22a8d22bdec9}-LatestMediaHandler.xml</ZipFileName>
               <DestinationFilename>%Config%\LatestMediaHandler.xml</DestinationFilename>
             </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
+      <GroupItem Name="Languages">
+        <DisplayName>Languages</DisplayName>
+        <DefaulChecked>true</DefaulChecked>
+        <Description>Languages</Description>
+        <Files>
+          <Items>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
@@ -259,23 +268,21 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>+ Full internal rework
-* Fix Music Album folders determine
-* Fix for Music Play from Latests controls
+    <VersionDescription>* Fix freezing when stopping
+* Fix save the settings
 * Optimizations
-* Bug fixes
 + Added boolean skin fields (true,false):
- #latestMediaHandler.tvrecordings.hasnew
- #latestMediaHandler.movingpicture.hasnew
- #latestMediaHandler.mvcentral.hasnew
- #latestMediaHandler.music.hasnew
- #latestMediaHandler.picture.hasnew
- #latestMediaHandler.myfilms.hasnew
- #latestMediaHandler.myvideo.hasnew
- #latestMediaHandler.tvseries.hasnew</VersionDescription>
+#latestMediaHandler.music.latest[1,2,3].new
+#latestMediaHandler.myvideo.latest[1,2,3].new
+#latestMediaHandler.picture.latest[1,2,3].new
+#latestMediaHandler.tvrecordings.latest[1,2,3].new
+#latestMediaHandler.movingpicture.latest[1,2,3].new
+#latestMediaHandler.myfilms.latest[1,2,3].new
+#latestMediaHandler.mvcentral.latest[1,2,3].new
+</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2015-09-23T09:06:46</ReleaseDate>
+    <ReleaseDate>2015-09-26T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>
@@ -298,7 +305,7 @@ cul8er</Value>
  If have .dll extension used like MP plugin configuration</Description>
         </SectionParam>
         <SectionParam Name="Online Screenshots">
-          <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg</Value>
+          <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg</Value>
           <ValueType>String</ValueType>
           <Description>Online stored screenshot urls separated by ; </Description>
         </SectionParam>
@@ -323,7 +330,7 @@ cul8er</Value>
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\config\LatestMediaHandler.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d7d746d5-0e97-4660-b732-22a8d22bdec9}-LatestMediaHandler.org</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{d7d746d5-0e97-4660-b732-22a8d22bdec9}-LatestMediaHandler.xml</ZipFileName>
         <DestinationFilename>%Config%\LatestMediaHandler.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">

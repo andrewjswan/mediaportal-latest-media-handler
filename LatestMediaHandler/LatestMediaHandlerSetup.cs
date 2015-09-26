@@ -3,8 +3,8 @@
 // Author           : cul8er
 // Created          : 05-09-2010
 //
-// Last Modified By : cul8er
-// Last Modified On : 10-05-2010
+// Last Modified By : ajs
+// Last Modified On : 24-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -50,7 +50,7 @@ namespace LatestMediaHandler
     /*
          * All Threads and Timers
     */
-    private static string fhThreadPriority = "Lowest";
+    private static string lmhThreadPriority = "Lowest";
     internal static System.Timers.Timer ReorgTimer = null;
     private System.Timers.Timer refreshTimer = null;
 
@@ -59,12 +59,7 @@ namespace LatestMediaHandler
 
     private Hashtable windowsUsingFanartLatest; //used to know what skin files that supports latest media fanart     
 
-    internal static int SyncPointReorg;
-    internal static int SyncPointTVRecordings;
-    internal static int SyncPointMusicUpdate;
-    internal static int SyncPointMvCMusicUpdate;
-
-    internal int SyncPointRefresh;
+    internal static bool Starting = true;
 
     private static LatestMyVideosHandler lmvh = null;
     private static LatestMovingPicturesHandler lmph = null;
@@ -203,6 +198,12 @@ namespace LatestMediaHandler
       set { Utils.latestTVRecordingsWatched = value; }
     }
 
+    internal static string LatestTVRecordingsUnfinished
+    {
+      get { return Utils.latestTVRecordingsUnfinished; }
+      set { Utils.latestTVRecordingsUnfinished = value; }
+    }
+
     internal static string LatestMyFilmsWatched
     {
       get { return Utils.latestMyFilmsWatched; }
@@ -275,10 +276,10 @@ namespace LatestMediaHandler
       set { Utils.latestMyFilms = value; }
     }
 
-    internal static string FHThreadPriority
+    internal static string LMHThreadPriority
     {
-      get { return LatestMediaHandlerSetup.fhThreadPriority; }
-      set { LatestMediaHandlerSetup.fhThreadPriority = value; }
+      get { return LatestMediaHandlerSetup.lmhThreadPriority; }
+      set { LatestMediaHandlerSetup.lmhThreadPriority = value; }
     }
 
     public static string MpVersion
@@ -509,7 +510,7 @@ namespace LatestMediaHandler
       {
         try
         {
-          int sync = Interlocked.CompareExchange(ref SyncPointReorg, 1, 0);
+          int sync = Interlocked.CompareExchange(ref Utils.SyncPointReorg, 1, 0);
           if (sync == 0)
           {
             // No other event was executing.                                                      
@@ -522,12 +523,12 @@ namespace LatestMediaHandler
           }
           //else
           //{
-          //    SyncPointReorg = 0;
+          //    Utils.SyncPointReorg = 0;
           //}
         }
         catch (Exception ex)
         {
-          SyncPointReorg = 0;
+          Utils.SyncPointReorg = 0;
           logger.Error("UpdateReorgTimer: " + ex.ToString());
         }
       }
@@ -670,12 +671,6 @@ namespace LatestMediaHandler
       Lmch  = new LatestMvCentralHandler();
       ltvrh = new LatestTVAllRecordingsHandler();
 
-      SyncPointReorg = 0;
-      SyncPointTVRecordings = 0;
-      SyncPointMusicUpdate = 0;
-      SyncPointMvCMusicUpdate = 0;
-      SyncPointRefresh = 0;
-
       ReorgTimerTick = Environment.TickCount;
 
       Lmh.EmptyLatestMediaPropsMusic();
@@ -781,20 +776,8 @@ namespace LatestMediaHandler
       LogLevel logLevel;
       MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
 
-      string myThreadPriority = xmlreader.GetValue("general", "ThreadPriority");
-
-      if (myThreadPriority != null && myThreadPriority.Equals("Normal", StringComparison.CurrentCulture))
-      {
-        FHThreadPriority = "Lowest";
-      }
-      else if (myThreadPriority != null && myThreadPriority.Equals("BelowNormal", StringComparison.CurrentCulture))
-      {
-        FHThreadPriority = "Lowest";
-      }
-      else
-      {
-        FHThreadPriority = "BelowNormal";
-      }
+      string str = xmlreader.GetValue("general", "ThreadPriority");
+      LMHThreadPriority = str == null || !str.Equals("Normal", StringComparison.CurrentCulture) ? (str == null || !str.Equals("BelowNormal", StringComparison.CurrentCulture) ? "BelowNormal" : "Lowest") : "Lowest";
 
       switch ((Level) xmlreader.GetValueAsInt("general", "loglevel", 0))
       {
@@ -849,6 +832,7 @@ namespace LatestMediaHandler
 
         SetupWindowsUsingLatestMediaHandlerVisibility();
         SetupVariables();
+        Utils.SyncPointInit();
 
         GetLatestMediaInfo();
 
@@ -879,6 +863,8 @@ namespace LatestMediaHandler
         }
         */
         RefreshActiveWindow();
+
+        Starting = false ;
 
         logger.Info("Latest Media Handler is started.");
       }
@@ -921,9 +907,10 @@ namespace LatestMediaHandler
       {
         try
         {
-          StartupWorker MyStartupWorker = new StartupWorker();
-          MyStartupWorker.RunWorkerCompleted += MyStartupWorker.OnRunWorkerCompleted;
-          MyStartupWorker.RunWorkerAsync(Lmh);
+          Lmh.GetLatestMediaInfoThread();
+          // RefreshWorker MyRefreshWorker = new RefreshWorker();
+          // MyRefreshWorker.RunWorkerCompleted += MyRefreshWorker.OnRunWorkerCompleted;
+          // MyRefreshWorker.RunWorkerAsync(Lmh);
         }
         catch (Exception ex)
         {
@@ -939,9 +926,10 @@ namespace LatestMediaHandler
       {
         try
         {
-          StartupWorker MyStartupWorker = new StartupWorker();
-          MyStartupWorker.RunWorkerCompleted += MyStartupWorker.OnRunWorkerCompleted;
-          MyStartupWorker.RunWorkerAsync(Lph);
+          Lph.GetLatestMediaInfoThread();
+          // RefreshWorker MyRefreshWorker = new RefreshWorker();
+          // MyRefreshWorker.RunWorkerCompleted += MyRefreshWorker.OnRunWorkerCompleted;
+          // MyRefreshWorker.RunWorkerAsync(Lph);
         }
         catch (Exception ex)
         {
@@ -973,9 +961,10 @@ namespace LatestMediaHandler
       {
         try
         {
-          StartupWorker MyStartupWorker = new StartupWorker();
-          MyStartupWorker.RunWorkerCompleted += MyStartupWorker.OnRunWorkerCompleted;
-          MyStartupWorker.RunWorkerAsync(Lmvh);
+          // RefreshWorker MyRefreshWorker = new RefreshWorker();
+          // MyRefreshWorker.RunWorkerCompleted += MyRefreshWorker.OnRunWorkerCompleted;
+          // MyRefreshWorker.RunWorkerAsync(Lmvh);
+          Lmvh.MyVideosUpdateLatestThread();
         }
         catch (Exception ex)
         {
@@ -988,9 +977,10 @@ namespace LatestMediaHandler
       {
         try
         {
-          StartupWorker MyStartupWorker = new StartupWorker();
-          MyStartupWorker.RunWorkerCompleted += MyStartupWorker.OnRunWorkerCompleted;
-          MyStartupWorker.RunWorkerAsync(Ltvsh);
+          Ltvsh.TVSeriesUpdateLatestThread();
+          // RefreshWorker MyRefreshWorker = new RefreshWorker();
+          // MyRefreshWorker.RunWorkerCompleted += MyRefreshWorker.OnRunWorkerCompleted;
+          // MyRefreshWorker.RunWorkerAsync(Ltvsh);
         }
         catch (Exception ex)
         {
@@ -1003,9 +993,10 @@ namespace LatestMediaHandler
       {
         try
         {
-          StartupWorker MyStartupWorker = new StartupWorker();
-          MyStartupWorker.RunWorkerCompleted += MyStartupWorker.OnRunWorkerCompleted;
-          MyStartupWorker.RunWorkerAsync(Lmph);
+          Lmph.MovingPictureUpdateLatestThread();
+          // RefreshWorker MyRefreshWorker = new RefreshWorker();
+          // MyRefreshWorker.RunWorkerCompleted += MyRefreshWorker.OnRunWorkerCompleted;
+          // MyRefreshWorker.RunWorkerAsync(Lmph);
         }
         catch (Exception ex)
         {
@@ -1018,9 +1009,10 @@ namespace LatestMediaHandler
       {
         try
         {
-          StartupWorker MyStartupWorker = new StartupWorker();
-          MyStartupWorker.RunWorkerCompleted += MyStartupWorker.OnRunWorkerCompleted;
-          MyStartupWorker.RunWorkerAsync(Lmfh);
+          Lmfh.MyFilmsUpdateLatestThread();
+          // RefreshWorker MyRefreshWorker = new RefreshWorker();
+          // MyRefreshWorker.RunWorkerCompleted += MyRefreshWorker.OnRunWorkerCompleted;
+          // MyRefreshWorker.RunWorkerAsync(Lmfh);
         }
         catch (Exception ex)
         {
@@ -1033,9 +1025,10 @@ namespace LatestMediaHandler
       {
         try
         {
-          StartupWorker MyStartupWorker = new StartupWorker();
-          MyStartupWorker.RunWorkerCompleted += MyStartupWorker.OnRunWorkerCompleted;
-          MyStartupWorker.RunWorkerAsync(Lmch);
+          Lmch.GetLatestMediaInfoThread();
+          // RefreshWorker MyRefreshWorker = new RefreshWorker();
+          // MyRefreshWorker.RunWorkerCompleted += MyRefreshWorker.OnRunWorkerCompleted;
+          // MyRefreshWorker.RunWorkerAsync(Lmch);
         }
         catch (Exception ex)
         {
@@ -1193,14 +1186,15 @@ namespace LatestMediaHandler
     {
       if (fWindow != null)
       {
-        if (fWindow.GetFocusControlId() == LatestMovingPicturesHandler.ControlID || 
-            fWindow.GetFocusControlId() == LatestPictureHandler.ControlID ||
-            fWindow.GetFocusControlId() == LatestTVSeriesHandler.ControlID || 
-            fWindow.GetFocusControlId() == LatestMusicHandler.ControlID || 
-            fWindow.GetFocusControlId() == LatestTVAllRecordingsHandler.ControlID || 
-            fWindow.GetFocusControlId() == LatestMyFilmsHandler.ControlID ||
-            fWindow.GetFocusControlId() == LatestMyVideosHandler.ControlID || 
-            fWindow.GetFocusControlId() == LatestMvCentralHandler.ControlID)
+        if ((!ContextMenu) &&
+            (fWindow.GetFocusControlId() == LatestMovingPicturesHandler.ControlID || 
+             fWindow.GetFocusControlId() == LatestPictureHandler.ControlID ||
+             fWindow.GetFocusControlId() == LatestTVSeriesHandler.ControlID || 
+             fWindow.GetFocusControlId() == LatestMusicHandler.ControlID || 
+             fWindow.GetFocusControlId() == LatestTVAllRecordingsHandler.ControlID || 
+             fWindow.GetFocusControlId() == LatestMyFilmsHandler.ControlID ||
+             fWindow.GetFocusControlId() == LatestMyVideosHandler.ControlID || 
+             fWindow.GetFocusControlId() == LatestMvCentralHandler.ControlID))
         {
           if (action.IsUserAction())
           {
@@ -1405,21 +1399,7 @@ namespace LatestMediaHandler
           }
 
           SetFocusOnFacade(facade, x);
-          if (facade.ListLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.List;
-            facade.ListLayout.IsVisible = (!facade.Focus) ? false : facade.ListLayout.IsVisible;
-          }
-          else if (facade.FilmstripLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.Filmstrip;
-            facade.FilmstripLayout.IsVisible = (!facade.Focus) ? false : facade.FilmstripLayout.IsVisible;
-          }
-          else if (facade.CoverFlowLayout != null)
-          {
-            facade.CurrentLayout = GUIFacadeControl.Layout.CoverFlow;
-            facade.CoverFlowLayout.IsVisible = (!facade.Focus) ? false : facade.CoverFlowLayout.IsVisible;
-          }
+          Utils.UpdateFacade(ref facade);
           facade.Visible = false;
         }
       }
@@ -1569,17 +1549,17 @@ namespace LatestMediaHandler
         logger.Error("GUIWindowManager_OnActivateWindow: " + ex.ToString());
       }
     }
-
+    /*
     internal static void UpdateLatestMediaInfo()
     {
       Ltvrh.UpdateLatestMediaInfo();
     }
-
+    */
     private void UpdateImageTimer(Object stateInfo, ElapsedEventArgs e)
     {
       try
       {
-        int sync = Interlocked.CompareExchange(ref SyncPointRefresh, 1, 0);
+        int sync = Interlocked.CompareExchange(ref Utils.SyncPointRefresh, 1, 0);
         if (sync == 0)
         {
           if (Utils.IsIdle())
@@ -1615,15 +1595,13 @@ namespace LatestMediaHandler
               Ltvrh.UpdateImageTimer(fWindow, stateInfo, e);
             }
           }
-          SyncPointRefresh = 0;
         }
       }
       catch (Exception ex)
       {
-        SyncPointRefresh = 0;
         logger.Error("UpdateImageTimer: " + ex.ToString());
       }
-
+      Utils.SyncPointRefresh = 0;
     }
 
     /// <summary>
@@ -1685,6 +1663,7 @@ namespace LatestMediaHandler
       try
       {
         Utils.SetIsStopping(true);
+
         GUIWindowManager.OnActivateWindow -=  new GUIWindowManager.WindowActivationHandler(GuiWindowManagerOnActivateWindow);
         GUIGraphicsContext.OnNewAction -= new OnActionHandler(OnNewAction);
         GUIWindowManager.Receivers -= new SendMessageHandler(OnMessage);
