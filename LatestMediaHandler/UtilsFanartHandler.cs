@@ -4,7 +4,7 @@
 // Created          : 05-09-2010
 //
 // Last Modified By : ajs
-// Last Modified On : 23-09-2015
+// Last Modified On : 30-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -26,16 +26,12 @@ namespace LatestMediaHandler
 
     internal static void SetupFanartHandlerSubcribeScaperFinishedEvent()
     {
-      FanartHandler.ExternalAccess.ScraperCompleted +=
-        new FanartHandler.ExternalAccess.ScraperCompletedHandler(
-          LatestMediaHandlerSetup.TriggerGetLatestMediaInfoOnEvent);
+      FanartHandler.ExternalAccess.ScraperCompleted += new FanartHandler.ExternalAccess.ScraperCompletedHandler(LatestMediaHandlerSetup.TriggerGetLatestMediaInfoOnEvent);
     }
 
     internal static void DisposeFanartHandlerSubcribeScaperFinishedEvent()
     {
-      FanartHandler.ExternalAccess.ScraperCompleted -=
-        new FanartHandler.ExternalAccess.ScraperCompletedHandler(
-          LatestMediaHandlerSetup.TriggerGetLatestMediaInfoOnEvent);
+      FanartHandler.ExternalAccess.ScraperCompleted -= new FanartHandler.ExternalAccess.ScraperCompletedHandler(LatestMediaHandlerSetup.TriggerGetLatestMediaInfoOnEvent);
     }
 
     internal static string GetFanartForLatest(string tvshow)

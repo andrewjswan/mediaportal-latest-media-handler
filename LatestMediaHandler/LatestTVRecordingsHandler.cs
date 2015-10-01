@@ -3,8 +3,8 @@
 // Author           : cul8er
 // Created          : 05-09-2010
 //
-// Last Modified By : cul8er
-// Last Modified On : 10-05-2010
+// Last Modified By : ajs
+// Last Modified On : 30-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -255,7 +255,7 @@ namespace LatestMediaHandler
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.active" + i + ".endDate", latestRecordings[x0].EndDate);
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.active" + i + ".channel", latestRecordings[x0].Channel);
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.active" + i + ".channelLogo", latestRecordings[x0].ChannelLogo);
-            if (i == 3)
+            if (i == Utils.LatestsMaxNum)
             {
               break;
             }
@@ -362,7 +362,7 @@ namespace LatestMediaHandler
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channel", latestRecordings[x0].Channel);
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channelLogo", latestRecordings[x0].ChannelLogo);
 
-            if (i == 3)
+            if (i == Utils.LatestsMaxNum)
               break;
             i++;
           }
@@ -475,7 +475,7 @@ namespace LatestMediaHandler
 
             x++;
             i0++;
-            if (x == 10)
+            if (x == Utils.FacadeMaxNum)
               break;
           }
           Utils.UpdateFacade(ref facade, LastFocusedId);
@@ -570,10 +570,8 @@ namespace LatestMediaHandler
     {
       try
       {
-        GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(LatestTVAllRecordingsHandler.ControlID);
-        facade = gc as GUIFacadeControl;
-        if (facade != null && gw.GetFocusControlId() == LatestTVAllRecordingsHandler.ControlID && facade.SelectedListItem != null)
+        facade = Utils.GetLatestsFacade(LatestTVAllRecordingsHandler.ControlID);
+        if (facade != null && facade.Focus && facade.SelectedListItem != null)
         {
           int _id = facade.SelectedListItem.ItemId;
           String _image = facade.SelectedListItem.DVDLabel;

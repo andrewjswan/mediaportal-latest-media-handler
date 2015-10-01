@@ -1,7 +1,15 @@
-﻿// Type: LatestMediaHandler.LatestMediaHandlerHelper
-// Assembly: LatestMediaHandler, Version=3.1.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: 073E8D78-B6AE-4F86-BDE9-3E09A337833B
-// Assembly location: D:\Mes documents\Desktop\LatestMediaHandler.dll
+﻿//***********************************************************************
+// Assembly         : LatestMediaHandler
+// Author           : cul8er
+// Created          : 05-09-2010
+//
+// Last Modified By : ajs
+// Last Modified On : 30-09-2015
+// Description      : 
+//
+// Copyright        : Open Source software licensed under the GNU/GPL agreement.
+//***********************************************************************
+
 
 using System;
 using System.Diagnostics;

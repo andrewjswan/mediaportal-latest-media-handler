@@ -4,7 +4,7 @@
 // Created          : 05-09-2010
 //
 // Last Modified By : ajs
-// Last Modified On : 24-09-2015
+// Last Modified On : 30-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement. Thanks to MediaPortal that created many of the functions used here.
@@ -42,10 +42,14 @@ namespace LatestMediaHandler
     #region declarations
 
     private static Logger logger = LogManager.GetCurrentClassLogger();
-    private readonly object lockObject = new object();
-    private MusicDatabase m_db = null;
+    // private readonly object lockObject = new object();
     private bool isInitialized /* = false*/;
-    internal Hashtable latestMusicAlbums;
+    private MusicDatabase m_db = null;
+
+    private LatestsCollection latestMusicAlbums;
+    internal Hashtable latestMusicAlbumsFolders;
+    public Hashtable artistsWithImageMissing;
+
     private MediaPortal.Playlists.PlayListPlayer playlistPlayer;
     private ArrayList m_Shares = new ArrayList();
     private bool _run;
@@ -53,11 +57,12 @@ namespace LatestMediaHandler
     //private MusicDatabaseSettings setting;
     private bool _usetime;
     private bool _stripArtistPrefixes;
-    public Hashtable artistsWithImageMissing;
-    private GUIFacadeControl facade = null;
+
     private ArrayList al = new ArrayList();
     internal ArrayList images = new ArrayList();
     internal ArrayList imagesThumbs = new ArrayList();
+
+    private GUIFacadeControl facade = null;
     private int selectedFacadeItem1 = -1;
     private int selectedFacadeItem2 = -1;
     private int showFanart = 1;
@@ -75,6 +80,9 @@ namespace LatestMediaHandler
     public const string MusicTypeLatestAdded = "Latest Added Music";
     public const string MusicTypeMostPlayed = "Most Played Music";
     public const string MusicTypeLatestPlayed = "Latest Played Music";
+
+    public List<int> ControlIDFacades;
+    public List<int> ControlIDPlays;
 
     public int LastFocusedId
     {
@@ -134,6 +142,14 @@ namespace LatestMediaHandler
     {
       InitDB();
       artistsWithImageMissing = new Hashtable();
+
+      ControlIDFacades = new List<int>();
+      ControlIDPlays = new List<int>();
+      //
+      ControlIDFacades.Add(ControlID);
+      ControlIDPlays.Add(Play1ControlID);
+      ControlIDPlays.Add(Play2ControlID);
+      ControlIDPlays.Add(Play3ControlID);
     }
 
     internal bool IsInitialized
@@ -286,64 +302,43 @@ namespace LatestMediaHandler
 
     internal void GetLatestMediaInfo(bool _onStartUp)
     {
+      int sync = Interlocked.CompareExchange(ref Utils.SyncPointMusicUpdate, 1, 0);
+      if (sync != 0)
+        return ;
+
+      artistsWithImageMissing = new Hashtable();
+      if (!LatestMediaHandlerSetup.LatestMusic.Equals("True", StringComparison.CurrentCulture))
+      {
+        EmptyLatestMediaPropsMusic();
+        return;
+      }
+
+      //Music
       try
       {
-        int P = Utils.SyncPointMusicUpdate ;
-        int sync = Interlocked.CompareExchange(ref Utils.SyncPointMusicUpdate, 1, 0);
-        logger.Debug("GetLatestMediaInfo: Music sync ["+P+"-"+sync+"-"+Utils.SyncPointMusicUpdate+"]");
-        if (sync == 0)
+        LatestsCollection hTable = GetLatestMusic(_onStartUp, LatestMediaHandlerSetup.LatestMusicType);
+        EmptyLatestMediaPropsMusic();
+
+        if (hTable != null)
         {
-          artistsWithImageMissing = new Hashtable();
-          string windowId = GUIWindowManager.ActiveWindow.ToString();
-          logger.Debug("GetLatestMediaInfo: Music [" + LatestMediaHandlerSetup.LatestMusic + "] ID:" + windowId);
-          if (LatestMediaHandlerSetup.LatestMusic.Equals("True", StringComparison.CurrentCulture) &&
-              !(windowId.Equals("987656", StringComparison.CurrentCulture) || 
-                windowId.Equals("504", StringComparison.CurrentCulture) || 
-                windowId.Equals("501", StringComparison.CurrentCulture) ||
-                windowId.Equals("500", StringComparison.CurrentCulture)
-               )
-             )
+          int z = 1;
+          for (int i = 0; i < hTable.Count && i < Utils.LatestsMaxNum; i++)
           {
-            //Music
-            try
-            {
-              LatestMediaHandler.LatestsCollection hTable = GetLatestMusic(_onStartUp, LatestMediaHandlerSetup.LatestMusicType);
-              EmptyLatestMediaPropsMusic();
+            logger.Info("Updating Latest Media Info: Music: " + LatestMediaHandlerSetup.LatestMusicType + " Album " + z + ": " + hTable[i].Artist + " - " + hTable[i].Album + " [" + hTable[i].DateAdded + "/" + hTable[i].Summary +"]");
 
-              if (hTable != null)
-              {
-                int z = 1;
-                for (int i = 0; i < hTable.Count && i < 3; i++)
-                {
-                  logger.Info("Updating Latest Media Info: " + LatestMediaHandlerSetup.LatestMusicType + " Album " + z + ": " + hTable[i].Artist + " - " + hTable[i].Album + " [" + hTable[i].DateAdded + "]");
-
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".thumb", hTable[i].Thumb);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".artist", hTable[i].Artist);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".album", hTable[i].Album);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".dateAdded", hTable[i].DateAdded);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".fanart", hTable[i].Fanart);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".genre", hTable[i].Genre);
-                  LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".new", hTable[i].New);
-                  z++;
-                }
-                hTable.Clear();
-
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest.enabled", "true");
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest.hasnew", Utils.HasNewMusic ? "true" : "false");
-                logger.Debug("Updating Latest Media Info: Latest music has new: " + (Utils.HasNewMusic ? "true" : "false"));
-              }
-              hTable = null;
-            }
-            catch (Exception ex)
-            {
-              logger.Error("GetLatestMediaInfo (Music): " + ex.ToString());
-            }
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".thumb", hTable[i].Thumb);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".artist", hTable[i].Artist);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".album", hTable[i].Album);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".dateAdded", hTable[i].DateAdded);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".fanart", hTable[i].Fanart);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".genre", hTable[i].Genre);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".new", hTable[i].New);
+            z++;
           }
-          else
-          {
-            EmptyLatestMediaPropsMusic();
-          }
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.hasnew", Utils.HasNewMusic ? "true" : "false");
+          logger.Debug("Updating Latest Media Info: Music: Has new: " + (Utils.HasNewMusic ? "true" : "false"));
         }
+        // hTable = null;
       }
       catch (FileNotFoundException)
       {
@@ -357,6 +352,14 @@ namespace LatestMediaHandler
       {
         logger.Error("GetLatestMediaInfo (Music): " + ex.ToString());
       }
+      
+      if ((latestMusicAlbums != null) && (latestMusicAlbums.Count > 0))
+      {
+        InitFacade();
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest.enabled", "true");
+      }
+      else
+        EmptyLatestMediaPropsMusic();
       Utils.SyncPointMusicUpdate = 0;
     }
 
@@ -388,6 +391,7 @@ namespace LatestMediaHandler
         pItem.ItemId = 3;
         dlg.Add(pItem);
 
+        /*
         //Add filter menu item "Latest Added Music", "Most Played Music", "Latest Played Music"
         if (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeLatestAdded, StringComparison.CurrentCulture))
         {
@@ -406,6 +410,25 @@ namespace LatestMediaHandler
         }
         pItem.ItemId = 4;
         dlg.Add(pItem);
+        */
+        
+        // "Latest Added Music"
+        pItem = new GUIListItem();
+        pItem.Label = Translation.LatestAddedMusic + (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeLatestAdded, StringComparison.CurrentCulture) ? " [X]" : "");
+        pItem.ItemId = 4;
+        dlg.Add(pItem);
+
+        // "Latest Played Music"
+        pItem = new GUIListItem();
+        pItem.Label = Translation.LatestPlayedMusic + (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeLatestPlayed, StringComparison.CurrentCulture) ? " [X]" : "");
+        pItem.ItemId = 5;
+        dlg.Add(pItem);
+
+        // "Most Played Music"
+        pItem = new GUIListItem();
+        pItem.Label = Translation.MostPlayedMusic + (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeMostPlayed, StringComparison.CurrentCulture) ? " [X]" : "");
+        pItem.ItemId = 6;
+        dlg.Add(pItem);
 
         //Show Dialog
         dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -419,49 +442,28 @@ namespace LatestMediaHandler
         {
           case 1:
           {
-            GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            GUIControl gc = gw.GetControl(ControlID);
-            facade = gc as GUIFacadeControl;
-            if (facade != null)
-            {
-              PlayMusicAlbum(facade.SelectedListItem.ItemId);
-            }
+            PlayMusicAlbum(GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow));
             break;
           }
           case 2:
-          {
-            GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            GUIControl gc = gw.GetControl(ControlID);
-            facade = gc as GUIFacadeControl;
-            if (facade != null)
-            {
-              ShowArtistInfo(facade.SelectedListItem.Label, facade.SelectedListItem.Label2);
-            }
-            break;
-          }
           case 3:
           {
-            GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            GUIControl gc = gw.GetControl(ControlID);
-            facade = gc as GUIFacadeControl;
-            if (facade != null)
-            {
-              ShowAlbumInfo(GUIWindowManager.ActiveWindow, facade.SelectedListItem.Label, facade.SelectedListItem.Label2);
-                //, (facade.SelectedListItem.MusicTag as MusicTag).FileName, facade.SelectedListItem.MusicTag as MusicTag);
-            }
+            ShowInfo(dlg.SelectedId == 2);
             break;
           }
           case 4:
+          case 5:
+          case 6:
           {
-            if (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeLatestAdded, StringComparison.CurrentCulture))
+            if (dlg.SelectedId == 4)
             {
               LatestMediaHandlerSetup.LatestMusicType = MusicTypeMostPlayed;
             }
-            else if (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeMostPlayed, StringComparison.CurrentCulture))
+            else if (dlg.SelectedId == 5)
             {
               LatestMediaHandlerSetup.LatestMusicType = MusicTypeLatestPlayed;
             }
-            else if (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeLatestPlayed, StringComparison.CurrentCulture))
+            else if (dlg.SelectedId == 6)
             {
               LatestMediaHandlerSetup.LatestMusicType = MusicTypeLatestAdded;
             }
@@ -473,6 +475,46 @@ namespace LatestMediaHandler
       catch (Exception ex)
       {
         logger.Error("MyContextMenu: " + ex.ToString());
+      }
+    }
+
+    public void ShowInfo(bool artist = true)
+    {
+      try
+      {
+        GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+        int FocusControlID = fWindow.GetFocusControlId();
+
+        int idx = -1;
+        if (ControlIDPlays.Contains(FocusControlID))
+        {
+          idx = ControlIDPlays.IndexOf(FocusControlID);
+        }
+        //
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null && facade.Focus && facade.SelectedListItem != null)
+        {
+          idx = facade.SelectedListItem.ItemId-1;
+        }
+        //
+        if (idx > 0)
+        {
+          string Artist = latestMusicAlbums[idx].Artist;
+          string Album = latestMusicAlbums[idx].Album;
+
+          if (artist && !string.IsNullOrEmpty(Artist))
+          {
+            ShowArtistInfo(Artist, Album);
+          }
+          if (!artist && !string.IsNullOrEmpty(Artist) && !string.IsNullOrEmpty(Album))
+          {
+            ShowAlbumInfo(Artist, Album);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("ShowInfo: " + ex.ToString());
       }
     }
 
@@ -610,8 +652,7 @@ namespace LatestMediaHandler
 
       if (!errorEncountered)
       {
-        var pDlgAlbumInfo =
-          (MediaPortal.GUI.Music.GUIMusicInfo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_MUSIC_INFO);
+        var pDlgAlbumInfo = (MediaPortal.GUI.Music.GUIMusicInfo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_MUSIC_INFO);
         if (null != pDlgAlbumInfo)
         {
           pDlgAlbumInfo.Album = albumInfo;
@@ -646,7 +687,7 @@ namespace LatestMediaHandler
 
     protected virtual void ShowArtistInfo(string artistName, string albumName)
     {
-      Log.Debug("Looking up Artist: {0}", albumName);
+      Log.Debug("Looking up Artist: {0}", artistName);
 
       var dlgProgress = (GUIDialogProgress) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       var pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_OK);
@@ -768,9 +809,7 @@ namespace LatestMediaHandler
 
       if (!errorEncountered)
       {
-        var pDlgArtistInfo =
-          (MediaPortal.GUI.Music.GUIMusicArtistInfo)
-            GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_ARTIST_INFO);
+        var pDlgArtistInfo = (MediaPortal.GUI.Music.GUIMusicArtistInfo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_ARTIST_INFO);
         if (null != pDlgArtistInfo)
         {
           pDlgArtistInfo.Artist = artistInfo;
@@ -797,111 +836,27 @@ namespace LatestMediaHandler
       }
     }
 
-    internal bool GetAlbumInfo (string Artist, string Album, ref string Folders, ref string DateAdded, ref string Genres, ref bool IsNew)
-    {
-      bool result = false;
-
-      Folders   = string.Empty;
-      DateAdded = string.Empty;
-      Genres    = string.Empty;
-
-      if (string.IsNullOrEmpty(Artist) && string.IsNullOrEmpty(Album))
-        return result ;
-
-      try
-      {
-        Hashtable htFolders = new Hashtable();
-        Hashtable htGenres  = new Hashtable();
-        List<Song> songInfo = new List<Song>();
-        m_db.GetSongsByAlbumArtistAlbum(Artist, Album, ref songInfo);
-
-        string key = string.Empty;
-        foreach (Song mySong in songInfo)
-        {
-          // DateAdded
-          if (string.IsNullOrEmpty(DateAdded))
-          {
-            try
-            {
-              DateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", mySong.DateTimeModified);
-              IsNew = (mySong.DateTimeModified > Utils.NewDateTime);
-            }
-            catch 
-            { 
-              DateAdded = string.Empty;
-              IsNew = false;
-            }
-          }
-
-          // Folders
-          string sPath  = mySong.FileName.Trim();
-          
-          if (!string.IsNullOrEmpty(sPath))
-            sPath = Path.GetDirectoryName(sPath);
-
-          if (!string.IsNullOrEmpty(sPath))
-          {
-            key = sPath.ToLower();
-            if (!htFolders.Contains(key))
-            {
-              Folders = Folders + (string.IsNullOrEmpty(Folders) ? string.Empty : "|") + sPath;
-              htFolders.Add(key, key);
-            }
-          }
-
-          // Genres
-          if (!string.IsNullOrEmpty(mySong.Genre))
-          {
-            string[] sGenres = mySong.Genre.Split(Utils.PipesArray, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string sGenre in sGenres)
-            {
-              key = sGenre.ToLower();
-              if (!htGenres.Contains(key))
-              {
-                Genres = Genres + (string.IsNullOrEmpty(Genres) ? string.Empty : "|") + sGenre;
-                htGenres.Add(key, key);
-              }
-            }
-          }
-        }
-        if (htFolders != null)
-          htFolders.Clear();
-        htFolders = null;
-        if (htGenres != null)
-          htGenres.Clear();
-        htGenres = null;
-
-        result = true;
-      }
-      catch (Exception ex)
-      {
-        logger.Error("GetAlbumFolders: " + ex.ToString());
-      }
-      return result ;
-    }
-
     /// <summary>
     /// Returns last music track info added to MP music database.
     /// </summary>
     /// <returns>Hashtable containg artist names</returns>
-    internal LatestMediaHandler.LatestsCollection GetLatestMusic(bool _onStartUp, string type)
+    internal LatestsCollection GetLatestMusic(bool _onStartUp, string type)
     {
-      LatestsCollection result = new LatestsCollection();
+      latestMusicAlbums = new LatestsCollection();
+      latestMusicAlbumsFolders = new Hashtable();
+
       int x = 0;
       try
       {
-        GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(ControlID);
-        facade = gc as GUIFacadeControl;
+        // string sqlQuery = "SELECT DISTINCT strArtist, strAlbumArtist, strAlbum ...
+        // MySQL: GROUP_CONCAT(... SEPARATOR '|')
+        // string sqlQuery = @"SELECT strAlbumArtist, strAlbum, strFileType, (SELECT MAX(dateAdded) FROM tracks WHERE strAlbumArtist=T.strAlbumArtist AND strAlbum=T.strAlbum AND strFileType=T.strFileType) as dateAdded, GROUP_CONCAT(strGenre,'|') as strGenre, GROUP_CONCAT(RTRIM(strPath,REPLACE(strPath,'\','')),'|') as strPath FROM tracks T GROUP BY strAlbumArtist, strAlbum, strFileType ORDER BY {0} DESC LIMIT {1}";
+        string sqlQuery = "SELECT strAlbumArtist, strAlbum, strFileType, MAX(dateAdded) as dateAdded, ROUND(AVG(iTimesPlayed)) as iTimesPlayed, MAX(dateLastPlayed) as dateLastPlayed, "+
+                                 "GROUP_CONCAT(strGenre,'|') as strGenre, GROUP_CONCAT(strPath,'|') as strPath "+
+                          "FROM tracks "+
+                          "GROUP BY strAlbumArtist, strAlbum, strFileType "+
+                          "ORDER BY {0} DESC LIMIT {1}";
 
-        if (facade != null)
-          facade.Clear();
-        if (al != null)
-          al.Clear();
-
-        // sqlQuery = "select distinct strAlbumArtist, strAlbum, dateAdded, strGenre, strPath from tracks order by {0} desc limit 50;";
-        // string sqlQuery = "SELECT DISTINCT strArtist, strAlbumArtist, strAlbum FROM tracks ORDER BY {0} DESC LIMIT 10";
-        string sqlQuery = "SELECT DISTINCT strAlbumArtist, strAlbum FROM tracks ORDER BY {0} DESC LIMIT 10;";
         string sqlOrder = string.Empty;
         if (type.Equals(MusicTypeLatestAdded, StringComparison.CurrentCulture))
         {
@@ -909,7 +864,7 @@ namespace LatestMediaHandler
         }
         else if (type.Equals(MusicTypeMostPlayed, StringComparison.CurrentCulture))
         {
-          sqlOrder = "iTimesPlayed";
+          sqlOrder = "AVG(iTimesPlayed)";
         }
         else if (type.Equals(MusicTypeLatestPlayed, StringComparison.CurrentCulture))
         {
@@ -918,10 +873,9 @@ namespace LatestMediaHandler
         if (string.IsNullOrEmpty(sqlOrder))
           return null;
 
-        sqlQuery = string.Format(sqlQuery, sqlOrder);
+        sqlQuery = string.Format(sqlQuery, sqlOrder, Utils.FacadeMaxNum);
 
         string key = string.Empty;
-        latestMusicAlbums = new Hashtable();
         Hashtable ht = new Hashtable();
 
         List<Song> songInfo = new List<Song>();
@@ -934,14 +888,25 @@ namespace LatestMediaHandler
         {
           string artist    = mySong.AlbumArtist;
           string album     = mySong.Album;
-          string sPaths    = string.Empty;
+          string sPaths    = Utils.GetDistinct(mySong.FileName);
+          string sGenres   = Utils.GetDistinct(mySong.Genre);
+          string sFileType = mySong.FileType;
           string dateAdded = string.Empty;
-          string sGenres   = string.Empty;
           bool   isnew     = false;
 
-          if (GetAlbumInfo (artist, album, ref sPaths, ref dateAdded, ref sGenres, ref isnew)) { }
-          // logger.Debug("*** Artist: "+mySong.Artist.Trim()+"/"+mySong.AlbumArtist.Trim()+" Album: "+mySong.Album.Trim()+" Paths: "+sPaths);
+          try
+          {
+            dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", mySong.DateTimeModified);
+            isnew = ((mySong.DateTimeModified > Utils.NewDateTime) && (mySong.TimesPlayed <= 0));
+          }
+          catch 
+          { 
+            dateAdded = string.Empty;
+            isnew = false;
+          }
 
+          // logger.Debug ("*** GetLatestMusic: "+Utils.Check(isnew)+" AlbumArtist: "+artist+ " Album: "+album+" Date: "+dateAdded+"/"+mySong.DateTimePlayed+" sPath: "+sPaths.Length+" Genre:"+sGenres);
+          
           key = artist + "#" + ((string.IsNullOrEmpty(album)) ? " " : album);
           if (!ht.Contains(key))
           {
@@ -1005,25 +970,26 @@ namespace LatestMediaHandler
             if (thumb == null || thumb.Length < 1)
               thumb = "defaultAudioBig.png";
 
-            result.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, sPaths, 
-                                                     null, 
-                                                     sArtist, mySong.Album, sGenres.Replace("|", ","), 
-                                                     null, null, null, null, null, null, null, null, null, null, null, null,
-                                                     isnew));
+            latestMusicAlbums.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, sPaths, 
+                                                                null, 
+                                                                sArtist, mySong.Album, sGenres.Replace("|", ","), 
+                                                                null, null, 
+                                                                sFileType, 
+                                                                null, null, null, null, null, null, null, 
+                                                                mySong.DateTimePlayed.ToString(), 
+                                                                null,
+                                                                isnew));
+            latestMusicAlbumsFolders.Add(i0, sPaths);
             ht.Add(key, key);
-            latestMusicAlbums.Add(i0, sPaths);
-            AddToFilmstrip(result[x], i0);
             Utils.ThreadToSleep();
             //
             x++;
             i0++;
           }
 
-          if (x == 10)
+          if (x == Utils.FacadeMaxNum)
             break;
         }
-
-        Utils.UpdateFacade(ref facade, LastFocusedId);
 
         if (ht != null)
           ht.Clear();
@@ -1038,7 +1004,7 @@ namespace LatestMediaHandler
       {
         Utils.HasNewMusic = false;
 
-        string sqlQuery = "select distinct strAlbumArtist, strAlbum, dateAdded, strGenre, strPath from tracks order by dateAdded desc limit 1;";
+        string sqlQuery = "select distinct strAlbumArtist, strAlbum, dateAdded, iTimesPlayed, strGenre, strPath from tracks order by dateAdded desc limit 1;";
 
         List<Song> songInfo = new List<Song>();
         m_db.GetSongsByFilter(sqlQuery, out songInfo, "tracks");
@@ -1047,7 +1013,7 @@ namespace LatestMediaHandler
         {
           try
           {
-            if (mySong.DateTimeModified > Utils.NewDateTime)
+            if ((mySong.DateTimeModified > Utils.NewDateTime) && (mySong.TimesPlayed <= 0))
               Utils.HasNewMusic = true;
           }
           catch { }
@@ -1058,7 +1024,7 @@ namespace LatestMediaHandler
         logger.Error("GetLatestMusic (HasNew): " + ex.ToString());
       }
 
-      return result;
+      return latestMusicAlbums;
     }
 
     private void AddToFilmstrip(Latest latests, int x)
@@ -1066,12 +1032,12 @@ namespace LatestMediaHandler
       try
       {
         //Add to filmstrip
-        GUIListItem item = new GUIListItem();
         MusicTag mt = new MusicTag();
         mt.Album = latests.Album;
         mt.Artist = latests.Artist;
         mt.AlbumArtist = latests.Artist;
         mt.FileName = latests.Title;
+        mt.FileType = latests.Classification;
         try
         {
           mt.Duration = Int32.Parse(latests.Runtime);
@@ -1096,8 +1062,11 @@ namespace LatestMediaHandler
         {
           mt.Rating = 0;
         }
-        item.ItemId = x;
+
         Utils.LoadImage(latests.Thumb, ref imagesThumbs);
+
+        GUIListItem item = new GUIListItem();
+        item.ItemId = x;
         item.IconImage = latests.Thumb;
         item.IconImageBig = latests.Thumb;
         item.ThumbnailImage = latests.Thumb;
@@ -1113,19 +1082,75 @@ namespace LatestMediaHandler
         item.Rating = mt.Rating;
         //item.Path = latests.Summary;
         item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        if (facade != null)
-        {
-          facade.Add(item);
-        }
+
         al.Add(item);
-        if (x == 1)
-        {
-          UpdateSelectedProperties(item);
-        }
       }
       catch (Exception ex)
       {
         logger.Error("AddToFilmstrip: " + ex.ToString());
+      }
+    }
+
+    internal void LatestsToFilmStrip(LatestsCollection lTable)
+    {
+      if (lTable != null)
+      {
+        if (al != null)
+          al.Clear();
+
+        for (int i = 0; i < lTable.Count; i++)
+          AddToFilmstrip(lTable[i], i+1);
+      }
+    }
+
+    internal void InitFacade(bool OnActivate = false)
+    {
+      try
+      {
+        LatestsToFilmStrip(latestMusicAlbums);
+
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null)
+        {
+          Utils.ClearFacade(ref facade);
+          if (al != null)
+          {
+            int selected = ((LastFocusedId <= 0) || (LastFocusedId > al.Count)) ? 1 : LastFocusedId;
+            for (int i = 0; i < al.Count; i++)
+            {
+              GUIListItem _gc = al[i] as GUIListItem;
+              Utils.LoadImage(_gc.IconImage, ref imagesThumbs);
+              facade.Add(_gc);
+              if ((i+1) == selected)
+                UpdateSelectedProperties(_gc);
+            }
+          }
+          Utils.UpdateFacade(ref facade, LastFocusedId);
+          if (OnActivate)
+            facade.Visible = false;
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("InitFacade: " + ex.ToString());
+      }
+    }
+
+    internal void DeInitFacade()
+    {
+      try
+      {
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null)
+        {
+          facade.Clear();
+          Utils.UnLoadImage(ref images);
+          Utils.UnLoadImage(ref imagesThumbs);
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("DeInitFacade: " + ex.ToString());
       }
     }
 
@@ -1142,14 +1167,9 @@ namespace LatestMediaHandler
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.selected.genre", item.Path);
           selectedFacadeItem1 = item.ItemId;
 
-          GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          GUIControl gc = gw.GetControl(ControlID);
-          facade = gc as GUIFacadeControl;
-
+          facade = Utils.GetLatestsFacade(ControlID);
           if (facade != null)
-          {
             lastFocusedId = facade.SelectedListItemIndex;
-          }
         }
       }
       catch (Exception ex)
@@ -1162,10 +1182,8 @@ namespace LatestMediaHandler
     {
       try
       {
-        GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(ControlID);
-        facade = gc as GUIFacadeControl;
-        if (facade != null && gw.GetFocusControlId() == ControlID && facade.SelectedListItem != null)
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null && facade.Focus && facade.SelectedListItem != null)
         {
           int _id = facade.SelectedListItem.ItemId;
           String _image = facade.SelectedListItem.DVDLabel;
@@ -1336,25 +1354,23 @@ namespace LatestMediaHandler
     {
       try
       {
-        if (fWindow.GetFocusControlId() == Play1ControlID)
+        int FocusControlID = fWindow.GetFocusControlId();
+        if (ControlIDPlays.Contains(FocusControlID))
         {
-          PlayMusicAlbum(1);
+          PlayMusicAlbum(ControlIDPlays.IndexOf(FocusControlID)+1);
           return true;
         }
-        else if (fWindow.GetFocusControlId() == Play2ControlID)
+        //
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null && facade.Focus && facade.SelectedListItem != null)
         {
-          PlayMusicAlbum(2);
-          return true;
-        }
-        else if (fWindow.GetFocusControlId() == Play3ControlID)
-        {
-          PlayMusicAlbum(3);
+          PlayMusicAlbum(facade.SelectedListItem.ItemId);
           return true;
         }
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Unable to play album! " + ex.ToString());
+        logger.Error("Unable to play album! " + ex.ToString());
         return true;
       }
       return false;
@@ -1362,8 +1378,9 @@ namespace LatestMediaHandler
 
     internal void PlayMusicAlbum(int index)
     {
-      string _songFolder = latestMusicAlbums[index].ToString().Trim();
-
+      /*
+      string _songFolder = latestMusicAlbumsFolders[index].ToString().Trim();
+       
       // if (Directory.Exists(_songFolder))
       if (!string.IsNullOrEmpty(_songFolder))
       {
@@ -1374,16 +1391,12 @@ namespace LatestMediaHandler
       }
       else
         logger.Debug("PlayMusicAlbum: Folder for index [" + index + "] empty.");
-    }
-
-    private void StartPlayback()
-    {
-      // if we got a playlist start playing it
-      if (playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP).Count > 0)
+      */
+      string SongsFiles = latestMusicAlbumsFolders[index].ToString().Trim();
+      if (!string.IsNullOrEmpty(SongsFiles))
       {
-        playlistPlayer.CurrentPlaylistType = MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP;
-        playlistPlayer.Reset();
-        playlistPlayer.Play(0);
+        LoadSongsFromList (SongsFiles);
+        StartPlayback();
       }
     }
 
@@ -1455,11 +1468,59 @@ namespace LatestMediaHandler
             numSongs++;
           }
         }
-        logger.Debug("LoadSongsFromFolder: Folder: " + folder + " " + Utils.Check(includeSubFolders) + " - " + numSongs);
+        logger.Debug("LoadSongsFromFolder: Folder: " + folder + " Sub: " + Utils.Check(includeSubFolders) + " - " + numSongs);
       }
       catch //(Exception ex)
       {
         logger.Error("LoadSongsFromFolder: Error retrieving songs from folder.");
+      }
+    }
+
+    private void LoadSongsFromList(string SongsFiles)
+    {
+      // clear current playlist
+      playlistPlayer = MediaPortal.Playlists.PlayListPlayer.SingletonPlayer;
+      playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+      int numSongs = 0;
+      try
+      {
+        string[] sSongsFiles = SongsFiles.Split(Utils.PipesArray, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string sSongsFile in sSongsFiles)
+        {
+          MediaPortal.Playlists.PlayListItem item = new MediaPortal.Playlists.PlayListItem();
+          item.FileName = sSongsFile;
+          item.Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.Audio;
+          MusicTag tag = TagReader.ReadTag(sSongsFile);
+          if (tag != null)
+          {
+            tag.Artist = MediaPortal.Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
+            tag.AlbumArtist = MediaPortal.Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist, _stripArtistPrefixes);
+            tag.Genre = MediaPortal.Util.Utils.FormatMultiItemMusicStringTrim(tag.Genre, false);
+            tag.Composer = MediaPortal.Util.Utils.FormatMultiItemMusicStringTrim(tag.Composer, _stripArtistPrefixes);
+
+            item.Description = tag.Title;
+            item.MusicTag = tag;
+            item.Duration = tag.Duration;
+          }
+          playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP).Add(item);
+          numSongs++;
+        }
+        logger.Debug("LoadSongsFromList: Complete: " + numSongs);
+      }
+      catch (Exception ex)
+      {
+        logger.Error("LoadSongsFromList: " + ex.ToString());
+      }
+    }
+
+    private void StartPlayback()
+    {
+      // if we got a playlist start playing it
+      if (playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP).Count > 0)
+      {
+        playlistPlayer.CurrentPlaylistType = MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP;
+        playlistPlayer.Reset();
+        playlistPlayer.Play(0);
       }
     }
   }

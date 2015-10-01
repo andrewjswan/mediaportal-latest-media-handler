@@ -1,4 +1,16 @@
-﻿extern alias RealNLog;
+﻿//***********************************************************************
+// Assembly         : LatestMediaHandler
+// Author           : cul8er
+// Created          : 05-09-2010
+//
+// Last Modified By : ajs
+// Last Modified On : 30-09-2015
+// Description      : 
+//
+// Copyright        : Open Source software licensed under the GNU/GPL agreement.
+//***********************************************************************
+
+extern alias RealNLog;
 
 using System;
 

@@ -4,7 +4,7 @@
 // Created          : 05-09-2010
 //
 // Last Modified By : ajs
-// Last Modified On : 24-09-2015
+// Last Modified On : 30-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -46,35 +46,34 @@ namespace LatestMediaHandler
 
           Thread.CurrentThread.Name = "LatestReorgWorker";
           Utils.AllocateDelayStop("LatestReorgWorker-OnDoWork");
-          logger.Info("Database reorg is starting.");
+
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
+
           if (LatestMediaHandlerSetup.LatestMusic.Equals("True", StringComparison.CurrentCulture) &&
               LatestMediaHandlerSetup.RefreshDbMusic.Equals("True", StringComparison.CurrentCulture))
           {
             try
             {
-              //LatestMediaHandlerSetup.Lmh = new LatestMusicHandler();
-//                            lmh.InitDB();
+              logger.Info("Music Database reorganisation starting.");
               LatestMediaHandlerSetup.Lmh.DoScanMusicShares();
-              //lmh.GetLatestMediaInfo();
-              //lmh = null;
+              logger.Info("Music Database reorganisation is done.");
+              LatestMediaHandlerSetup.Lmh.GetLatestMediaInfo(LatestMediaHandlerSetup.Starting);
             }
             catch
-            {
-            }
+            {   }
           }
           if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture) &&
               LatestMediaHandlerSetup.RefreshDbPicture.Equals("True", StringComparison.CurrentCulture))
           {
             try
             {
-              //LatestMediaHandlerSetup.Lph = new LatestPictureHandler();
+              logger.Info("Picture Database reorganisation starting.");
               LatestMediaHandlerSetup.Lph.RebuildPictureDatabase();
+              logger.Info("Picture Database reorganisation is done.");
               LatestMediaHandlerSetup.Lph.GetLatestMediaInfo();
-              //lph = null;
             }
             catch
-            {
-            }
+            {   }
           }
         }
         catch (Exception ex)
@@ -84,9 +83,6 @@ namespace LatestMediaHandler
           logger.Error("OnDoWork: " + ex.ToString());
         }
       }
-      //Utils.ReleaseDelayStop("DirectoryWorker-OnDoWork");
-      //Utils.SyncPointDirectory = 0;
-      logger.Info("Database reorg is done.");
     }
 
     internal void OnRunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
@@ -97,6 +93,8 @@ namespace LatestMediaHandler
         LatestMediaHandlerSetup.ReorgTimer.Interval = (Int32.Parse(LatestMediaHandlerSetup.ReorgInterval)*60000);
         LatestMediaHandlerSetup.ReorgTimerTick = Environment.TickCount;
         Utils.SyncPointReorg = 0;
+
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
       }
       catch (Exception ex)
       {

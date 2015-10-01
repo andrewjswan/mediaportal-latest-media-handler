@@ -4,7 +4,7 @@
 // Created          : 05-09-2010
 //
 // Last Modified By : ajs
-// Last Modified On : 24-09-2015
+// Last Modified On : 30-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -21,12 +21,16 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Threading;
 using System.Timers;
+using System.Windows.Forms;
 
 using MediaPortal.Picture.Database;
 using MediaPortal.Util;
 using MediaPortal.Profile;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Pictures;
 using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.Player;
 
 namespace LatestMediaHandler
 {
@@ -38,13 +42,19 @@ namespace LatestMediaHandler
     #region declarations
 
     private static Logger logger = LogManager.GetCurrentClassLogger();
+
     private SQLiteClient dbClient;
     private bool noLargeThumbnails = true;
     private VirtualDirectory virtualDirectory = new VirtualDirectory();
     private GUIFacadeControl facade = null;
+
+    private LatestsCollection latestPictures;
+    internal Hashtable latestPicturesFiles;
+
     private ArrayList al = new ArrayList();
     internal ArrayList images = new ArrayList();
     internal ArrayList imagesThumbs = new ArrayList();
+
     private int selectedFacadeItem1 = -1;
     private int selectedFacadeItem2 = -1;
     private int showFanart = 1;
@@ -55,6 +65,12 @@ namespace LatestMediaHandler
     #endregion
 
     public const int ControlID = 919199710;
+    public const int Play1ControlID = 91919971;
+    public const int Play2ControlID = 91919972;
+    public const int Play3ControlID = 91919973;
+
+    public List<int> ControlIDFacades;
+    public List<int> ControlIDPlays;
 
     public int LastFocusedId
     {
@@ -108,6 +124,17 @@ namespace LatestMediaHandler
     {
       get { return facade; }
       set { facade = value; }
+    }
+
+    internal LatestPictureHandler()
+    {
+      ControlIDFacades = new List<int>();
+      ControlIDPlays = new List<int>();
+      //
+      ControlIDFacades.Add(ControlID);
+      ControlIDPlays.Add(Play1ControlID);
+      ControlIDPlays.Add(Play2ControlID);
+      ControlIDPlays.Add(Play3ControlID);
     }
 
     /// <summary>
@@ -231,6 +258,110 @@ namespace LatestMediaHandler
       }
     }
 
+    internal void MyContextMenu()
+    {
+      try
+      {
+        GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dlg == null) return;
+
+        dlg.Reset();
+        dlg.SetHeading(924);
+
+        //Play Menu Item
+        GUIListItem pItem = new GUIListItem();
+        pItem.Label = Translation.Play;
+        pItem.ItemId = 1;
+        dlg.Add(pItem);
+
+        //Show Dialog
+        dlg.DoModal(GUIWindowManager.ActiveWindow);
+
+        if (dlg.SelectedLabel < 0)
+        {
+          return;
+        }
+
+        switch (dlg.SelectedId)
+        {
+          case 1:
+          {
+            PlayPictures(GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow));
+            break;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("MyContextMenu: " + ex.ToString());
+      }
+    }
+
+    internal bool PlayPictures(GUIWindow fWindow)
+    {
+      try
+      {
+        /*
+        if (fWindow.GetFocusControlId() == Play1ControlID)
+        {
+          PlayPictures(1);
+          return true;
+        }
+        else if (fWindow.GetFocusControlId() == Play2ControlID)
+        {
+          PlayPictures(2);
+          return true;
+        }
+        else if (fWindow.GetFocusControlId() == Play3ControlID)
+        {
+          PlayPictures(3);
+          return true;
+        }
+        */
+        int FocusControlID = fWindow.GetFocusControlId();
+        if (ControlIDPlays.Contains(FocusControlID))
+        {
+          PlayPictures(ControlIDPlays.IndexOf(FocusControlID)+1);
+          return true;
+        }
+        //
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null && facade.Focus && facade.SelectedListItem != null)
+        {
+          PlayPictures(facade.SelectedListItem.ItemId);
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("Unable to play picture! " + ex.ToString());
+        return true;
+      }
+      return false;
+    }
+
+    internal void PlayPictures(int index)
+    {
+      // Stop video playback before starting show picture to avoid MP freezing
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.hasVideo || g_Player.IsTV || g_Player.IsVideo)
+        g_Player.Stop();
+
+      GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
+      if (SlideShow == null)
+        return;
+
+      // if (SlideShow._returnedFromVideoPlayback)
+      //  SlideShow._returnedFromVideoPlayback = false;
+
+      SlideShow.Reset();
+      SlideShow.Add(latestPicturesFiles[index].ToString());
+      if (SlideShow.Count > 0)
+      {
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
+        SlideShow.Select(latestPicturesFiles[index].ToString());
+      }
+    }
+
     private void CreateThumbsAndAddPictureToDB(string file)
     {
       int iRotate = PictureDatabase.GetRotation(file);
@@ -261,33 +392,23 @@ namespace LatestMediaHandler
     /// </summary>
     /// <param name="type">Type of data to fetch</param>
     /// <returns>Resultset of matching data</returns>
-    private LatestMediaHandler.LatestsCollection GetLatestPictures()
+    private LatestsCollection GetLatestPictures()
     {
-      LatestMediaHandler.LatestsCollection result = new LatestMediaHandler.LatestsCollection();
-      string sqlQuery = null;
+      latestPictures = new LatestsCollection();
+      latestPicturesFiles = new Hashtable();
+
       int x = 0;
-      //int i0 = 1;
       try
       {
-        GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(ControlID);
-        facade = gc as GUIFacadeControl;
-        if (facade != null)
-        {
-          facade.Clear();
-        }
-        if (al != null)
-        {
-          al.Clear();
-        }
         Utils.HasNewPictures = false;
 
-        sqlQuery = "select strFile, strDateTaken from picture where strFile not like '%kindgirls%' order by strDateTaken desc limit 10;";
+        string sqlQuery = "select strFile, strDateTaken from picture where strFile not like '%kindgirls%' order by strDateTaken desc limit "+Utils.FacadeMaxNum+";";
         SQLiteResultSet resultSet = dbClient.Execute(sqlQuery);
         if (resultSet != null)
         {
           if (resultSet.Rows.Count > 0)
           {
+            int i0 = 1;
             for (int i = 0; i < resultSet.Rows.Count; i++)
             {
               string tmpThumb = resultSet.GetField(i, 0);
@@ -296,9 +417,7 @@ namespace LatestMediaHandler
               {
                 thumb = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(tmpThumb));
                 if (!File.Exists(thumb))
-                {
                   thumb = tmpThumb;
-                }
               }
 
               string dateAdded = resultSet.GetField(i, 1);
@@ -319,34 +438,30 @@ namespace LatestMediaHandler
               {
                 if (File.Exists(thumb))
                 {
-                  result.Add(new LatestMediaHandler.Latest(dateAdded, thumb, tmpThumb, title, 
+                  latestPictures.Add(new LatestMediaHandler.Latest(dateAdded, thumb, tmpThumb, title, 
                                                            null, null, null, null, null, null, 
                                                            null, null, null, null, null, null, 
                                                            null, null, null, null,
                                                            isnew));
-                  //                   if (facade != null)
-                  //                 {
-                  AddToFilmstrip(result[x], i);
-                  //               }
+                  latestPicturesFiles.Add(i0, tmpThumb);
                   Utils.ThreadToSleep();
+
                   x++;
+                  i0++;
                 }
               }
-              if (x == 10)
-              {
+              if (x == Utils.FacadeMaxNum)
                 break;
-              }
             }
           }
         }
-        Utils.UpdateFacade(ref facade, LastFocusedId);
         resultSet = null;
       }
-      catch //(Exception ex)
+      catch (Exception ex)
       {
-        //logger.Error("getData: " + ex.ToString());
+        logger.Error("GetLatestPictures: " + ex.ToString());
       }
-      return result;
+      return latestPictures;
     }
 
     private void AddToFilmstrip(Latest latests, int x)
@@ -354,9 +469,10 @@ namespace LatestMediaHandler
       try
       {
         //Add to filmstrip
+        Utils.LoadImage(latests.Thumb, ref imagesThumbs);
+
         GUIListItem item = new GUIListItem();
         item.ItemId = x;
-        Utils.LoadImage(latests.Thumb, ref imagesThumbs);
         item.IconImage = latests.Thumb;
         item.IconImageBig = latests.Thumb;
         item.ThumbnailImage = latests.Thumb;
@@ -365,19 +481,75 @@ namespace LatestMediaHandler
         item.IsFolder = false;
         item.DVDLabel = latests.Fanart;
         item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        if (facade != null)
-        {
-          facade.Add(item);
-        }
+
         al.Add(item);
-        if (x == 1)
-        {
-          UpdateSelectedProperties(item);
-        }
       }
       catch (Exception ex)
       {
         logger.Error("AddToFilmstrip: " + ex.ToString());
+      }
+    }
+
+    internal void LatestsToFilmStrip(LatestsCollection lTable)
+    {
+      if (lTable != null)
+      {
+        if (al != null)
+          al.Clear();
+
+        for (int i = 0; i < lTable.Count; i++)
+          AddToFilmstrip(lTable[i], i+1);
+      }
+    }
+
+    internal void InitFacade(bool OnActivate = false)
+    {
+      try
+      {
+        LatestsToFilmStrip(latestPictures);
+
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null)
+        {
+          Utils.ClearFacade(ref facade);
+          if (al != null)
+          {
+            int selected = ((LastFocusedId <= 0) || (LastFocusedId > al.Count)) ? 1 : LastFocusedId;
+            for (int i = 0; i < al.Count; i++)
+            {
+              GUIListItem _gc = al[i] as GUIListItem;
+              Utils.LoadImage(_gc.IconImage, ref imagesThumbs);
+              facade.Add(_gc);
+              if ((i+1) == selected)
+                UpdateSelectedProperties(_gc);
+            }
+          }
+          Utils.UpdateFacade(ref facade, LastFocusedId);
+          if (OnActivate)
+            facade.Visible = false;
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("InitFacade: " + ex.ToString());
+      }
+    }
+
+    internal void DeInitFacade()
+    {
+      try
+      {
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null)
+        {
+          facade.Clear();
+          Utils.UnLoadImage(ref images);
+          Utils.UnLoadImage(ref imagesThumbs);
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("DeInitFacade: " + ex.ToString());
       }
     }
 
@@ -393,13 +565,9 @@ namespace LatestMediaHandler
           LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.filename", item.Label);
           selectedFacadeItem1 = item.ItemId;
 
-          GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          GUIControl gc = gw.GetControl(ControlID);
-          facade = gc as GUIFacadeControl;
+          facade = Utils.GetLatestsFacade(ControlID);
           if (facade != null)
-          {
             lastFocusedId = facade.SelectedListItemIndex;
-          }
         }
       }
       catch (Exception ex)
@@ -412,10 +580,8 @@ namespace LatestMediaHandler
     {
       try
       {
-        GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(ControlID);
-        facade = gc as GUIFacadeControl;
-        if (facade != null && gw.GetFocusControlId() == ControlID && facade.SelectedListItem != null)
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null && facade.Focus && facade.SelectedListItem != null)
         {
           int _id = facade.SelectedListItem.ItemId;
           String _image = facade.SelectedListItem.DVDLabel;
@@ -618,62 +784,65 @@ namespace LatestMediaHandler
       if (sync != 0)
         return;
 
-      string windowId = GUIWindowManager.ActiveWindow.ToString();
-
-      if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture) && !(windowId.Equals("2", StringComparison.CurrentCulture)))
-      {
-        try
-        {
-          //Pictures            
-          EmptyLatestMediaPropsPictures();
-          if (InitDB("PictureDatabase.db3"))
-          {
-            LatestMediaHandler.LatestsCollection ht = GetLatestPictures();
-            if (ht != null)
-            {
-              int z = 1;
-              for (int i = 0; i < ht.Count && i < 3; i++)
-              {
-                logger.Info("Updating Latest Media Info: Latest picture " + z + ": " + ht[i].Thumb);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", ht[i].Title);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", ht[i].Thumb);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", ht[i].Thumb);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", ht[i].DateAdded);
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".new", ht[i].New);
-                z++;
-              }
-              ht.Clear();
-
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.hasnew", Utils.HasNewPictures ? "true" : "false");
-              logger.Debug("Updating Latest Media Info: Latest Pictures has new: " + (Utils.HasNewPictures ? "true" : "false"));
-            }
-            ht = null;
-          }
-          try
-          {
-            Close();
-          }
-          catch
-          {   }
-        }
-        catch (FileNotFoundException)
-        {
-          //do nothing    
-        }
-        catch (MissingMethodException)
-        {
-          //do nothing    
-        }
-        catch (Exception ex)
-        {
-          logger.Error("GetLatestMediaInfo (Pictures): " + ex.ToString());
-        }
-      }
-      else
+      if (!LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture))
       {
         EmptyLatestMediaPropsPictures();
+        return;
       }
+
+      //Pictures            
+      try
+      {
+        if (InitDB("PictureDatabase.db3"))
+        {
+          LatestsCollection ht = GetLatestPictures();
+          EmptyLatestMediaPropsPictures();
+          if (ht != null)
+          {
+            int z = 1;
+            for (int i = 0; i < ht.Count && i < Utils.LatestsMaxNum; i++)
+            {
+              logger.Info("Updating Latest Media Info: Pictures: Picture " + z + ": " + ht[i].Thumb);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", ht[i].Title);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", ht[i].Thumb);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", ht[i].Thumb);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", ht[i].DateAdded);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".new", ht[i].New);
+              z++;
+            }
+            // ht.Clear();
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.hasnew", Utils.HasNewPictures ? "true" : "false");
+            logger.Debug("Updating Latest Media Info: Pictures: Has new: " + (Utils.HasNewPictures ? "true" : "false"));
+          }
+          // ht = null;
+        }
+        try
+        {
+          Close();
+        }
+        catch
+        {   }
+      }
+      catch (FileNotFoundException)
+      {
+        //do nothing    
+      }
+      catch (MissingMethodException)
+      {
+        //do nothing    
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetLatestMediaInfo (Pictures): " + ex.ToString());
+      }
+
+      if ((latestPictures != null) && (latestPictures.Count > 0))
+      {
+        InitFacade();
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "true");
+      }
+      else
+        EmptyLatestMediaPropsPictures();
       Utils.SyncPointPicturesUpdate=0;
     }
   }

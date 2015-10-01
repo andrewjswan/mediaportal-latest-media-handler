@@ -4,7 +4,7 @@
 // Created          : 05-09-2010
 //
 // Last Modified By : ajs
-// Last Modified On : 24-09-2015
+// Last Modified On : 30-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -80,7 +80,7 @@ namespace LatestMediaHandler
 
     public static DateTime NewDateTime { get; set; }
 
-    public static string[] PipesArray ;
+    public static string[] PipesArray;
 
     // SyncPoint
     internal static int SyncPointReorg;
@@ -96,6 +96,9 @@ namespace LatestMediaHandler
     internal static int SyncPointMvCMusicUpdate;
     //
     public const int ThreadSleep = 0;
+    //
+    public const int FacadeMaxNum = 10;
+    public const int LatestsMaxNum = 3;
 
     internal static DateTime LastRefreshRecording
     {
@@ -120,11 +123,15 @@ namespace LatestMediaHandler
     /// <summary>
     /// Return value.
     /// </summary>
-
     internal static Hashtable DelayStop
     {
       get { return Utils.delayStop; }
       set { Utils.delayStop = value; }
+    }
+
+    internal static int DelayStopCount
+    {
+      get { return Utils.delayStop.Count; }
     }
 
     internal static string RemoveLeadingZeros(string s)
@@ -152,7 +159,7 @@ namespace LatestMediaHandler
 
     internal static bool GetDelayStop()
     {
-      if (DelayStop.Count == 0)
+      if (DelayStop.Count <= 0)
         return false;
 
       int i = 0;
@@ -172,6 +179,84 @@ namespace LatestMediaHandler
         if ((int)DelayStop[key] <= 0)
           DelayStop.Remove(key);
       }
+    }
+
+    internal static string GetDistinct (string Input)
+    {
+      string result = string.Empty;
+
+      Input  = Input.Trim();
+      if (string.IsNullOrEmpty(Input))
+        return result ;
+
+      Input = Input.Replace(",", "|");
+      Hashtable ht = new Hashtable();
+      try
+      {
+        string key = string.Empty;
+        string[] sInputs = Input.Split(Utils.PipesArray, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string sInput in sInputs)
+        {
+          key = sInput.ToLower().Trim();
+          if (!ht.Contains(key))
+          {
+            result = result + (string.IsNullOrEmpty(result) ? string.Empty : "|") + sInput.Trim();
+            ht.Add(key, key);
+          }
+        }
+        if (ht != null)
+          ht.Clear();
+        ht = null;
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetDistinct: " + ex.ToString());
+      }
+      return result ;
+    }
+
+    internal static string GetFirstDistinctDate (string Input)
+    {
+      bool Dummy = false;
+      return GetFirstDistinctDate (Input, ref Dummy);
+    }
+
+    internal static string GetFirstDistinctDate (string Input, ref bool IsNew)
+    {
+      string result = string.Empty;
+
+      Input  = Input.Trim();
+      if (string.IsNullOrEmpty(Input))
+        return result ;
+
+      Input = Input.Replace(",", "|");
+      try
+      {
+        string[] sInputs = Input.Split(Utils.PipesArray, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string sInput in sInputs)
+        {
+          if (string.IsNullOrEmpty(result))
+          {
+            try
+            {
+              DateTime dTmp = DateTime.Parse(Input);
+              IsNew = (dTmp > Utils.NewDateTime);
+              result = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", dTmp);
+              return result;
+            }
+            catch 
+            { 
+              result = string.Empty;
+              IsNew = false;
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetFirstDistinctDate: " + ex.ToString());
+      }
+      return result ;
     }
 
     /// <summary>
@@ -241,11 +326,13 @@ namespace LatestMediaHandler
           {
             logger.Error("LoadImage (" + filename + "): " + ex.ToString());
           }
-
         }
       }
     }
 
+    /// <summary>
+    /// UnLoad image (free memory)
+    /// </summary>
     internal static void UNLoadImage(string name)
     {
       try
@@ -316,7 +403,6 @@ namespace LatestMediaHandler
       }
       return key;
     }
-
 
     internal static void LoadImage(string name, ref ArrayList Images)
     {
@@ -400,6 +486,70 @@ namespace LatestMediaHandler
       {
         logger.Error("UnLoadImage: " + ex.ToString());
       }
+    }
+
+    /*
+    internal static void HandleOldImages(ref ArrayList al)
+    {
+      try
+      {
+        if (al != null && al.Count > 1)
+        {
+          int i = 0;
+          while (i < (al.Count - 1))
+          {
+            //unload old image to free MP resource
+            UNLoadImage(al[i].ToString());
+
+            //remove old no longer used image
+            al.RemoveAt(i);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("HandleOldImages: " + ex.ToString());
+      }
+    }
+
+    internal static void EmptyAllImages(ref ArrayList al)
+    {
+      try
+      {
+        if (al != null)
+        {
+          foreach (Object obj in al)
+          {
+            //unload old image to free MP resource
+            if (obj != null)
+            {
+              UNLoadImage(obj.ToString());
+            }
+          }
+
+          //remove old no longer used image
+          al.Clear();
+        }
+      }
+      catch (Exception ex)
+      {
+        //do nothing
+        logger.Error("EmptyAllImages: " + ex.ToString());
+      }
+    }
+    */
+
+    internal static GUIFacadeControl GetLatestsFacade(int ControlID)
+    {
+      GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+      GUIControl gc = gw.GetControl(ControlID);
+      return gc as GUIFacadeControl;
+    }
+
+    internal static void ClearFacade(ref GUIFacadeControl facade)
+    {
+      if (facade != null)
+        facade.Clear();
     }
 
     internal static void UpdateFacade(ref GUIFacadeControl facade, int LastFocusedId = -1000)

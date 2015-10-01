@@ -4,7 +4,7 @@
 // Created          : 05-09-2010
 //
 // Last Modified By : ajs
-// Last Modified On : 24-09-2015
+// Last Modified On : 30-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -42,23 +42,30 @@ namespace LatestMediaHandler
     #region declarations
 
     private Logger logger = LogManager.GetCurrentClassLogger();
+
     private bool _isGetTypeRunningOnThisThread /* = false*/;
+
     private VideoHandler episodePlayer = null;
-    private Hashtable latestTVSeries;
-    private int tVSeriesCount = 0;
     private GUIFacadeControl facade = null;
-    private LatestMediaHandler.LatestsCollection result = null;
+
+    private int tVSeriesCount = 0;
+    private LatestsCollection latestTVSeries = null;
+    private Hashtable latestTVSeriesEpisodes;
+
     private ArrayList al = new ArrayList();
     internal ArrayList images = new ArrayList();
     internal ArrayList imagesThumbs = new ArrayList();
     //internal ArrayList thumbs = new ArrayList();
+
     private int selectedFacadeItem1 = -1;
     private int selectedFacadeItem2 = -1;
     private int showFanart = 1;
     private bool needCleanup = false;
     private int needCleanupCount = 0;
-    private Types currentType = Types.Latest;
     private int lastFocusedId = 0;
+
+    private Types currentType = Types.Latest;
+    private ResultTypes resultType = ResultTypes.Episodes;
 
     #endregion
 
@@ -66,6 +73,9 @@ namespace LatestMediaHandler
     public const int Play1ControlID = 91919994;
     public const int Play2ControlID = 91919995;
     public const int Play3ControlID = 91919996;
+
+    public List<int> ControlIDFacades;
+    public List<int> ControlIDPlays;
 
     internal Types CurrentType
     {
@@ -83,6 +93,13 @@ namespace LatestMediaHandler
     {
       Latest,
       Watched
+    }
+
+    internal enum ResultTypes
+    {
+      Episodes,
+      Seasons,
+      Series
     }
 
     public int NeedCleanupCount
@@ -139,20 +156,24 @@ namespace LatestMediaHandler
       set { facade = value; }
     }
 
-    public LatestTVSeriesHandler()
-    {
-      currentType = Types.Latest;
-    }
-
     private bool IsGetTypeRunningOnThisThread
     {
       get { return _isGetTypeRunningOnThisThread; }
       set { _isGetTypeRunningOnThisThread = value; }
     }
 
-    internal void tt()
+    public LatestTVSeriesHandler()
     {
+      currentType = Types.Latest;
+      resultType = ResultTypes.Episodes;
 
+      ControlIDFacades = new List<int>();
+      ControlIDPlays = new List<int>();
+      //
+      ControlIDFacades.Add(ControlID);
+      ControlIDPlays.Add(Play1ControlID);
+      ControlIDPlays.Add(Play2ControlID);
+      ControlIDPlays.Add(Play3ControlID);
     }
 
     internal void MyContextMenu()
@@ -213,27 +234,12 @@ namespace LatestMediaHandler
         {
           case 1:
           {
-            GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            GUIControl gc = gw.GetControl(ControlID);
-            facade = gc as GUIFacadeControl;
-            if (facade != null)
-            {
-              PlayTVSeries(facade.SelectedListItem.ItemId);
-            }
+            PlayTVSeries(GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow));
             break;
           }
           case 2:
           {
-            GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            GUIControl gc = gw.GetControl(ControlID);
-            facade = gc as GUIFacadeControl;
-            if (facade != null)
-            {
-              string sHyp = "seriesid:" + result[(facade.SelectedListItemIndex)].SeriesIndex + 
-                            "|seasonidx:" + Utils.RemoveLeadingZeros(result[(facade.SelectedListItemIndex)].SeasonIndex) +
-                            "|episodeidx:" + Utils.RemoveLeadingZeros(result[(facade.SelectedListItemIndex)].EpisodeIndex);
-              GUIWindowManager.ActivateWindow(9811, sHyp, false);
-            }
+            ShowInfo();
             break;
           }
           case 3:
@@ -256,6 +262,39 @@ namespace LatestMediaHandler
       }
     }
 
+    private void ShowInfo()
+    {
+      try
+      {
+        GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+        int FocusControlID = fWindow.GetFocusControlId();
+
+        int idx = -1 ;
+        if (ControlIDPlays.Contains(FocusControlID))
+        {
+          idx = ControlIDPlays.IndexOf(FocusControlID);
+        }
+        //
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null && facade.Focus && facade.SelectedListItem != null)
+        {
+          idx = facade.SelectedListItem.ItemId-1;
+        }
+        //
+        if (idx > 0)
+        {
+          string sHyp = "seriesid:" + latestTVSeries[idx].SeriesIndex + 
+                        ((resultType == ResultTypes.Seasons || resultType == ResultTypes.Episodes) ? "|seasonidx:" + Utils.RemoveLeadingZeros(latestTVSeries[idx].SeasonIndex) : "") +
+                        ((resultType == ResultTypes.Episodes) ? "|episodeidx:" + Utils.RemoveLeadingZeros(latestTVSeries[idx].EpisodeIndex) : "");
+          GUIWindowManager.ActivateWindow(9811, sHyp, false);
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("ShowInfo: " + ex.ToString());
+      }
+    }
+
     /// <summary>
     /// Returns latest added tvseries thumbs from TVSeries db.
     /// </summary>
@@ -263,41 +302,27 @@ namespace LatestMediaHandler
     /// <returns>Resultset of matching data</returns>
     private LatestsCollection GetLatestTVSeries(Types type, bool onlyNew)
     {
-      LatestMediaHandler.LatestsCollection resultTmp = new LatestMediaHandler.LatestsCollection();
+      latestTVSeries = new LatestsCollection();
+      latestTVSeriesEpisodes = new Hashtable();
+
       try
       {
-        GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(ControlID);
-        facade = gc as GUIFacadeControl;
-        ArrayList alTmp = new ArrayList();
-        /*if (facade != null)
-                {
-                    facade.Clear();
-                }
-                if (al != null)
-                {
-                    al.Clear();
-                }*/
-        latestTVSeries = new Hashtable();
         int i0 = 1;
-        int x0 = 0;
+        int x = 0;
 
         List<DBEpisode> episodes = null;
         if (type == Types.Latest)
         {
-          Utils.HasNewTVSeries = false ;
-          episodes = DBEpisode.GetMostRecent(MostRecentType.Created, 300, 30, onlyNew);
+          episodes = DBEpisode.GetMostRecent(MostRecentType.Created, 300, 3*Utils.FacadeMaxNum, onlyNew);
         }
         else
         {
-          episodes = DBEpisode.GetNextWatchingEpisodes(10);
+          episodes = DBEpisode.GetNextWatchingEpisodes(Utils.FacadeMaxNum);
         }
 
+        Utils.HasNewTVSeries = false ;
         if (episodes != null)
         {
-          //if (episodes.Count > 3) episodes.RemoveRange(3, episodes.Count - 3);
-          //episodes.Reverse();
-
           foreach (DBEpisode episode in episodes)
           {
             DBSeries series = Helper.getCorrespondingSeries(episode[DBEpisode.cSeriesID]);
@@ -312,17 +337,12 @@ namespace LatestMediaHandler
                 string seasonIdx = episode[DBEpisode.cSeasonIndex];
                 string episodeIdx = episode[DBEpisode.cEpisodeIndex];
                 if (seasonIdx != null)
-                {
                   seasonIdx = seasonIdx.PadLeft(2, '0');
-                }
                 if (episodeIdx != null)
-                {
                   episodeIdx = episodeIdx.PadLeft(2, '0');
-                }
                 string seriesTitle = series.ToString();
                 string thumb = episode.Image.Trim(); // ImageAllocator.GetEpisodeImage(episode);
-                string thumbSeries = ImageAllocator.GetSeriesPosterAsFilename(series).Trim();
-                  //ImageAllocator.GetSeriesPoster(series,false);
+                string thumbSeries = ImageAllocator.GetSeriesPosterAsFilename(series).Trim(); //ImageAllocator.GetSeriesPoster(series,false);
                 string fanart = Fanart.getFanart(episode[DBEpisode.cSeriesID]).FanartFilename;
                 string dateAdded = episode[DBEpisode.cFileDateAdded];
                 bool isnew = false;
@@ -331,7 +351,7 @@ namespace LatestMediaHandler
                   DateTime dTmp = DateTime.Parse(dateAdded);
                   dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", dTmp);
 
-                  isnew = (dTmp > Utils.NewDateTime);
+                  isnew = ((dTmp > Utils.NewDateTime) && (string.IsNullOrEmpty(episode[DBEpisode.cDateWatched])));
                   if (isnew)
                     Utils.HasNewTVSeries = true;
                 }
@@ -364,56 +384,27 @@ namespace LatestMediaHandler
                   {   }
                 }
                 if (thumb == null || thumb.Length < 1)
-                {
                   thumb = "DefaultFolderBig.png";
-                }
 
-                resultTmp.Add(new LatestMediaHandler.Latest(dateAdded, thumb, fanart, seriesTitle, episodeTitle, null,
+                latestTVSeries.Add(new LatestMediaHandler.Latest(dateAdded, thumb, fanart, seriesTitle, episodeTitle, null,
                                                             null, seriesGenre, episodeRating, mathRoundToString, contentRating, episodeRuntime, episodeFirstAired,
                                                             seasonIdx, episodeIdx, thumbSeries, 
                                                             null, null, 
                                                             episodeSummary, seriesIdx, isnew));
-                if (result == null || result.Count == 0)
-                {
-                  result = resultTmp;
-                }
-                latestTVSeries.Add(i0, episode);
-                /*if (x0 < 3)
-                                {                                
-                                
-                                }*/
-                //if (facade != null)
-                //{
-                AddToFilmstrip(resultTmp[x0], i0, ref alTmp);
-                //}
+                latestTVSeriesEpisodes.Add(i0, episode);
                 Utils.ThreadToSleep();
-                x0++;
+
                 i0++;
+                x++;
+                if (x == Utils.FacadeMaxNum)
+                  break;
               }
             }
             series = null;
           }
 
-          if (al != null)
-          {
-            al.Clear();
-          }
-          if (facade != null)
-          {
-            facade.Clear();
-
-            foreach (GUIListItem item in alTmp)
-            {
-              facade.Add(item);
-            }
-          }
-          al = alTmp;
-          Utils.UpdateFacade(ref facade, LastFocusedId);
-
           if (episodes != null)
-          {
             episodes.Clear();
-          }
           episodes = null;
         }
       }
@@ -429,16 +420,103 @@ namespace LatestMediaHandler
       {
         logger.Error("GetLatestTVSeries: " + ex.ToString());
       }
-      result = resultTmp;
-      return result;
+      return latestTVSeries;
     }
 
-    private void AddToFilmstrip(Latest latests, int x, ref ArrayList alTmp)
+    internal void EmptyLatestMediaPropsTVSeries()
+    {
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.label", Translation.LabelLatestAdded);
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest.enabled", "false");
+      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.hasnew", "false");
+      for (int z = 1; z < 4; z++)
+      {
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".thumb", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieThumb", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".fanart", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieName", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".seasonIndex", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".episodeName", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".episodeIndex", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".dateAdded", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".genre", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".rating", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".roundedRating", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".classification", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".runtime", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".firstAired", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plot", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".new", "false");
+      }
+    }
+
+    internal void TVSeriesUpdateLatest(Types type, bool onlyNew)
+    {
+      int sync = Interlocked.CompareExchange(ref Utils.SyncPointTVSeriesUpdate, 1, 0);
+      if (sync != 0)
+        return;
+
+      if (!LatestMediaHandlerSetup.LatestTVSeries.Equals("True", StringComparison.CurrentCulture))
+      {
+        EmptyLatestMediaPropsTVSeries();
+        return;
+      }
+
+      // TV Series
+      try
+      {
+        LatestsCollection hTable = GetLatestTVSeries(type, onlyNew);
+        EmptyLatestMediaPropsTVSeries();
+        if (hTable != null)
+        {
+          int z = 1;
+          for (int i = 0; i < hTable.Count && i < Utils.LatestsMaxNum; i++)
+          {
+            logger.Info("Updating Latest Media Info: TVSeries: Episode " + z + ": " + hTable[i].Title + " - " + hTable[i].Subtitle);
+
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".thumb", hTable[i].Thumb);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieThumb", hTable[i].ThumbSeries); //  _al.Add(hTable[i].Fanart);                                                
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".fanart", hTable[i].Fanart);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieName", hTable[i].Title);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".seasonIndex", hTable[i].SeasonIndex);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".episodeName", hTable[i].Subtitle);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".episodeIndex", hTable[i].EpisodeIndex);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".dateAdded", hTable[i].DateAdded);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".genre", hTable[i].Genre);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".rating", hTable[i].Rating);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".roundedRating", hTable[i].RoundedRating);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".classification", hTable[i].Classification);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".runtime", hTable[i].Runtime);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".firstAired", hTable[i].Year);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plot", hTable[i].Summary);
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".new", hTable[i].New);
+            z++;
+          }
+          // hTable.Clear();
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.hasnew", Utils.HasNewTVSeries ? "true" : "false");
+          logger.Debug("Updating Latest Media Info: TVSeries: Has new: " + (Utils.HasNewTVSeries ? "true" : "false"));
+        }
+        // hTable = null;
+      }
+      catch (Exception ex)
+      {
+        logger.Error("TVSeriesUpdateLatest: " + ex.ToString());
+      }
+
+      if ((latestTVSeries != null) && (latestTVSeries.Count > 0))
+      {
+        InitFacade();
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest.enabled", "true");
+      }
+      else
+        EmptyLatestMediaPropsTVSeries();
+      Utils.SyncPointTVSeriesUpdate=0;
+    }
+
+    private void AddToFilmstrip(Latest latests, int x)
     {
       try
       {
         //Add to filmstrip
-        GUIListItem item = new GUIListItem();
         IMDBMovie movie = new IMDBMovie();
         movie.Title = latests.Title;
         movie.File = "";
@@ -468,8 +546,11 @@ namespace LatestMediaHandler
           movie.Rating = 0;
         }
         movie.Watched = 0;
-        item.ItemId = x;
+
         Utils.LoadImage(latests.ThumbSeries, ref imagesThumbs);
+
+        GUIListItem item = new GUIListItem();
+        item.ItemId = x;
         item.IconImage = latests.ThumbSeries;
         item.IconImageBig = latests.ThumbSeries;
         item.ThumbnailImage = latests.ThumbSeries;
@@ -485,20 +566,75 @@ namespace LatestMediaHandler
         item.Path = latests.Summary;
         item.IsPlayed = movie.Watched > 0 ? true : false;
         item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        /*if (facade != null)
-                {
-                    facade.Add(item);
-                }
-                al.Add(item);            */
-        alTmp.Add(item);
-        if (x == 1)
-        {
-          UpdateSelectedProperties(item);
-        }
+
+        al.Add(item);
       }
       catch (Exception ex)
       {
         logger.Error("AddToFilmstrip: " + ex.ToString());
+      }
+    }
+
+    internal void LatestsToFilmStrip(LatestsCollection lTable)
+    {
+      if (lTable != null)
+      {
+        if (al != null)
+          al.Clear();
+
+        for (int i = 0; i < lTable.Count; i++)
+          AddToFilmstrip(lTable[i], i+1);
+      }
+    }
+
+    internal void InitFacade(bool OnActivate = false)
+    {
+      try
+      {
+        LatestsToFilmStrip(latestTVSeries);
+
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null)
+        {
+          Utils.ClearFacade(ref facade);
+          if (al != null)
+          {
+            int selected = ((LastFocusedId <= 0) || (LastFocusedId > al.Count)) ? 1 : LastFocusedId;
+            for (int i = 0; i < al.Count; i++)
+            {
+              GUIListItem _gc = al[i] as GUIListItem;
+              Utils.LoadImage(_gc.IconImage, ref imagesThumbs);
+              facade.Add(_gc);
+              if ((i+1) == selected)
+                UpdateSelectedProperties(_gc);
+            }
+          }
+          Utils.UpdateFacade(ref facade, LastFocusedId);
+          if (OnActivate)
+            facade.Visible = false;
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("InitFacade: " + ex.ToString());
+      }
+    }
+
+    internal void DeInitFacade()
+    {
+      try
+      {
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null)
+        {
+          facade.Clear();
+          Utils.UnLoadImage(ref images);
+          Utils.UnLoadImage(ref imagesThumbs);
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("DeInitFacade: " + ex.ToString());
       }
     }
 
@@ -508,30 +644,26 @@ namespace LatestMediaHandler
       {
         if (item != null && selectedFacadeItem1 != item.ItemId)
         {
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.thumb", result[(item.ItemId - 1)].Thumb);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.serieThumb", result[(item.ItemId - 1)].ThumbSeries);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.serieName", result[(item.ItemId - 1)].Title);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.seasonIndex", result[(item.ItemId - 1)].SeasonIndex);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.episodeName", result[(item.ItemId - 1)].Subtitle);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.episodeIndex", result[(item.ItemId - 1)].EpisodeIndex);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.dateAdded", result[(item.ItemId - 1)].DateAdded);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.genre", result[(item.ItemId - 1)].Genre);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.rating", result[(item.ItemId - 1)].Rating);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.roundedRating", result[(item.ItemId - 1)].RoundedRating);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.classification", result[(item.ItemId - 1)].Classification);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.runtime", result[(item.ItemId - 1)].Runtime);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.firstAired", result[(item.ItemId - 1)].Year);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.plot", result[(item.ItemId - 1)].Summary);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.new", result[(item.ItemId - 1)].New);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.thumb", latestTVSeries[(item.ItemId - 1)].Thumb);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.serieThumb", latestTVSeries[(item.ItemId - 1)].ThumbSeries);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.serieName", latestTVSeries[(item.ItemId - 1)].Title);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.seasonIndex", latestTVSeries[(item.ItemId - 1)].SeasonIndex);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.episodeName", latestTVSeries[(item.ItemId - 1)].Subtitle);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.episodeIndex", latestTVSeries[(item.ItemId - 1)].EpisodeIndex);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.dateAdded", latestTVSeries[(item.ItemId - 1)].DateAdded);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.genre", latestTVSeries[(item.ItemId - 1)].Genre);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.rating", latestTVSeries[(item.ItemId - 1)].Rating);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.roundedRating", latestTVSeries[(item.ItemId - 1)].RoundedRating);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.classification", latestTVSeries[(item.ItemId - 1)].Classification);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.runtime", latestTVSeries[(item.ItemId - 1)].Runtime);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.firstAired", latestTVSeries[(item.ItemId - 1)].Year);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.plot", latestTVSeries[(item.ItemId - 1)].Summary);
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.selected.new", latestTVSeries[(item.ItemId - 1)].New);
           selectedFacadeItem1 = item.ItemId;
 
-          GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          GUIControl gc = gw.GetControl(ControlID);
-          facade = gc as GUIFacadeControl;
+          facade = Utils.GetLatestsFacade(ControlID);
           if (facade != null)
-          {
             lastFocusedId = facade.SelectedListItemIndex;
-          }
         }
       }
       catch (Exception ex)
@@ -544,10 +676,8 @@ namespace LatestMediaHandler
     {
       try
       {
-        GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(ControlID);
-        facade = gc as GUIFacadeControl;
-        if (facade != null && gw.GetFocusControlId() == ControlID && facade.SelectedListItem != null)
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null && facade.Focus && facade.SelectedListItem != null)
         {
           int _id = facade.SelectedListItem.ItemId;
           String _image = facade.SelectedListItem.DVDLabel;
@@ -610,26 +740,23 @@ namespace LatestMediaHandler
     {
       try
       {
-        if (fWindow.GetFocusControlId() == Play1ControlID)
+        int FocusControlID = fWindow.GetFocusControlId();
+        if (ControlIDPlays.Contains(FocusControlID))
         {
-          PlayTVSeries(1);
-          // MediaPortal.Playlists.PlayListPlayer.SingletonPlayer.PlayNext();
+          PlayTVSeries(ControlIDPlays.IndexOf(FocusControlID)+1);
           return true;
         }
-        else if (fWindow.GetFocusControlId() == Play2ControlID)
+        //
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null && facade.Focus && facade.SelectedListItem != null)
         {
-          PlayTVSeries(2);
-          return true;
-        }
-        else if (fWindow.GetFocusControlId() == Play3ControlID)
-        {
-          PlayTVSeries(3);
+          PlayTVSeries(facade.SelectedListItem.ItemId);
           return true;
         }
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Unable to play episode! " + ex.ToString());
+        logger.Error("Unable to play episode! " + ex.ToString());
         return true;
       }
       return false;
@@ -642,7 +769,7 @@ namespace LatestMediaHandler
         episodePlayer = new VideoHandler();
       }
 
-      episodePlayer.ResumeOrPlay((DBEpisode) latestTVSeries[index]);
+      episodePlayer.ResumeOrPlay((DBEpisode) latestTVSeriesEpisodes[index]);
     }
 
     internal void SetupTVSeriesLatest()
@@ -757,96 +884,6 @@ namespace LatestMediaHandler
       }
     }
 
-    internal void EmptyLatestMediaPropsTVSeries()
-    {
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.label", Translation.LabelLatestAdded);
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest.enabled", "false");
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.hasnew", "false");
-      for (int z = 1; z < 4; z++)
-      {
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".thumb", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieThumb", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".fanart", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieName", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".seasonIndex", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".episodeName", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".episodeIndex", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".dateAdded", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".genre", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".rating", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".roundedRating", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".classification", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".runtime", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".firstAired", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plot", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".new", "false");
-      }
-    }
-
-    internal void TVSeriesUpdateLatest(Types type, bool onlyNew)
-    {
-      try
-      {
-        EmptyLatestMediaPropsTVSeries();
-        if (LatestMediaHandlerSetup.LatestTVSeries.Equals("True", StringComparison.CurrentCulture))
-        {
-          int sync = Interlocked.CompareExchange(ref Utils.SyncPointTVSeriesUpdate, 1, 0);
-          if (sync != 0)
-            return;
-
-          //LatestMediaHandler.LatestsCollection ht = null;
-          GetLatestTVSeries(type, onlyNew);
-          if (result != null)
-          {
-            int z = 1;
-            //ArrayList _al = new ArrayList();
-            for (int i = 0; i < result.Count && i < 3; i++)
-            {
-              logger.Info("Updating Latest Media Info: Latest episode " + z + ": " + result[i].Title + " - " + result[i].Subtitle);
-
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".thumb", result[i].Thumb);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieThumb", result[i].ThumbSeries); //  _al.Add(result[i].Fanart);                                                
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".fanart", result[i].Fanart);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieName", result[i].Title);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".seasonIndex", result[i].SeasonIndex);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".episodeName", result[i].Subtitle);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".episodeIndex", result[i].EpisodeIndex);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".dateAdded", result[i].DateAdded);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".genre", result[i].Genre);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".rating", result[i].Rating);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".roundedRating", result[i].RoundedRating);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".classification", result[i].Classification);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".runtime", result[i].Runtime);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".firstAired", result[i].Year);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plot", result[i].Summary);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".new", result[i].New);
-              z++;
-            }
-            /*LatestMediaHandlerSetup.UpdateLatestCache(ref LatestMediaHandlerSetup.LatestTVSeriesHash, _al);
-                        if (_al != null)
-                        {
-                            _al.Clear();
-                        }
-                        _al = null;                            */
-            //ht.Clear();
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.latest.enabled", "true");
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvseries.hasnew", Utils.HasNewTVSeries ? "true" : "false");
-            logger.Debug("Updating Latest Media Info: Latest episode has new: " + (Utils.HasNewTVSeries ? "true" : "false"));
-          }
-          //ht = null;
-        }
-        else
-        {
-          EmptyLatestMediaPropsTVSeries();
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("TVSeriesUpdateLatest: " + ex.ToString());
-      }
-      Utils.SyncPointTVSeriesUpdate=0;
-    }
- 
     internal void UpdateImageTimer(GUIWindow fWindow, Object stateInfo, ElapsedEventArgs e)
     {
       if (LatestMediaHandlerSetup.LatestTVSeries.Equals("True", StringComparison.CurrentCulture))

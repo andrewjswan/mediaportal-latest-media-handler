@@ -165,9 +165,9 @@ namespace LatestMediaHandler
     }
 
     internal Latest(string dateAdded, string thumb, string fanart, string title, string subtitle, string artist,
-      string album, string genre, string rating, string roundedRating, string classification, string runtime,
-      string year, string seasonIndex, string episodeIndex, string thumbSeries, object playable, string id,
-      string summary, string seriesIndex, bool isnew = false)
+                    string album, string genre, string rating, string roundedRating, string classification, string runtime,
+                    string year, string seasonIndex, string episodeIndex, string thumbSeries, object playable, string id,
+                    string summary, string seriesIndex, bool isnew = false)
     {
       this.dateAdded = dateAdded;
       this.thumb = thumb;

@@ -25,6 +25,7 @@ namespace LatestMediaHandler
     #region declarations
 
     private static Logger logger = LogManager.GetCurrentClassLogger();
+    private Object Argument { get; set;}
 
     #endregion
 
@@ -45,53 +46,46 @@ namespace LatestMediaHandler
           else
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
 
-          Thread.CurrentThread.Name = "RefreshWorker";
-          Utils.AllocateDelayStop("RefreshWorker-OnDoWork");
+          Argument = e.Argument;
+          Thread.CurrentThread.Name = "RefreshWorker-"+Argument.ToString().Trim();
+          Utils.AllocateDelayStop("RefreshWorker-OnDoWork-"+Argument.ToString().Trim());
+          logger.Debug("RefreshWorker: Start: "+Argument.ToString());
 
-          logger.Debug("RefreshWorker: "+e.Argument.ToString());
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
 
-          if (e.Argument is LatestMusicHandler)
+          if (Argument is LatestMusicHandler)
           {
             LatestMediaHandlerSetup.Lmh.GetLatestMediaInfo(LatestMediaHandlerSetup.Starting);
           }
-          else if (e.Argument is LatestPictureHandler)
+          else if (Argument is LatestPictureHandler)
           {
             LatestMediaHandlerSetup.Lph.GetLatestMediaInfo();
           }
-          else if (e.Argument is LatestMovingPicturesHandler)
+          else if (Argument is LatestMovingPicturesHandler)
           {
             LatestMediaHandlerSetup.Lmph.MovingPictureUpdateLatest();
-            // LatestMediaHandlerSetup.Lmph.SetupMovingPicturesLatest();
           }
-          else if (e.Argument is LatestTVSeriesHandler)
+          else if (Argument is LatestTVSeriesHandler)
           {
-            /*
-            if (LatestMediaHandlerSetup.Ltvsh.CurrentType == LatestTVSeriesHandler.Types.Latest)
-            {
-              LatestMediaHandlerSetup.Ltvsh.TVSeriesUpdateLatest(LatestTVSeriesHandler.Types.Latest, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture));
-            }
-            */
             LatestMediaHandlerSetup.Ltvsh.TVSeriesUpdateLatest(LatestMediaHandlerSetup.Ltvsh.CurrentType, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture));
             LatestMediaHandlerSetup.Ltvsh.ChangedEpisodeCount();
-            // LatestMediaHandlerSetup.Ltvsh.SetupTVSeriesLatest();
           }
-          else if (e.Argument is LatestMyFilmsHandler)
+          else if (Argument is LatestMyFilmsHandler)
           {
             LatestMediaHandlerSetup.Lmfh.MyFilmsUpdateLatest();
-            // LatestMediaHandlerSetup.Lmfh.SetupMovieLatest();
           }
-          else if (e.Argument is LatestMyVideosHandler)
+          else if (Argument is LatestMyVideosHandler)
           {
             LatestMediaHandlerSetup.Lmvh.MyVideosUpdateLatest();
           }
-          else if (e.Argument is LatestMvCentralHandler)
+          else if (Argument is LatestMvCentralHandler)
           {
             LatestMediaHandlerSetup.Lmch.GetLatestMediaInfo(LatestMediaHandlerSetup.Starting);
           }
         }
         catch (Exception ex)
         {
-          Utils.ReleaseDelayStop("RefreshWorker-OnDoWork");
+          Utils.ReleaseDelayStop("RefreshWorker-OnDoWork-"+Argument.ToString().Trim());
           logger.Error("OnDoWork: " + ex.ToString());
         }
       }
@@ -101,13 +95,15 @@ namespace LatestMediaHandler
     {
       try
       {
-        Utils.ReleaseDelayStop("RefreshWorker-OnDoWork");
+        Utils.ReleaseDelayStop("RefreshWorker-OnDoWork-"+Argument.ToString().Trim());
+        logger.Debug("RefreshWorker: Complete: "+Argument.ToString());
+
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
       }
       catch (Exception ex)
       {
-        logger.Error("OnRunWorkerCompleted: " + ex.ToString());
+        logger.Error("OnRunWorkerCompleted: ["+Argument.ToString()+"]" + ex.ToString());
       }
     }
-
   }
 }

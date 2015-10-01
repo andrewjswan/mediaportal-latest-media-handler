@@ -48,6 +48,8 @@ namespace LatestMediaHandler
           Utils.AllocateDelayStop("LatestTVRecordingsWorker-OnDoWork");
           logger.Info("Refreshing latest TV Recordings is starting.");
 
+          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
+
           int arg = (int) e.Argument;
           if (arg == 0)
             LatestMediaHandlerSetup.Ltvrh.UpdateLatestMediaInfo();
@@ -70,6 +72,8 @@ namespace LatestMediaHandler
         logger.Info("Refreshing latest TV Recordings is done.");
         Utils.ReleaseDelayStop("LatestTVRecordingsWorker-OnDoWork");
         Utils.SyncPointTVRecordings = 0;
+
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
       }
       catch (Exception ex)
       {

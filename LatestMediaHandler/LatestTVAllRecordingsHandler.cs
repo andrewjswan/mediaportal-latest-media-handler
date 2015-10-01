@@ -4,7 +4,7 @@
 // Created          : 21-09-2015
 //
 // Last Modified By : ajs
-// Last Modified On : 24-09-2015
+// Last Modified On : 30-09-2015
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
@@ -17,6 +17,7 @@ using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 using RealNLog.NLog;
 
@@ -49,6 +50,9 @@ namespace LatestMediaHandler
     public const int Play3ControlID = 91919986;
     public const int Play4ControlID = 91919987;
 
+    public List<int> ControlIDFacades;
+    public List<int> ControlIDPlays;
+
     public LatestTVRecordingsHandler Ltvrh
     {
         get { return ltvrh; }
@@ -72,6 +76,15 @@ namespace LatestMediaHandler
       Ltvrh = new LatestTVRecordingsHandler();
       L4trrh = new Latest4TRRecordingsHandler();
       Largusrh = new LatestArgusRecordingsHandler();
+
+      ControlIDFacades = new List<int>();
+      ControlIDPlays = new List<int>();
+      //
+      ControlIDFacades.Add(ControlID);
+      ControlIDPlays.Add(Play1ControlID);
+      ControlIDPlays.Add(Play2ControlID);
+      ControlIDPlays.Add(Play3ControlID);
+      ControlIDPlays.Add(Play4ControlID);
     }
 
     public int LastFocusedId
@@ -415,10 +428,10 @@ namespace LatestMediaHandler
         }
         bool noNewRecordings = false;
         if ((latestTVRecordings != null && latestTVRecordings.Count > 1) && 
-            GUIPropertyManager.GetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title").Equals(latestTVRecordings[0].Title, StringComparison.CurrentCulture))
+            LatestMediaHandlerSetup.GetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title").Equals(latestTVRecordings[0].Title, StringComparison.CurrentCulture))
         {
           noNewRecordings = true;
-          logger.Info("Updating Latest Media Info: Latest tv recording: No new recordings since last check!");
+          logger.Info("Updating Latest Media Info: TV Recording: No new recordings since last check!");
         }
 
         if (latestTVRecordings != null && latestTVRecordings.Count > 1)
@@ -429,7 +442,7 @@ namespace LatestMediaHandler
             z = 1;
             for (int i = 0; i < latestTVRecordings.Count && i < 4; i++)
             {
-              logger.Info("Updating Latest Media Info: Latest tv recording " + z + ": " + latestTVRecordings[i].Title);
+              logger.Info("Updating Latest Media Info: TV Recording: Recording " + z + ": " + latestTVRecordings[i].Title);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", latestTVRecordings[i].Thumb);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", latestTVRecordings[i].Title);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", latestTVRecordings[i].DateAdded);
@@ -439,14 +452,14 @@ namespace LatestMediaHandler
             }
             //latestTVRecordings.Clear();
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "true");
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest.hasnew", Utils.HasNewTVRecordings ? "true" : "false");
-            logger.Debug("Updating Latest Media Info: Latest tv recording has new: " + (Utils.HasNewTVRecordings ? "true" : "false"));
+            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.hasnew", Utils.HasNewTVRecordings ? "true" : "false");
+            logger.Debug("Updating Latest Media Info: TV Recording: Has new: " + (Utils.HasNewTVRecordings ? "true" : "false"));
           }
         }
         else
         {
           EmptyLatestMediaPropsTVRecordings();
-          logger.Info("Updating Latest Media Info: Latest tv recording: No recordings found!");
+          logger.Info("Updating Latest Media Info: TV Recording: No recordings found!");
         }
         //latestTVRecordings = null;
         z = 1;
@@ -697,82 +710,42 @@ namespace LatestMediaHandler
     {
       try
       {
-        if (fWindow.GetFocusControlId() == Play1ControlID)
+        int idx = -1;
+        int FocusControlID = fWindow.GetFocusControlId();
+
+        if (ControlIDPlays.Contains(FocusControlID))
         {
-          if (Utils.Used4TRTV && !Utils.UsedArgus)
-          {
-            action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-            L4trrh.PlayRecording(1);
-          }
-          else if (Utils.Used4TRTV && Utils.UsedArgus)
-          {
-            action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-            Largusrh.PlayRecording(1);
-          }
-          else
-          {
-            Ltvrh.PlayRecording(1);
-          }
-          return true;
+          idx = ControlIDPlays.IndexOf(FocusControlID)+1;
         }
-        else if (fWindow.GetFocusControlId() == Play2ControlID)
+        //
+        GUIFacadeControl facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null && facade.Focus && facade.SelectedListItem != null)
         {
-          if (Utils.Used4TRTV && !Utils.UsedArgus)
-          {
-            action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-            L4trrh.PlayRecording(2);
-          }
-          else if (Utils.Used4TRTV && Utils.UsedArgus)
-          {
-            action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-            Largusrh.PlayRecording(2);
-          }
-          else
-          {
-            Ltvrh.PlayRecording(2);
-          }
-          return true;
+          idx = facade.SelectedListItem.ItemId;
         }
-        else if (fWindow.GetFocusControlId() == Play3ControlID)
+        //
+        if (idx > 0)
         {
           if (Utils.Used4TRTV && !Utils.UsedArgus)
           {
             action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-            L4trrh.PlayRecording(3);
+            L4trrh.PlayRecording(idx);
           }
           else if (Utils.Used4TRTV && Utils.UsedArgus)
           {
             action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-            Largusrh.PlayRecording(3);
+            Largusrh.PlayRecording(idx);
           }
           else
           {
-            Ltvrh.PlayRecording(3);
-          }
-          return true;
-        }
-        else if (fWindow.GetFocusControlId() == Play4ControlID)
-        {
-          if (Utils.Used4TRTV && !Utils.UsedArgus)
-          {
-            action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-            L4trrh.PlayRecording(4);
-          }
-          else if (Utils.Used4TRTV && Utils.UsedArgus)
-          {
-            action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-            Largusrh.PlayRecording(4);
-          }
-          else
-          {
-            Ltvrh.PlayRecording(4);
+            Ltvrh.PlayRecording(idx);
           }
           return true;
         }
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Unable to play recording! " + ex.ToString());
+        logger.Error("Unable to play recording! " + ex.ToString());
         return true;
       }
       return false;

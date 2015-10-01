@@ -124,6 +124,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\Gentle.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="GUIPictures">
+      <HintPath>..\External\GUIPictures.dll</HintPath>
+    </Reference>
     <Reference Include="GUIVideos">
       <HintPath>..\External\GUIVideos.dll</HintPath>
     </Reference>
