@@ -270,8 +270,18 @@ namespace LatestMediaHandler
 
         //Play Menu Item
         GUIListItem pItem = new GUIListItem();
-        pItem.Label = Translation.Play;
+        pItem.Label = Translation.View;
         pItem.ItemId = 1;
+        dlg.Add(pItem);
+
+        pItem = new GUIListItem();
+        pItem.Label = GUILocalizeStrings.Get(940);
+        pItem.ItemId = 2;
+        dlg.Add(pItem);
+
+        pItem = new GUIListItem();
+        pItem.Label = Translation.Update;
+        pItem.ItemId = 3;
         dlg.Add(pItem);
 
         //Show Dialog
@@ -289,11 +299,57 @@ namespace LatestMediaHandler
             PlayPictures(GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow));
             break;
           }
+          case 2:
+          {
+            InfoPictures();
+            break;
+          }
+          case 3:
+          {
+            GetLatestPictures();
+            break;
+          }
         }
       }
       catch (Exception ex)
       {
         logger.Error("MyContextMenu: " + ex.ToString());
+      }
+    }
+
+    internal void InfoPictures()
+    {
+      try
+      {
+        GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+        int FocusControlID = fWindow.GetFocusControlId();
+
+        int idx = -1;
+        if (ControlIDPlays.Contains(FocusControlID))
+        {
+          idx = ControlIDPlays.IndexOf(FocusControlID)+1;
+        }
+        //
+        facade = Utils.GetLatestsFacade(ControlID);
+        if (facade != null && facade.Focus && facade.SelectedListItem != null)
+        {
+          idx = facade.SelectedListItem.ItemId;
+        }
+        //
+        if (idx > 0)
+        {
+          GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_EXIF);
+          // Needed to set GUIDialogExif
+          exifDialog.Restore();
+          exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_EXIF);
+          exifDialog.FileName = latestPicturesFiles[idx].ToString();
+          exifDialog.DoModal(fWindow.GetID);
+          exifDialog.Restore();
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("Unable to Info picture! " + ex.ToString());
       }
     }
 

@@ -217,6 +217,11 @@ namespace LatestMediaHandler
           pItem.ItemId = 3;
         }
 
+        pItem = new GUIListItem();
+        pItem.Label = Translation.Update;
+        pItem.ItemId = 4;
+        dlg.Add(pItem);
+
         //Show Dialog
         dlg.DoModal(GUIWindowManager.ActiveWindow);
 
@@ -241,6 +246,11 @@ namespace LatestMediaHandler
             MyVideosUpdateLatest();
             break;
           }
+          case 4:
+          {
+            MyVideosUpdateLatest();
+            break;
+          }
         }
       }
       catch (Exception ex)
@@ -259,13 +269,13 @@ namespace LatestMediaHandler
         int idx = -1 ;
         if (ControlIDPlays.Contains(FocusControlID))
         {
-          idx = ControlIDPlays.IndexOf(FocusControlID);
+          idx = ControlIDPlays.IndexOf(FocusControlID)+1;
         }
         //
         facade = Utils.GetLatestsFacade(ControlID);
         if (facade != null && facade.Focus && facade.SelectedListItem != null)
         {
-          idx = facade.SelectedListItem.ItemId-1;
+          idx = facade.SelectedListItem.ItemId;
         }
         //
         if (idx > 0)

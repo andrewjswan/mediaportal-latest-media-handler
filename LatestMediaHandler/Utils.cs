@@ -23,6 +23,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Threading;
+using System.Xml;
+using System.Xml.XPath;
 
 namespace LatestMediaHandler
 {
@@ -99,7 +101,10 @@ namespace LatestMediaHandler
     //
     public const int FacadeMaxNum = 10;
     public const int LatestsMaxNum = 3;
-
+    //
+    // public static string CheckUp = string.Empty;
+    // public static string CheckDown = string.Empty;
+    //
     internal static DateTime LastRefreshRecording
     {
       get { return Utils.lastRefreshRecording; }
@@ -132,6 +137,12 @@ namespace LatestMediaHandler
     internal static int DelayStopCount
     {
       get { return Utils.delayStop.Count; }
+    }
+
+    public static bool PluginIsEnabled(string name)
+    {
+      int condition = GUIInfoManager.TranslateString("plugin.isenabled(" + name + ")");
+      return GUIInfoManager.GetBool(condition, 0);
     }
 
     internal static string RemoveLeadingZeros(string s)
@@ -380,6 +391,42 @@ namespace LatestMediaHandler
       return image;
 
     }
+
+    /*
+    internal static void InitCheckMarks()
+    {
+      CheckUp = string.Empty;
+      CheckDown = string.Empty;
+
+      try
+      {
+        string filename = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml");
+        if (File.Exists(filename))
+        {
+          var doc = new XmlDocument();
+          doc.Load(filename);
+          XmlNode node = doc.SelectSingleNode("descendant::control[type='checkmark']");
+          if (node != null)
+          {
+            CheckUp = node["textureCheckmark"].InnerText;
+            CheckDown = node["textureCheckmarkNoFocus"].InnerText;
+      logger.Debug ("*** "+CheckUp) ;
+      logger.Debug ("*** "+CheckDown) ;
+      
+            if (!string.IsNullOrEmpty(CheckUp))
+              CheckUp = GUIGraphicsContext.GetThemedSkinFile(@"\media\" + CheckUp);
+            if (!string.IsNullOrEmpty(CheckDown))
+              CheckDown = GUIGraphicsContext.GetThemedSkinFile(@"\media\" + CheckDown);
+              
+          }
+        }
+      }
+      catch
+      {   }
+      logger.Debug ("*** "+CheckUp) ;
+      logger.Debug ("*** "+CheckDown) ;
+    }
+    */
 
     /// <summary>
     /// Get filename string.

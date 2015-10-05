@@ -724,7 +724,7 @@ namespace LatestMediaHandler
           idx = facade.SelectedListItem.ItemId;
         }
         //
-        if (idx > 0)
+        if (idx >= 0)
         {
           if (Utils.Used4TRTV && !Utils.UsedArgus)
           {

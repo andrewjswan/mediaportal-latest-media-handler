@@ -247,7 +247,7 @@ cul8er</Value>
   <GeneralInfo>
     <Name>Latest Media Handler</Name>
     <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
-    <Author>cul8er (maintained by yoavain, ajs)</Author>
+    <Author>ajs (maintained by yoavain, original by cul8er)</Author>
     <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
     <ForumPage>http://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
     <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
@@ -268,14 +268,15 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>* Internal rework, optimizations and bug fixes.
-* Fix for skins with facade-control.
-* SpeedUp latests music.
-* Context menu worked on facade and buttons.
-* Play music worked with (cue+flac etc).</VersionDescription>
+    <VersionDescription>* Context menu fix
+* AutoDJ work for music
++ Add ability to view pictures from latests control
++ Add Picture info in context
++ Add more items in context menu...
+* MyVideo context menu fix</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2015-10-01T09:06:46</ReleaseDate>
+    <ReleaseDate>2015-10-05T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>

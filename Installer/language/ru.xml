@@ -5,35 +5,39 @@
 <strings>
  
  <!-- EPISODES-->
-  <string Field="EpisodeDetails">Episode Details</string>
+  <string Field="EpisodeDetails">Информация о Серии</string>
   <string Field="DisplayNextEpisodes">Display Next Episodes For Last Watched Episode</string>
   <string Field="DisplayLatestEpisodes">Display Latest Added Episodes</string>
   <string Field="ShowUnwatchedEpisodes">Show Only Unwatched Episodes</string>
-  <string Field="ShowAllEpisodes">Show All Episodes</string>
+  <string Field="ShowAllEpisodes">Показать Все эпизоды</string>
+  <string Field="SeriesDetails">Информация о Сериале</string>
+  <string Field="ToSeries">Перейти к сериалу</string>
   
  <!-- MOVIES-->
-  <string Field="MovieDetails">Movie Details</string>
+  <string Field="MovieDetails">Информация о Фильме</string>
   <string Field="ShowUnwatchedMovies">Show Only Unwatched Movies</string>
-  <string Field="ShowAllMovies">Show All Movies</string>
+  <string Field="ShowAllMovies">Показать Все фильмы</string>
   
  <!-- RECORDINGS-->
   <string Field="ShowUnwatchedRecordings">Show Only Unwatched Recordings</string>
   <string Field="ShowAllRecordings">Show All Recordings</string>  
 
  <!-- MUSIC-->
-  <string Field="ArtistDetails">О Артисте</string>  
-  <string Field="AlbumDetails">О Альбоме</string>    
-  <string Field="MostPlayedMusic">Display Most Played Music</string>    
-  <string Field="LatestPlayedMusic">Display Latest Played Music</string>    
-  <string Field="LatestAddedMusic">Display Latest Added Music</string>    
+  <string Field="ArtistDetails">Информация о Артисте</string>  
+  <string Field="AlbumDetails">Информация о Альбоме</string>    
+  <string Field="MostPlayedMusic">Показать чаще всего проигрываемые альбомы</string>    
+  <string Field="LatestPlayedMusic">Показать последние прослушанные альбомы</string>    
+  <string Field="LatestAddedMusic">Показать недавно добавленные альбомы</string>    
 
  <!-- LABEL -->
   <string Field="LabelLatestAdded">Недавно добавленные</string>  
-  <string Field="LabelLatestPlayed">Недавно проигранные</string>  
+  <string Field="LabelLatestPlayed">Недавно прослушанные</string>  
   <string Field="LabelMostPlayed">Популярные</string>  
 
  <!-- ALL-->
-  <string Field="Play">Play</string>  
+  <string Field="Play">Проиграть</string>  
+  <string Field="View">Просмотр</string>  
+  <string Field="Update">Обновить</string>  
   
  <!-- SETTINGS-->
   <string Field="PrefsDateFormat">Date format</string>

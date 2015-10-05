@@ -50,7 +50,7 @@ namespace LatestMediaHandler
 
     private int tVSeriesCount = 0;
     private LatestsCollection latestTVSeries = null;
-    private Hashtable latestTVSeriesEpisodes;
+    private Hashtable latestTVSeriesForPlay;
 
     private ArrayList al = new ArrayList();
     internal ArrayList images = new ArrayList();
@@ -196,18 +196,22 @@ namespace LatestMediaHandler
         dlg.Add(pItem);
         pItem.ItemId = 2;
 
+        pItem = new GUIListItem(Translation.ToSeries);
+        dlg.Add(pItem);
+        pItem.ItemId = 3;
+
         //Add Display Menu Item
         if (CurrentType == Types.Latest)
         {
           pItem = new GUIListItem(Translation.DisplayNextEpisodes);
           dlg.Add(pItem);
-          pItem.ItemId = 3;
+          pItem.ItemId = 4;
         }
         else
         {
           pItem = new GUIListItem(Translation.DisplayLatestEpisodes);
           dlg.Add(pItem);
-          pItem.ItemId = 3;
+          pItem.ItemId = 4;
         }
 
         //Add Watched/Unwatched Filter Menu Item
@@ -215,14 +219,19 @@ namespace LatestMediaHandler
         {
           pItem = new GUIListItem(Translation.ShowUnwatchedEpisodes);
           dlg.Add(pItem);
-          pItem.ItemId = 4;
+          pItem.ItemId = 5;
         }
         else
         {
           pItem = new GUIListItem(Translation.ShowAllEpisodes);
           dlg.Add(pItem);
-          pItem.ItemId = 4;
+          pItem.ItemId = 5;
         }
+
+        pItem = new GUIListItem();
+        pItem.Label = Translation.Update;
+        pItem.ItemId = 6;
+        dlg.Add(pItem);
 
         //Show Dialog
         dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -238,19 +247,25 @@ namespace LatestMediaHandler
             break;
           }
           case 2:
+          case 3:
           {
-            ShowInfo();
+            ShowInfo(dlg.SelectedId == 3);
             break;
           }
-          case 3:
+          case 4:
           {
             CurrentType = (CurrentType == Types.Latest) ? Types.Watched : Types.Latest;
             TVSeriesUpdateLatest(CurrentType, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture));
             break;
           }
-          case 4:
+          case 5:
           {
             LatestMediaHandlerSetup.LatestTVSeriesWatched = LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture) ? "False" : "True" ;
+            TVSeriesUpdateLatest(CurrentType, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture));
+            break;
+          }
+          case 6:
+          {
             TVSeriesUpdateLatest(CurrentType, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture));
             break;
           }
@@ -262,7 +277,7 @@ namespace LatestMediaHandler
       }
     }
 
-    private void ShowInfo()
+    private void ShowInfo(bool toseries = false)
     {
       try
       {
@@ -281,11 +296,16 @@ namespace LatestMediaHandler
           idx = facade.SelectedListItem.ItemId-1;
         }
         //
-        if (idx > 0)
+        if (idx >= 0)
         {
-          string sHyp = "seriesid:" + latestTVSeries[idx].SeriesIndex + 
-                        ((resultType == ResultTypes.Seasons || resultType == ResultTypes.Episodes) ? "|seasonidx:" + Utils.RemoveLeadingZeros(latestTVSeries[idx].SeasonIndex) : "") +
-                        ((resultType == ResultTypes.Episodes) ? "|episodeidx:" + Utils.RemoveLeadingZeros(latestTVSeries[idx].EpisodeIndex) : "");
+          string sHyp = string.Empty;
+          if (toseries)
+            sHyp = "seriesid:" + latestTVSeries[idx].SeriesIndex + 
+                    ((resultType == ResultTypes.Seasons || resultType == ResultTypes.Episodes) ? "|seasonidx:" + Utils.RemoveLeadingZeros(latestTVSeries[idx].SeasonIndex) : "") ;
+          else
+            sHyp = "seriesid:" + latestTVSeries[idx].SeriesIndex + 
+                    ((resultType == ResultTypes.Seasons || resultType == ResultTypes.Episodes) ? "|seasonidx:" + Utils.RemoveLeadingZeros(latestTVSeries[idx].SeasonIndex) : "") +
+                    ((resultType == ResultTypes.Episodes) ? "|episodeidx:" + Utils.RemoveLeadingZeros(latestTVSeries[idx].EpisodeIndex) : "");
           GUIWindowManager.ActivateWindow(9811, sHyp, false);
         }
       }
@@ -303,13 +323,68 @@ namespace LatestMediaHandler
     private LatestsCollection GetLatestTVSeries(Types type, bool onlyNew)
     {
       latestTVSeries = new LatestsCollection();
-      latestTVSeriesEpisodes = new Hashtable();
+      latestTVSeriesForPlay = new Hashtable();
 
+      // GetLatestTVSeriesSeries(type, onlyNew);
+
+      if (resultType == ResultTypes.Episodes)
+        return GetLatestTVSeriesEpisodes(type, onlyNew);
+      return null;
+    }
+
+    /// <summary>
+    /// Returns latest added tvseries thumbs from TVSeries db.
+    /// </summary>
+    /// <param name="type">Type of data to fetch</param>
+    /// <returns>Resultset of matching data</returns>
+    private LatestsCollection GetLatestTVSeriesSeries(Types type, bool onlyNew)
+    {
+      try
+      {
+        List<DBSeries> series = DBSeries.Get(null, onlyNew, true);
+        if (series != null)
+        {
+          foreach (DBSeries tvshow in series)
+          {
+            string contentRating = tvshow[DBOnlineSeries.cContentRating];
+
+            if (contentRating != null && LatestMediaHandlerSetup.LatestTVSeriesRatings.Contains(contentRating))
+            {
+              string seriesTitle = tvshow.ToString();
+              string thumb = tvshow.Poster;
+              string thumbSeries = ImageAllocator.GetSeriesPosterAsFilename(tvshow).Trim();
+
+              logger.Debug ("*** TVSeries: "+seriesTitle + " - " + thumb + " - " + thumbSeries);
+            }
+          }
+        }
+      }
+      catch (FileNotFoundException)
+      {
+        //do nothing    
+      }
+      catch (MissingMethodException)
+      {
+        //do nothing    
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetLatestTVSeries: " + ex.ToString());
+      }
+      return latestTVSeries;
+    }
+    /// <summary>
+    /// Returns latest added tvseries thumbs from TVSeries db.
+    /// </summary>
+    /// <param name="type">Type of data to fetch</param>
+    /// <returns>Resultset of matching data</returns>
+    private LatestsCollection GetLatestTVSeriesEpisodes(Types type, bool onlyNew)
+    {
       try
       {
         int i0 = 1;
         int x = 0;
-
+        
         List<DBEpisode> episodes = null;
         if (type == Types.Latest)
         {
@@ -391,7 +466,7 @@ namespace LatestMediaHandler
                                                             seasonIdx, episodeIdx, thumbSeries, 
                                                             null, null, 
                                                             episodeSummary, seriesIdx, isnew));
-                latestTVSeriesEpisodes.Add(i0, episode);
+                latestTVSeriesForPlay.Add(i0, episode);
                 Utils.ThreadToSleep();
 
                 i0++;
@@ -769,7 +844,7 @@ namespace LatestMediaHandler
         episodePlayer = new VideoHandler();
       }
 
-      episodePlayer.ResumeOrPlay((DBEpisode) latestTVSeriesEpisodes[index]);
+      episodePlayer.ResumeOrPlay((DBEpisode) latestTVSeriesForPlay[index]);
     }
 
     internal void SetupTVSeriesLatest()

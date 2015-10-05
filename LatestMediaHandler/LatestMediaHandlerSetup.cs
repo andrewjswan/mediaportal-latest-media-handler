@@ -673,6 +673,8 @@ namespace LatestMediaHandler
 
       // logger.Debug("*** Init active facade controls: "+string.Join(" ", ControlIDFacades));
       // logger.Debug("*** Init active button controls: "+string.Join(" ", ControlIDPlays));
+
+      // Utils.InitCheckMarks();
     }
 
 /*
@@ -1522,7 +1524,7 @@ namespace LatestMediaHandler
     // Returns the author of the plugin which is shown in the plugin menu
     public string Author()
     {
-      return "cul8er (maintained by yoavain, ajs)";
+      return "ajs (maintained by yoavain, original by cul8er)";
     }
 
     // show the setup dialog

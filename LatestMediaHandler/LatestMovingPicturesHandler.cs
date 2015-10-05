@@ -187,6 +187,11 @@ namespace LatestMediaHandler
           pItem.ItemId = 3;
         }
 
+        pItem = new GUIListItem();
+        pItem.Label = Translation.Update;
+        pItem.ItemId = 4;
+        dlg.Add(pItem);
+
         //Show Dialog
         dlg.DoModal(GUIWindowManager.ActiveWindow);
 
@@ -209,6 +214,11 @@ namespace LatestMediaHandler
           case 3:
           {
             LatestMediaHandlerSetup.LatestMovingPicturesWatched = (LatestMediaHandlerSetup.LatestMovingPicturesWatched.Equals("False", StringComparison.CurrentCulture)) ? "True" : "False" ;
+            MovingPictureUpdateLatest();
+            break;
+          }
+          case 4:
+          {
             MovingPictureUpdateLatest();
             break;
           }
@@ -239,7 +249,7 @@ namespace LatestMediaHandler
           idx = facade.SelectedListItem.ItemId-1;
         }
         //
-        if (idx > 0)
+        if (idx >= 0)
         {
           string sHyp = "movieid:" + latestMovies[idx].Id;
           GUIWindowManager.ActivateWindow(96742, sHyp, false);

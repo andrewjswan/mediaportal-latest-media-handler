@@ -324,7 +324,7 @@ namespace LatestMediaHandler
           int z = 1;
           for (int i = 0; i < hTable.Count && i < Utils.LatestsMaxNum; i++)
           {
-            logger.Info("Updating Latest Media Info: Music: " + LatestMediaHandlerSetup.LatestMusicType + " Album " + z + ": " + hTable[i].Artist + " - " + hTable[i].Album + " [" + hTable[i].DateAdded + "/" + hTable[i].Summary +"]");
+            logger.Info("Updating Latest Media Info: Music: " + LatestMediaHandlerSetup.LatestMusicType + " Album " + z + ": " + hTable[i].Artist + " - " + hTable[i].Album + " [" + hTable[i].DateAdded + "/" + hTable[i].Summary +"] - " + hTable[i].Fanart);
 
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".thumb", hTable[i].Thumb);
             LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.music.latest" + z + ".artist", hTable[i].Artist);
@@ -411,23 +411,28 @@ namespace LatestMediaHandler
         pItem.ItemId = 4;
         dlg.Add(pItem);
         */
-        
+
         // "Latest Added Music"
         pItem = new GUIListItem();
-        pItem.Label = Translation.LatestAddedMusic + (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeLatestAdded, StringComparison.CurrentCulture) ? " [X]" : "");
+        pItem.Label = (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeLatestAdded, StringComparison.CurrentCulture) ? "[X] " : "") + Translation.LatestAddedMusic;
         pItem.ItemId = 4;
         dlg.Add(pItem);
 
         // "Latest Played Music"
         pItem = new GUIListItem();
-        pItem.Label = Translation.LatestPlayedMusic + (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeLatestPlayed, StringComparison.CurrentCulture) ? " [X]" : "");
+        pItem.Label = (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeLatestPlayed, StringComparison.CurrentCulture) ? "[X] " : "") + Translation.LatestPlayedMusic;
         pItem.ItemId = 5;
         dlg.Add(pItem);
 
         // "Most Played Music"
         pItem = new GUIListItem();
-        pItem.Label = Translation.MostPlayedMusic + (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeMostPlayed, StringComparison.CurrentCulture) ? " [X]" : "");
+        pItem.Label = (LatestMediaHandlerSetup.LatestMusicType.Equals(MusicTypeMostPlayed, StringComparison.CurrentCulture) ? "[X] " : "") + Translation.MostPlayedMusic;
         pItem.ItemId = 6;
+        dlg.Add(pItem);
+
+        pItem = new GUIListItem();
+        pItem.Label = Translation.Update;
+        pItem.ItemId = 7;
         dlg.Add(pItem);
 
         //Show Dialog
@@ -457,7 +462,7 @@ namespace LatestMediaHandler
           {
             if (dlg.SelectedId == 4)
             {
-              LatestMediaHandlerSetup.LatestMusicType = MusicTypeMostPlayed;
+              LatestMediaHandlerSetup.LatestMusicType = MusicTypeLatestAdded;
             }
             else if (dlg.SelectedId == 5)
             {
@@ -465,9 +470,14 @@ namespace LatestMediaHandler
             }
             else if (dlg.SelectedId == 6)
             {
-              LatestMediaHandlerSetup.LatestMusicType = MusicTypeLatestAdded;
+              LatestMediaHandlerSetup.LatestMusicType = MusicTypeMostPlayed;
             }
-            GetLatestMediaInfo(false);
+            GetLatestMediaInfoThread();
+            break;
+          }
+          case 7:
+          {
+            GetLatestMediaInfoThread();
             break;
           }
         }
@@ -497,7 +507,7 @@ namespace LatestMediaHandler
           idx = facade.SelectedListItem.ItemId-1;
         }
         //
-        if (idx > 0)
+        if (idx >= 0)
         {
           string Artist = latestMusicAlbums[idx].Artist;
           string Album = latestMusicAlbums[idx].Album;
@@ -1516,11 +1526,13 @@ namespace LatestMediaHandler
     private void StartPlayback()
     {
       // if we got a playlist start playing it
-      if (playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP).Count > 0)
+      int Count = playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP).Count;
+      if (Count > 0)
       {
         playlistPlayer.CurrentPlaylistType = MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP;
         playlistPlayer.Reset();
         playlistPlayer.Play(0);
+        // MediaPortal.GUI.Music.GUIMusicBaseWindow.DoPlayNowJumpTo(Count);
       }
     }
   }

@@ -10,6 +10,8 @@
   <string Field="DisplayLatestEpisodes">Display Latest Added Episodes</string>
   <string Field="ShowUnwatchedEpisodes">Show Only Unwatched Episodes</string>
   <string Field="ShowAllEpisodes">Show All Episodes</string>
+  <string Field="SeriesDetails">TV Series Details</string>
+  <string Field="ToSeries">Open TV Series</string>
   
  <!-- MOVIES-->
   <string Field="MovieDetails">Movie Details</string>
@@ -34,6 +36,8 @@
 
  <!-- ALL-->
   <string Field="Play">Play</string>  
+  <string Field="View">View</string>  
+  <string Field="Update">Upadte</string>  
   
  <!-- SETTINGS-->
   <string Field="PrefsDateFormat">Date format</string>

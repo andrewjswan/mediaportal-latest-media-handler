@@ -165,6 +165,11 @@ namespace LatestMediaHandler
           pItem.ItemId = 2;
         }
 
+        pItem = new GUIListItem();
+        pItem.Label = Translation.Update;
+        pItem.ItemId = 3;
+        dlg.Add(pItem);
+
         //Show Dialog
         dlg.DoModal(GUIWindowManager.ActiveWindow);
 
@@ -181,6 +186,11 @@ namespace LatestMediaHandler
           case 2:
           {
             LatestMediaHandlerSetup.LatestMyFilmsWatched = (LatestMediaHandlerSetup.LatestMyFilmsWatched.Equals("False", StringComparison.CurrentCulture)) ? "True" : "False";
+            MyFilmsUpdateLatest();
+            break;
+          }
+          case 3:
+          {
             MyFilmsUpdateLatest();
             break;
           }

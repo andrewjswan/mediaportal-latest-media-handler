@@ -216,6 +216,9 @@ namespace LatestMediaHandler
 
     //Episodes
     public static string EpisodeDetails = "Episode Details";
+    public static string SeriesDetails = "TV Series Details";
+
+    public static string ToSeries = "Open TV Series";
 
     public static string DisplayNextEpisodes = "Display Next Episodes For Last Watched Episode";
     public static string DisplayLatestEpisodes = "Display Latest Added Episodes";
@@ -240,6 +243,8 @@ namespace LatestMediaHandler
 
     //All
     public static string Play = "Play";
+    public static string View = "View";
+    public static string Update = "Update";
 
     //Label
     public static string LabelLatestAdded  = "Latest added";

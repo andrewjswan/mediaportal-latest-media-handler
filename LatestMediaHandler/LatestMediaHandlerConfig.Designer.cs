@@ -525,7 +525,7 @@ namespace LatestMediaHandler
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(383, 24);
             this.label10.TabIndex = 2;
-            this.label10.Text = "Maintained by yoavain, ajs\r\nOriginal Version created by cul8er, Thanks BPoH_Voodoo.";
+            this.label10.Text = "ajs, maintained by yoavain\r\nOriginal Version created by cul8er, Thanks BPoH_Voodoo.";
             // 
             // label9
             // 
