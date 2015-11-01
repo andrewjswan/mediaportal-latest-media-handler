@@ -341,7 +341,7 @@ namespace LatestMediaHandler
     {
       try
       {
-        List<DBSeries> series = DBSeries.Get(null, onlyNew, true);
+        List<DBSeries> series = DBSeries.Get(new SQLCondition(), onlyNew, true);
         if (series != null)
         {
           foreach (DBSeries tvshow in series)

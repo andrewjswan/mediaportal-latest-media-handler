@@ -349,7 +349,7 @@ namespace LatestMediaHandler
 
             latests.Add(new Latest(sTimestamp, thumb, GetFanart(item.Title, item.ID), item.Title, 
                                    null, null, null, 
-                                   item.Genre.Replace("/", ","),
+                                   item.Genre,
                                    item.Rating.ToString(CultureInfo.CurrentCulture),
                                    Math.Round(item.Rating, MidpointRounding.AwayFromZero).ToString(CultureInfo.CurrentCulture), 
                                    item.MPARating,

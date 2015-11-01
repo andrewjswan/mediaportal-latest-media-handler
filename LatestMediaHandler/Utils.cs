@@ -162,6 +162,13 @@ namespace LatestMediaHandler
 
     internal static void AllocateDelayStop(string key)
     {
+      if (string.IsNullOrEmpty(key))
+        return ;
+
+      if (DelayStop == null)
+      {
+        DelayStop = new Hashtable();
+      }
       if (DelayStop.Contains(key))
         DelayStop[key] = (int)DelayStop[key] + 1;
       else
@@ -170,7 +177,7 @@ namespace LatestMediaHandler
 
     internal static bool GetDelayStop()
     {
-      if (DelayStop.Count <= 0)
+      if ((DelayStop == null) || (DelayStop.Count <= 0))
         return false;
 
       int i = 0;
@@ -184,6 +191,9 @@ namespace LatestMediaHandler
 
     internal static void ReleaseDelayStop(string key)
     {
+      if ((DelayStop == null) || (DelayStop.Count <= 0) || string.IsNullOrEmpty(key))
+        return;
+
       if (DelayStop.Contains(key))
       {
         DelayStop[key] = (int)DelayStop[key] - 1;

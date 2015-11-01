@@ -78,8 +78,6 @@ namespace LatestMediaHandler
         }
         catch (Exception ex)
         {
-          Utils.ReleaseDelayStop("LatestReorgWorker-OnDoWork");
-          Utils.SyncPointReorg = 0;
           logger.Error("OnDoWork: " + ex.ToString());
         }
       }

@@ -1165,6 +1165,9 @@ namespace LatestMediaHandler
       bool Action = false;
       bool Context = false;
 
+      if (action == null)
+        return;
+
       try
       {
         if ((GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME) && (GUIWindowManager.RoutedWindow == -1))
@@ -1201,7 +1204,9 @@ namespace LatestMediaHandler
           }
 
           if (Action)
+          {
             OnAction(fWindow, ref action, Context);
+          }
         }
       }
       catch (Exception ex)

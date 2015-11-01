@@ -362,7 +362,7 @@ namespace LatestMediaHandler
             if (allTrack.ArtistInfo != null && allTrack.ArtistInfo.Count > 0)
             {
               tmpArtist = allTrack.ArtistInfo[0].Artist;
-              tmpGenre = allTrack.ArtistInfo[0].Genre.Replace("|", ",");
+              tmpGenre = allTrack.ArtistInfo[0].Genre;
             }
 
             latestMusicAlbums.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, allTrack.Track,

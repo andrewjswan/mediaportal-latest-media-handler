@@ -178,7 +178,7 @@ namespace LatestMediaHandler
       this.album = album;
       if (genre != null && genre.Length > 0)
       {
-        this.genre = genre.Replace("|", ",");
+        this.genre = genre.Replace("|", ",").Replace("/", ",");
       }
       else
       {

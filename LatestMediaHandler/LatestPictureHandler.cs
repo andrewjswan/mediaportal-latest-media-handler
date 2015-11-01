@@ -422,8 +422,7 @@ namespace LatestMediaHandler
     {
       int iRotate = PictureDatabase.GetRotation(file);
 
-      string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures,
-        MediaPortal.Util.Utils.EncryptLine(file));
+      string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(file));
 
       if (!File.Exists(thumbnailImage))
       {
@@ -495,10 +494,10 @@ namespace LatestMediaHandler
                 if (File.Exists(thumb))
                 {
                   latestPictures.Add(new LatestMediaHandler.Latest(dateAdded, thumb, tmpThumb, title, 
-                                                           null, null, null, null, null, null, 
-                                                           null, null, null, null, null, null, 
-                                                           null, null, null, null,
-                                                           isnew));
+                                                                   null, null, null, null, null, null, 
+                                                                   null, null, null, null, null, null, 
+                                                                   null, null, null, null,
+                                                                   isnew));
                   latestPicturesFiles.Add(i0, tmpThumb);
                   Utils.ThreadToSleep();
 
@@ -829,6 +828,7 @@ namespace LatestMediaHandler
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", string.Empty);
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", string.Empty);
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", string.Empty);
+        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".fanart", string.Empty);
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", string.Empty);
         LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".new", "false");
       }
@@ -858,10 +858,11 @@ namespace LatestMediaHandler
             int z = 1;
             for (int i = 0; i < ht.Count && i < Utils.LatestsMaxNum; i++)
             {
-              logger.Info("Updating Latest Media Info: Pictures: Picture " + z + ": " + ht[i].Thumb);
+              logger.Info("Updating Latest Media Info: Pictures: Picture " + z + ": " + ht[i].Fanart);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", ht[i].Title);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", ht[i].Thumb);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", ht[i].Thumb);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", ht[i].Fanart);
+              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".fanart", ht[i].Fanart);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", ht[i].DateAdded);
               LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".new", ht[i].New);
               z++;

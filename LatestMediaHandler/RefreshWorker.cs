@@ -85,7 +85,6 @@ namespace LatestMediaHandler
         }
         catch (Exception ex)
         {
-          Utils.ReleaseDelayStop("RefreshWorker-OnDoWork-"+Argument.ToString().Trim());
           logger.Error("OnDoWork: " + ex.ToString());
         }
       }

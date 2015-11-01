@@ -58,8 +58,6 @@ namespace LatestMediaHandler
         }
         catch (Exception ex)
         {
-          Utils.ReleaseDelayStop("LatestTVRecordingsWorker-OnDoWork");
-          Utils.SyncPointTVRecordings = 0;
           logger.Error("OnDoWork: " + ex.ToString());
         }
       }

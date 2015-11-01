@@ -861,7 +861,7 @@ namespace LatestMediaHandler
         // string sqlQuery = "SELECT DISTINCT strArtist, strAlbumArtist, strAlbum ...
         // MySQL: GROUP_CONCAT(... SEPARATOR '|')
         // string sqlQuery = @"SELECT strAlbumArtist, strAlbum, strFileType, (SELECT MAX(dateAdded) FROM tracks WHERE strAlbumArtist=T.strAlbumArtist AND strAlbum=T.strAlbum AND strFileType=T.strFileType) as dateAdded, GROUP_CONCAT(strGenre,'|') as strGenre, GROUP_CONCAT(RTRIM(strPath,REPLACE(strPath,'\','')),'|') as strPath FROM tracks T GROUP BY strAlbumArtist, strAlbum, strFileType ORDER BY {0} DESC LIMIT {1}";
-        string sqlQuery = "SELECT strAlbumArtist, strAlbum, strFileType, MAX(dateAdded) as dateAdded, ROUND(AVG(iTimesPlayed)) as iTimesPlayed, MAX(dateLastPlayed) as dateLastPlayed, "+
+        string sqlQuery = "SELECT strAlbumArtist, strAlbum, strFileType, MAX(dateAdded) as dateAdded, CAST(ROUND(AVG(iTimesPlayed)) AS INTEGER) as iTimesPlayed, MAX(dateLastPlayed) as dateLastPlayed, "+
                                  "GROUP_CONCAT(strGenre,'|') as strGenre, GROUP_CONCAT(strPath,'|') as strPath "+
                           "FROM tracks "+
                           "GROUP BY strAlbumArtist, strAlbum, strFileType "+
@@ -982,7 +982,7 @@ namespace LatestMediaHandler
 
             latestMusicAlbums.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, sPaths, 
                                                                 null, 
-                                                                sArtist, mySong.Album, sGenres.Replace("|", ","), 
+                                                                sArtist, mySong.Album, sGenres, 
                                                                 null, null, 
                                                                 sFileType, 
                                                                 null, null, null, null, null, null, null, 
