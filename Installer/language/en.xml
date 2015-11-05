@@ -12,6 +12,13 @@
   <string Field="ShowAllEpisodes">Show All Episodes</string>
   <string Field="SeriesDetails">TV Series Details</string>
   <string Field="ToSeries">Open TV Series</string>
+  <string Field="SeasonDetails">Season Details</string>
+  <string Field="ShowLatestsEpisodes">Show Episodes</string>
+  <string Field="ShowLatestsSeasons">Show Seasons</string>
+  <string Field="ShowLatestsSeries">Show Series</string>
+  <string Field="LabelSeriesLatestSeries">Series</string>
+  <string Field="LabelSeriesLatestSeasons">Seasons</string>
+  <string Field="LabelSeriesLatestEpisodes">Episodes</string>
   
  <!-- MOVIES-->
   <string Field="MovieDetails">Movie Details</string>
@@ -39,6 +46,8 @@
   <string Field="View">View</string>  
   <string Field="Update">Upadte</string>  
   
+  <string Field="NoDescription">No Description available...</string>
+
  <!-- SETTINGS-->
   <string Field="PrefsDateFormat">Date format</string>
   <string Field="PrefsDescription">Latest Media Handller is a plugin for MediaPortal.\r\nThe purpose of the plugin is to deliver information about latest\r\n* Pictures\r\n* Music Albums\r\n* My Video\r\n* TVSeries\r\n* Moving Pictures\r\n* My Films\r\n* MvCentral\r\n* TV Recordings\r\nto MediaPortal skins so that they can display things like latest movie title, poster and backdrops.</string>
@@ -82,5 +91,8 @@
   <string Field="PrefsTVSeriesWatched">Only Return Unwatched Series</string>
   <string Field="PrefsUpdateDB">Query/Update Databases</string>
   <string Field="PrefsUpdateDBDesc">Enable automatic database updates for:</string>
+  <string Field="PrefsLatestEpisodes">Latest Episodes</string>
+  <string Field="PrefsLatestSeasons">Latest Seasons</string>
+  <string Field="PrefsLatestSeries">Latest Series</string>
 
 </strings>

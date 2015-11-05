@@ -164,14 +164,40 @@ namespace LatestMediaHandler
       set { isnew = value.ToLower().Equals("true"); }
     }
 
-    internal Latest(string dateAdded, string thumb, string fanart, string title, string subtitle, string artist,
-                    string album, string genre, string rating, string roundedRating, string classification, string runtime,
-                    string year, string seasonIndex, string episodeIndex, string thumbSeries, object playable, string id,
-                    string summary, string seriesIndex, bool isnew = false)
+    internal Latest(string dateAdded, 
+                    string thumb, string fanart, 
+                    string title, string subtitle, 
+                    string artist, string album, string genre, 
+                    string rating, string roundedRating, string classification, string runtime, string year, 
+                    string seasonIndex, string episodeIndex, 
+                    string thumbSeries, object playable, string id, string summary, 
+                    string seriesIndex, bool isnew = false)
     {
       this.dateAdded = dateAdded;
-      this.thumb = thumb;
-      this.fanart = fanart;
+      if (!string.IsNullOrEmpty(thumbSeries))
+      {
+        this.thumbSeries = thumbSeries.Replace("/", @"\");
+      }
+      else
+      {
+        this.thumbSeries = thumbSeries;
+      }
+      if (!string.IsNullOrEmpty(thumb))
+      {
+        this.thumb = thumb.Replace("/", @"\");
+      }
+      else
+      {
+        this.thumb = thumb;
+      }
+      if (!string.IsNullOrEmpty(fanart))
+      {
+        this.fanart = fanart.Replace("/", @"\");
+      }
+      else
+      {
+        this.fanart = fanart;
+      }
       this.title = title;
       this.subtitle = subtitle;
       this.artist = artist;
@@ -192,7 +218,6 @@ namespace LatestMediaHandler
       this.seriesIndex = seriesIndex;
       this.seasonIndex = seasonIndex;
       this.episodeIndex = episodeIndex;
-      this.thumbSeries = thumbSeries;
       this.playable = playable;
       //this.fanart1 = fanart1;
       //this.fanart2 = fanart2;

@@ -284,7 +284,6 @@ namespace LatestMediaHandler
         //Add to filmstrip
         IMDBMovie movie = new IMDBMovie();
         movie.Title = latests.Title;
-        movie.File = "";
         try
         {
           movie.RunTime = Int32.Parse(latests.Runtime);
@@ -323,7 +322,6 @@ namespace LatestMediaHandler
         item.Label2 = latests.Genre;
         item.Label3 = latests.DateAdded;
         item.IsFolder = false;
-        item.Path = movie.File;
         item.Duration = movie.RunTime; // *60;
         item.AlbumInfoTag = movie;
         item.Year = movie.Year;
@@ -410,16 +408,17 @@ namespace LatestMediaHandler
       {
         if (item != null && selectedFacadeItem1 != item.ItemId)
         {
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.thumb", item.IconImageBig);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.title", item.Label);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.dateAdded", item.Label3);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.genre", item.Label2);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.roundedRating", "" + item.Rating);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.classification", "");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.runtime", "" + item.Duration);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.year", "" + item.Year);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.id", "" + item.ItemId);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.plot", item.Path);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.thumb", item.IconImageBig);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.title", item.Label);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.dateAdded", item.Label3);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.genre", item.Label2);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.roundedRating", "" + item.Rating);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.classification", "");
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.runtime", "" + item.Duration);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.year", "" + item.Year);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.id", "" + item.ItemId);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.plot", item.Path);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.plotoutline", string.Empty);
           selectedFacadeItem1 = item.ItemId;
 
           facade = Utils.GetLatestsFacade(ControlID);
@@ -449,20 +448,20 @@ namespace LatestMediaHandler
             Utils.LoadImage(_image, ref images);
             if (showFanart == 1)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", _image);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "false");
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", _image);
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "true");
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "false");
               Thread.Sleep(1000);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", "");
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", "");
               showFanart = 2;
             }
             else
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", _image);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "false");
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", _image);
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "true");
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "false");
               Thread.Sleep(1000);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", "");
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", "");
               showFanart = 1;
             }
             Utils.UnLoadImage(_image, ref images);
@@ -471,10 +470,10 @@ namespace LatestMediaHandler
         }
         else
         {
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "false");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "false");
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", " ");
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", " ");
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "false");
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "false");
           Utils.UnLoadImage(ref images);
           showFanart = 1;
           selectedFacadeItem2 = -1;
@@ -589,20 +588,22 @@ namespace LatestMediaHandler
 
     internal void EmptyLatestMediaPropsMyFilms()
     {
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.label", Translation.LabelLatestAdded);
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest.enabled", "false");
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.hasnew", "false");
+      Utils.SetProperty("#latestMediaHandler.myfilms.label", Translation.LabelLatestAdded);
+      Utils.SetProperty("#latestMediaHandler.myfilms.latest.enabled", "false");
+      Utils.SetProperty("#latestMediaHandler.myfilms.hasnew", "false");
       for (int z = 1; z < 4; z++)
       {
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".poster", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".fanart", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".title", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".dateAdded", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".rating", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".roundedRating", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".year", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".id", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".new", "false");
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".poster", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".fanart", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".title", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".dateAdded", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".rating", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".roundedRating", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".year", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".id", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plot", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plotoutline", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".new", "false");
       }
     }
 
@@ -647,21 +648,23 @@ namespace LatestMediaHandler
           for (int i = 0; i < ht.Count && i < Utils.LatestsMaxNum; i++)
           {
             logger.Info("Updating Latest Media Info: MyFilms: Films " + z + ": " + ht[i].Title);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".poster", ht[i].Thumb); //  _al.Add(ht[i].Fanart);                                                
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".fanart", ht[i].Fanart);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".title", ht[i].Title);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".dateAdded", ht[i].DateAdded);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".rating", ht[i].Rating);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".roundedRating", ht[i].RoundedRating);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".year", ht[i].Year);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".id", ht[i].Id);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".genre", ht[i].Genre);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".runtime", ht[i].Runtime);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".new", ht[i].New);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".poster", ht[i].Thumb); //  _al.Add(ht[i].Fanart);                                                
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".fanart", ht[i].Fanart);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".title", ht[i].Title);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".dateAdded", ht[i].DateAdded);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".rating", ht[i].Rating);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".roundedRating", ht[i].RoundedRating);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".year", ht[i].Year);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".id", ht[i].Id);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".genre", ht[i].Genre);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".runtime", ht[i].Runtime);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plot", ht[i].Summary);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plotoutline", Utils.GetSentences(ht[i].Summary, Utils.latestPlotOutlineSentencesNum));
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".new", ht[i].New);
             z++;
           }
           // ht.Clear();
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.hasnew", Utils.HasNewMyFilms ? "true" : "false");
+          Utils.SetProperty("#latestMediaHandler.myfilms.hasnew", Utils.HasNewMyFilms ? "true" : "false");
           logger.Debug("Updating Latest Media Info: MyFilms: Has new: " + (Utils.HasNewMyFilms ? "true" : "false"));
         }
         // ht = null;
@@ -682,7 +685,7 @@ namespace LatestMediaHandler
       if ((latestMyFilms != null) && (latestMyFilms.Count > 0))
       {
         InitFacade();
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.latest.enabled", "true");
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest.enabled", "true");
       }
       else
         EmptyLatestMediaPropsMyFilms();
@@ -704,8 +707,8 @@ namespace LatestMediaHandler
           {
             if (NeedCleanup && NeedCleanupCount >= 5)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", " ");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", " ");
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.fanart1", " ");
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.fanart2", " ");
               Utils.UnLoadImage(ref images);
               ShowFanart = 1;
               SelectedFacadeItem2 = -1;
@@ -715,8 +718,8 @@ namespace LatestMediaHandler
             }
             else if (NeedCleanup && NeedCleanupCount == 0)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "false");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "false");
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.showfanart1", "false");
+              Utils.SetProperty("#latestMediaHandler.myfilms.selected.showfanart2", "false");
               NeedCleanupCount++;
             }
             else if (NeedCleanup)

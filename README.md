@@ -28,6 +28,8 @@ List of latests properties:
  #latestMediaHandler.music.hasnew
  #latestMediaHandler.music.latest[1,2,3].thumb
  #latestMediaHandler.music.latest[1,2,3].artist
+ #latestMediaHandler.music.latest[1,2,3].artistbio
+ #latestMediaHandler.music.latest[1,2,3].artistbiooutline
  #latestMediaHandler.music.latest[1,2,3].album
  #latestMediaHandler.music.latest[1,2,3].dateAdded
  #latestMediaHandler.music.latest[1,2,3].fanart
@@ -60,6 +62,7 @@ List of latests properties:
  #latestMediaHandler.myvideo.latest[1,2,3].year
  #latestMediaHandler.myvideo.latest[1,2,3].id
  #latestMediaHandler.myvideo.latest[1,2,3].plot
+ #latestMediaHandler.myvideo.latest[1,2,3].plotoutline
  #latestMediaHandler.myvideo.latest[1,2,3].new
 
  #latestMediaHandler.myvideo.selected.thumb
@@ -101,6 +104,8 @@ List of latests properties:
  #latestMediaHandler.tvseries.label
  #latestMediaHandler.tvseries.latest.enabled
  #latestMediaHandler.tvseries.hasnew
+ #latestMediaHandler.tvseries.latest.mode - episodes, seasons, series
+ #latestMediaHandler.tvseries.latest.type
  #latestMediaHandler.tvseries.latest[1,2,3].thumb
  #latestMediaHandler.tvseries.latest[1,2,3].serieThumb
  #latestMediaHandler.tvseries.latest[1,2,3].fanart
@@ -116,6 +121,7 @@ List of latests properties:
  #latestMediaHandler.tvseries.latest[1,2,3].runtime
  #latestMediaHandler.tvseries.latest[1,2,3].firstAired
  #latestMediaHandler.tvseries.latest[1,2,3].plot
+ #latestMediaHandler.tvseries.latest[1,2,3].plotoutline
  #latestMediaHandler.tvseries.latest[1,2,3].new
 
  #latestMediaHandler.tvseries.selected.thumb
@@ -154,8 +160,9 @@ List of latests properties:
  #latestMediaHandler.movingpicture.latest[1,2,3].year
  #latestMediaHandler.movingpicture.latest[1,2,3].id
  #latestMediaHandler.movingpicture.latest[1,2,3].plot
+ #latestMediaHandler.movingpicture.latest[1,2,3].plotoutline
  #latestMediaHandler.movingpicture.latest[1,2,3].new
-
+  
  #latestMediaHandler.movingpicture.selected.thumb
  #latestMediaHandler.movingpicture.selected.title
  #latestMediaHandler.movingpicture.selected.dateAdded
@@ -184,6 +191,8 @@ List of latests properties:
  #latestMediaHandler.myfilms.latest[1,2,3].roundedRating
  #latestMediaHandler.myfilms.latest[1,2,3].year
  #latestMediaHandler.myfilms.latest[1,2,3].id
+ #latestMediaHandler.myfilms.latest[1,2,3].plot
+ #latestMediaHandler.myfilms.latest[1,2,3].plotoutline
  #latestMediaHandler.myfilms.latest[1,2,3].new
 
  #latestMediaHandler.myfilms.selected.thumb
@@ -207,6 +216,8 @@ List of latests properties:
  #latestMediaHandler.mvcentral.hasnew
  #latestMediaHandler.mvcentral.latest[1,2,3].thumb
  #latestMediaHandler.mvcentral.latest[1,2,3].artist
+ #latestMediaHandler.mvcentral.latest[1,2,3].artistbio
+ #latestMediaHandler.mvcentral.latest[1,2,3].artistbiooutline
  #latestMediaHandler.mvcentral.latest[1,2,3].album
  #latestMediaHandler.mvcentral.latest[1,2,3].track
  #latestMediaHandler.mvcentral.latest[1,2,3].dateAdded
@@ -229,6 +240,7 @@ List of latests properties:
  #latestMediaHandler.tvrecordings.label
  #latestMediaHandler.tvrecordings.latest.enabled
  #latestMediaHandler.tvrecordings.hasnew
+
  #latestMediaHandler.tvrecordings.active[1,2,3,4].title
  #latestMediaHandler.tvrecordings.active[1,2,3,4].genre
  #latestMediaHandler.tvrecordings.active[1,2,3,4].startTime
@@ -237,6 +249,7 @@ List of latests properties:
  #latestMediaHandler.tvrecordings.active[1,2,3,4].endDate
  #latestMediaHandler.tvrecordings.active[1,2,3,4].channel
  #latestMediaHandler.tvrecordings.active[1,2,3,4].channelLogo
+
  #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].title
  #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].startTime
  #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].startDate
@@ -244,12 +257,18 @@ List of latests properties:
  #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].endDate
  #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].channel
  #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].channelLogo
+
  #latestMediaHandler.tvrecordings.latest[1,2,3,4].thumb
  #latestMediaHandler.tvrecordings.latest[1,2,3,4].title
  #latestMediaHandler.tvrecordings.latest[1,2,3,4].dateAdded
  #latestMediaHandler.tvrecordings.latest[1,2,3,4].genre
  #latestMediaHandler.tvrecordings.latest[1,2,3,4].new
-
+ #latestMediaHandler.tvrecordings.latest[1,2,3,4].summary
+ #latestMediaHandler.tvrecordings.latest[1,2,3,4].summaryoutline
+ #latestMediaHandler.tvrecordings.latest[1,2,3,4].series
+ #latestMediaHandler.tvrecordings.latest[1,2,3,4].episode
+ #latestMediaHandler.tvrecordings.latest[1,2,3,4].episodename
+  
  #latestMediaHandler.tvrecordings.selected.thumb
  #latestMediaHandler.tvrecordings.selected.title
  #latestMediaHandler.tvrecordings.selected.dateAdded

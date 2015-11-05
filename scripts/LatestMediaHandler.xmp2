@@ -268,15 +268,31 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>* Context menu fix
-* AutoDJ work for music
-+ Add ability to view pictures from latests control
-+ Add Picture info in context
-+ Add more items in context menu...
-* MyVideo context menu fix</VersionDescription>
+    <VersionDescription>+ Add ability change latests view mode for TV Series (Latests Episodes, Latests Seasons, Latests Series) Configurator and Context menu.
++ Language file updated
++ Fix for thumbnails file name
++ Add jump to Now Playing when music play start
++ Add properties:
+#latestMediaHandler.tvrecordings.latest.[1,2,3,4].summary
+#latestMediaHandler.tvrecordings.latest.[1,2,3,4].summaryoutline
+#latestMediaHandler.tvrecordings.latest[1,2,3,4].series
+#latestMediaHandler.tvrecordings.latest[1,2,3,4].episode
+#latestMediaHandler.tvrecordings.latest[1,2,3,4].episodename
+#latestMediaHandler.music.latest[1,2,3].artistbio
+#latestMediaHandler.music.latest[1,2,3].artistbiooutline
+#latestMediaHandler.myvideo.latest[1,2,3].plotoutline
+#latestMediaHandler.movingpicture.latest[1,2,3].plotoutline
+#latestMediaHandler.myfilms.latest[1,2,3].plot - always empty - I did not find how to get
+#latestMediaHandler.myfilms.latest[1,2,3].plotoutline - always empty - I did not find how to get
+#latestMediaHandler.mvcentral.latest[1,2,3].artistbio
+#latestMediaHandler.mvcentral.latest[1,2,3].artistbiooutline
+#latestMediaHandler.tvseries.latest.mode - episodes, seasons, series
+#latestMediaHandler.tvseries.latest.type
+#latestMediaHandler.tvseries.latest[1,2,3].plotoutline
+</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2015-10-05T09:06:46</ReleaseDate>
+    <ReleaseDate>2015-11-05T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>

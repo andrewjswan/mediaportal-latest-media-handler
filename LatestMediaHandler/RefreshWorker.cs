@@ -51,7 +51,7 @@ namespace LatestMediaHandler
           Utils.AllocateDelayStop("RefreshWorker-OnDoWork-"+Argument.ToString().Trim());
           logger.Debug("RefreshWorker: Start: "+Argument.ToString());
 
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
+          Utils.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
 
           if (Argument is LatestMusicHandler)
           {
@@ -97,7 +97,7 @@ namespace LatestMediaHandler
         Utils.ReleaseDelayStop("RefreshWorker-OnDoWork-"+Argument.ToString().Trim());
         logger.Debug("RefreshWorker: Complete: "+Argument.ToString());
 
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
+        Utils.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
       }
       catch (Exception ex)
       {

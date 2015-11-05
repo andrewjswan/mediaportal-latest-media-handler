@@ -84,6 +84,12 @@ namespace LatestMediaHandler
       set { Utils.latestTVSeriesWatched = value; }
     }
 
+    private int LatestTVSeriesType
+    {
+      get { return Utils.latestTVSeriesType; }
+      set { Utils.latestTVSeriesType = value; }
+    }
+
     private string LatestTVSeriesRatings
     {
       get { return Utils.latestTVSeriesRatings; }
@@ -219,6 +225,7 @@ namespace LatestMediaHandler
         LatestTVSeries = checkBox2.Checked ? "True" : "False";
         LatestTVSeriesWatched = checkBox11.Checked ? "True" : "False";
         LatestTVSeriesRatings = GetTVSeriesRatings();
+        LatestTVSeriesType = comboBoxTVSeriesType.SelectedIndex;
         LatestTVRecordings = checkBox3.Checked ? "True" : "False";
         LatestTVRecordingsWatched = checkBox14.Checked ? "True" : "False";
         LatestTVRecordingsUnfinished = checkBoxRecordingsUnfinished.Checked ? "True" : "False";
@@ -242,7 +249,6 @@ namespace LatestMediaHandler
       {
         logger.Error("DoSave: " + ex);
       }
-
 
       if (LatestMusicType == Translation.PrefsMostPlayedMusic)
         LatestMusicType = LatestMusicHandler.MusicTypeMostPlayed;
@@ -307,6 +313,10 @@ namespace LatestMediaHandler
       comboBox2.Items.Add(Translation.PrefsLatestPlayedMusic);
       comboBox2.Items.Add(Translation.PrefsMostPlayedMusic);
 
+      comboBoxTVSeriesType.Items.Add(Translation.PrefsLatestEpisodes);
+      comboBoxTVSeriesType.Items.Add(Translation.PrefsLatestSeasons);
+      comboBoxTVSeriesType.Items.Add(Translation.PrefsLatestSeries);
+
       /*
       checkedListBox1.Items.Add("TV-Y: This program is designed to be appropriate for all children");
       checkedListBox1.Items.Add("TV-Y7: This program is designed for children age 7 and above.");
@@ -326,7 +336,7 @@ namespace LatestMediaHandler
       // 
       tabPage20.Text = Translation.PrefsTabLMH;
       tabPage4.Text = Translation.PrefsTabAbout;
-      richTextBox1.Text = Translation.PrefsDescription;
+      richTextBox1.AppendText(Translation.PrefsDescription.Replace("\r\n", Environment.NewLine).Replace("\n", Environment.NewLine));
       //
       groupBox11.Text = Translation.PrefsLMHOptions ;
       groupBox13.Text = Translation.PrefsUpdateDB;
@@ -565,6 +575,8 @@ namespace LatestMediaHandler
         checkBox11.Checked = true;
       }
 
+      comboBoxTVSeriesType.SelectedIndex = LatestTVSeriesType;
+
       if (RefreshDbPicture != null && RefreshDbPicture.Length > 0)
       {
         if (RefreshDbPicture.Equals("True", StringComparison.CurrentCulture))
@@ -637,7 +649,6 @@ namespace LatestMediaHandler
         checkBox4.Checked = true;
       }
 
-
       try
       {
         logger.Info("Latest Media Handler configuration is started.");
@@ -648,7 +659,6 @@ namespace LatestMediaHandler
       }
 
     }
-
 
     /// <summary>
     /// Setup logger. This funtion made by the team behind Moving Pictures 

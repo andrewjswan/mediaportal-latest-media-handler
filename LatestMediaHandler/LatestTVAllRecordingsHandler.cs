@@ -142,45 +142,49 @@ namespace LatestMediaHandler
 
     internal void EmptyRecordingProps()
     {
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.label", Translation.LabelLatestAdded);
+      Utils.SetProperty("#latestMediaHandler.tvrecordings.label", Translation.LabelLatestAdded);
       //Active Recordings
       for (int z = 1; z < 4; z++)
       {
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".title", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".genre", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".startTime", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".startDate", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".endTime", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".endDate", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".channel", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".channelLogo", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".title", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".genre", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".startTime", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".startDate", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".endTime", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".endDate", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".channel", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".channelLogo", string.Empty);
       }
 
       //Scheduled recordings
       for (int z = 1; z < 4; z++)
       {
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".title", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".startTime", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".startDate", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".endTime", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".endDate", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".channel", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".channelLogo", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".title", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".startTime", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".startDate", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".endTime", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".endDate", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".channel", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".channelLogo", string.Empty);
       }
     }
 
     internal void EmptyLatestMediaPropsTVRecordings()
     {
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.label", Translation.LabelLatestAdded);
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "false");
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.hasnew", "false");
+      Utils.SetProperty("#latestMediaHandler.tvrecordings.label", Translation.LabelLatestAdded);
+      Utils.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "false");
+      Utils.SetProperty("#latestMediaHandler.tvrecordings.hasnew", "false");
       for (int z = 1; z < 4; z++)
       {
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".genre", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".new", "false");
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".genre", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".summary", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".series", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".episode", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".episodename", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".new", "false");
       }
     }
 
@@ -428,7 +432,7 @@ namespace LatestMediaHandler
         }
         bool noNewRecordings = false;
         if ((latestTVRecordings != null && latestTVRecordings.Count > 1) && 
-            LatestMediaHandlerSetup.GetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title").Equals(latestTVRecordings[0].Title, StringComparison.CurrentCulture))
+            Utils.GetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title").Equals(latestTVRecordings[0].Title, StringComparison.CurrentCulture))
         {
           noNewRecordings = true;
           logger.Info("Updating Latest Media Info: TV Recording: No new recordings since last check!");
@@ -443,16 +447,24 @@ namespace LatestMediaHandler
             for (int i = 0; i < latestTVRecordings.Count && i < 4; i++)
             {
               logger.Info("Updating Latest Media Info: TV Recording: Recording " + z + ": " + latestTVRecordings[i].Title);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", latestTVRecordings[i].Thumb);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", latestTVRecordings[i].Title);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", latestTVRecordings[i].DateAdded);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".genre", latestTVRecordings[i].Genre);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".new", latestTVRecordings[i].New);
+
+              string recsummary = (string.IsNullOrEmpty(latestTVRecordings[i].Summary) ? Translation.NoDescription : latestTVRecordings[i].Summary);
+              string recsummaryoutline = Utils.GetSentences(recsummary, Utils.latestPlotOutlineSentencesNum);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", latestTVRecordings[i].Thumb);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", latestTVRecordings[i].Title);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", latestTVRecordings[i].DateAdded);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".genre", latestTVRecordings[i].Genre);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".summary", recsummary);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".summaryoutline", recsummaryoutline);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".series", latestTVRecordings[i].SeriesIndex);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".episode", latestTVRecordings[i].EpisodeIndex);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".episodename", latestTVRecordings[i].ThumbSeries);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".new", latestTVRecordings[i].New);
               z++;
             }
             //latestTVRecordings.Clear();
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "true");
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.hasnew", Utils.HasNewTVRecordings ? "true" : "false");
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "true");
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.hasnew", Utils.HasNewTVRecordings ? "true" : "false");
             logger.Debug("Updating Latest Media Info: TV Recording: Has new: " + (Utils.HasNewTVRecordings ? "true" : "false"));
           }
         }
@@ -500,8 +512,8 @@ namespace LatestMediaHandler
             {
               if (L4trrh.NeedCleanup && L4trrh.NeedCleanupCount >= 5)
               {
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
                 Utils.UnLoadImage(ref L4trrh.images);
                 L4trrh.ShowFanart = 1;
                 L4trrh.SelectedFacadeItem2 = -1;
@@ -511,8 +523,8 @@ namespace LatestMediaHandler
               }
               else if (L4trrh.NeedCleanup && L4trrh.NeedCleanupCount == 0)
               {
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
                 L4trrh.NeedCleanupCount++;
               }
               else if (L4trrh.NeedCleanup)
@@ -524,8 +536,8 @@ namespace LatestMediaHandler
             {
               if (Largusrh.NeedCleanup && Largusrh.NeedCleanupCount >= 5)
               {
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
                 Utils.UnLoadImage(ref Largusrh.images);
                 Largusrh.ShowFanart = 1;
                 Largusrh.SelectedFacadeItem2 = -1;
@@ -535,8 +547,8 @@ namespace LatestMediaHandler
               }
               else if (Largusrh.NeedCleanup && Largusrh.NeedCleanupCount == 0)
               {
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
                 Largusrh.NeedCleanupCount++;
               }
               else if (Largusrh.NeedCleanup)
@@ -548,8 +560,8 @@ namespace LatestMediaHandler
             {
               if (Ltvrh.NeedCleanup && Ltvrh.NeedCleanupCount >= 5)
               {
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
                 Utils.UnLoadImage(ref Ltvrh.images);
                 Ltvrh.ShowFanart = 1;
                 Ltvrh.SelectedFacadeItem2 = -1;
@@ -559,8 +571,8 @@ namespace LatestMediaHandler
               }
               else if (Ltvrh.NeedCleanup && Ltvrh.NeedCleanupCount == 0)
               {
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
-                LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
+                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
                 Ltvrh.NeedCleanupCount++;
               }
               else if (Ltvrh.NeedCleanup)

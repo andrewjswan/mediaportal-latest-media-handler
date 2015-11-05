@@ -216,7 +216,12 @@ namespace LatestMediaHandler
 
     //Episodes
     public static string EpisodeDetails = "Episode Details";
+    public static string SeasonDetails = "Season Details";
     public static string SeriesDetails = "TV Series Details";
+
+    public static string LabelSeriesLatestSeries = "series";
+    public static string LabelSeriesLatestSeasons = "seasons";
+    public static string LabelSeriesLatestEpisodes = "episodes";
 
     public static string ToSeries = "Open TV Series";
 
@@ -224,6 +229,9 @@ namespace LatestMediaHandler
     public static string DisplayLatestEpisodes = "Display Latest Added Episodes";
     public static string ShowUnwatchedEpisodes = "Show Only Unwatched Episodes";
     public static string ShowAllEpisodes = "Show All Episodes";
+    public static string ShowLatestsEpisodes = "Show Episodes";
+    public static string ShowLatestsSeasons = "Show Seasons";
+    public static string ShowLatestsSeries = "Show Series";
 
     //Movies
     public static string MovieDetails = "Movie Details";
@@ -245,6 +253,8 @@ namespace LatestMediaHandler
     public static string Play = "Play";
     public static string View = "View";
     public static string Update = "Update";
+
+    public static string NoDescription = "No Description available...";
 
     //Label
     public static string LabelLatestAdded  = "Latest added";
@@ -294,6 +304,9 @@ namespace LatestMediaHandler
     public static string PrefsTVSeriesWatched = "Only Return Unwatched Series";
     public static string PrefsUpdateDB = "Query/Update Databases";
     public static string PrefsUpdateDBDesc = "Enable automatic database updates for:";
+    public static string PrefsLatestEpisodes = "Latest Episodes";
+    public static string PrefsLatestSeasons = "Latest Seasons";
+    public static string PrefsLatestSeries = "Latest Series";
     #endregion
   }
 }

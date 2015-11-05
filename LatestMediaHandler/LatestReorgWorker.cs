@@ -47,7 +47,7 @@ namespace LatestMediaHandler
           Thread.CurrentThread.Name = "LatestReorgWorker";
           Utils.AllocateDelayStop("LatestReorgWorker-OnDoWork");
 
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
+          Utils.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
 
           if (LatestMediaHandlerSetup.LatestMusic.Equals("True", StringComparison.CurrentCulture) &&
               LatestMediaHandlerSetup.RefreshDbMusic.Equals("True", StringComparison.CurrentCulture))
@@ -92,7 +92,7 @@ namespace LatestMediaHandler
         LatestMediaHandlerSetup.ReorgTimerTick = Environment.TickCount;
         Utils.SyncPointReorg = 0;
 
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
+        Utils.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
       }
       catch (Exception ex)
       {

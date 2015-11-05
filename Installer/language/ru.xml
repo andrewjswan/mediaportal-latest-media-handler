@@ -7,11 +7,18 @@
  <!-- EPISODES-->
   <string Field="EpisodeDetails">Информация о Серии</string>
   <string Field="DisplayNextEpisodes">Display Next Episodes For Last Watched Episode</string>
-  <string Field="DisplayLatestEpisodes">Display Latest Added Episodes</string>
-  <string Field="ShowUnwatchedEpisodes">Show Only Unwatched Episodes</string>
+  <string Field="DisplayLatestEpisodes">Показать последние добавленные</string>
+  <string Field="ShowUnwatchedEpisodes">Показывать только не просмотренные</string>
   <string Field="ShowAllEpisodes">Показать Все эпизоды</string>
   <string Field="SeriesDetails">Информация о Сериале</string>
   <string Field="ToSeries">Перейти к сериалу</string>
+  <string Field="SeasonDetails">Информация о Сезоне</string>
+  <string Field="ShowLatestsEpisodes">Показывать эпизоды</string>
+  <string Field="ShowLatestsSeasons">Показывать сезоны</string>
+  <string Field="ShowLatestsSeries">Показывать сериалы</string>
+  <string Field="LabelSeriesLatestSeries">сериалы</string>
+  <string Field="LabelSeriesLatestSeasons">сезоны</string>
+  <string Field="LabelSeriesLatestEpisodes">эпизоды</string>
   
  <!-- MOVIES-->
   <string Field="MovieDetails">Информация о Фильме</string>
@@ -39,6 +46,8 @@
   <string Field="View">Просмотр</string>  
   <string Field="Update">Обновить</string>  
   
+  <string Field="NoDescription">Описания нет...</string>
+
  <!-- SETTINGS-->
   <string Field="PrefsDateFormat">Date format</string>
   <string Field="PrefsDescription">Latest Media Handller is a plugin for MediaPortal.\r\nThe purpose of the plugin is to deliver information about latest\r\n* Pictures\r\n* Music Albums\r\n* Moving Pictures\r\n* TVSeries\r\n* TV Recordings\r\nto MediaPortal skins so that they can display things like latest movie title, poster and backdrops.</string>
@@ -82,5 +91,8 @@
   <string Field="PrefsTVSeriesWatched">Only Return Unwatched Series</string>
   <string Field="PrefsUpdateDB">Query/Update Databases</string>
   <string Field="PrefsUpdateDBDesc">Enable automatic database updates for:</string>
+  <string Field="PrefsLatestEpisodes">Эпизоды</string>
+  <string Field="PrefsLatestSeasons">Сезоны</string>
+  <string Field="PrefsLatestSeries">Сериалы</string>
 
 </strings>

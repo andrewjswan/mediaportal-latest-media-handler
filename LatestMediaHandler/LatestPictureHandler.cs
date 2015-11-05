@@ -614,10 +614,10 @@ namespace LatestMediaHandler
       {
         if (item != null && selectedFacadeItem1 != item.ItemId)
         {
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.thumb", item.IconImageBig);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.title", item.Label);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.dateAdded", item.Label2);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.filename", item.Label);
+          Utils.SetProperty("#latestMediaHandler.picture.selected.thumb", item.IconImageBig);
+          Utils.SetProperty("#latestMediaHandler.picture.selected.title", item.Label);
+          Utils.SetProperty("#latestMediaHandler.picture.selected.dateAdded", item.Label2);
+          Utils.SetProperty("#latestMediaHandler.picture.selected.filename", item.Label);
           selectedFacadeItem1 = item.ItemId;
 
           facade = Utils.GetLatestsFacade(ControlID);
@@ -645,20 +645,20 @@ namespace LatestMediaHandler
             Utils.LoadImage(_image, ref images);
             if (showFanart == 1)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart1", _image);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "false");
+              Utils.SetProperty("#latestMediaHandler.picture.selected.fanart1", _image);
+              Utils.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "true");
+              Utils.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "false");
               Thread.Sleep(1000);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart2", "");
+              Utils.SetProperty("#latestMediaHandler.picture.selected.fanart2", "");
               showFanart = 2;
             }
             else
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart2", _image);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "false");
+              Utils.SetProperty("#latestMediaHandler.picture.selected.fanart2", _image);
+              Utils.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "true");
+              Utils.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "false");
               Thread.Sleep(1000);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart1", "");
+              Utils.SetProperty("#latestMediaHandler.picture.selected.fanart1", "");
               showFanart = 1;
             }
             Utils.UnLoadImage(_image, ref images);
@@ -667,10 +667,10 @@ namespace LatestMediaHandler
         }
         else
         {
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart1", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart2", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "false");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "false");
+          Utils.SetProperty("#latestMediaHandler.picture.selected.fanart1", " ");
+          Utils.SetProperty("#latestMediaHandler.picture.selected.fanart2", " ");
+          Utils.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "false");
+          Utils.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "false");
           Utils.UnLoadImage(ref images);
           showFanart = 1;
           selectedFacadeItem2 = -1;
@@ -772,8 +772,8 @@ namespace LatestMediaHandler
           {
             if (NeedCleanup && NeedCleanupCount >= 5)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart1", " ");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.fanart2", " ");
+              Utils.SetProperty("#latestMediaHandler.picture.selected.fanart1", " ");
+              Utils.SetProperty("#latestMediaHandler.picture.selected.fanart2", " ");
               Utils.UnLoadImage(ref images);
               ShowFanart = 1;
               SelectedFacadeItem2 = -1;
@@ -783,8 +783,8 @@ namespace LatestMediaHandler
             }
             else if (NeedCleanup && NeedCleanupCount == 0)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "false");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "false");
+              Utils.SetProperty("#latestMediaHandler.picture.selected.showfanart1", "false");
+              Utils.SetProperty("#latestMediaHandler.picture.selected.showfanart2", "false");
               NeedCleanupCount++;
             }
             else if (NeedCleanup)
@@ -820,17 +820,17 @@ namespace LatestMediaHandler
 
     internal void EmptyLatestMediaPropsPictures()
     {
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.label", Translation.LabelLatestAdded);
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "false");
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.hasnew", "false");
+      Utils.SetProperty("#latestMediaHandler.picture.label", Translation.LabelLatestAdded);
+      Utils.SetProperty("#latestMediaHandler.picture.latest.enabled", "false");
+      Utils.SetProperty("#latestMediaHandler.picture.hasnew", "false");
       for (int z = 1; z < 4; z++)
       {
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".fanart", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".new", "false");
+        Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".fanart", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".new", "false");
       }
     }
 
@@ -859,16 +859,16 @@ namespace LatestMediaHandler
             for (int i = 0; i < ht.Count && i < Utils.LatestsMaxNum; i++)
             {
               logger.Info("Updating Latest Media Info: Pictures: Picture " + z + ": " + ht[i].Fanart);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", ht[i].Title);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", ht[i].Thumb);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", ht[i].Fanart);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".fanart", ht[i].Fanart);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", ht[i].DateAdded);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest" + z + ".new", ht[i].New);
+              Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".title", ht[i].Title);
+              Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".thumb", ht[i].Thumb);
+              Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".filename", ht[i].Fanart);
+              Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".fanart", ht[i].Fanart);
+              Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".dateAdded", ht[i].DateAdded);
+              Utils.SetProperty("#latestMediaHandler.picture.latest" + z + ".new", ht[i].New);
               z++;
             }
             // ht.Clear();
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.hasnew", Utils.HasNewPictures ? "true" : "false");
+            Utils.SetProperty("#latestMediaHandler.picture.hasnew", Utils.HasNewPictures ? "true" : "false");
             logger.Debug("Updating Latest Media Info: Pictures: Has new: " + (Utils.HasNewPictures ? "true" : "false"));
           }
           // ht = null;
@@ -896,7 +896,7 @@ namespace LatestMediaHandler
       if ((latestPictures != null) && (latestPictures.Count > 0))
       {
         InitFacade();
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.picture.latest.enabled", "true");
+        Utils.SetProperty("#latestMediaHandler.picture.latest.enabled", "true");
       }
       else
         EmptyLatestMediaPropsPictures();

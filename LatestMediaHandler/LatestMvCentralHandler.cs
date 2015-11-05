@@ -163,19 +163,21 @@ namespace LatestMediaHandler
 
     internal void EmptyLatestMediaPropsMvCentral()
     {
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.label", Translation.LabelLatestAdded);
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest.enabled", "false");
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.hasnew", "false");
+      Utils.SetProperty("#latestMediaHandler.mvcentral.label", Translation.LabelLatestAdded);
+      Utils.SetProperty("#latestMediaHandler.mvcentral.latest.enabled", "false");
+      Utils.SetProperty("#latestMediaHandler.mvcentral.hasnew", "false");
       for (int z = 1; z < 4; z++)
       {
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".thumb", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artist", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".album", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".track", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".new", "false");
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".thumb", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artist", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artistbio", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artistbiooutline", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".album", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".track", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".new", "false");
       }
     }
 
@@ -203,18 +205,23 @@ namespace LatestMediaHandler
           for (int i = 0; i < hTable.Count && i < Utils.LatestsMaxNum; i++)
           {
             logger.Info("Updating Latest Media Info: MvCental: Video " + z + ": " + hTable[i].Artist + " - " + hTable[i].Album);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".thumb", hTable[i].Thumb);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artist", hTable[i].Artist);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".album", hTable[i].Album);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".track", hTable[i].Title);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded", hTable[i].DateAdded);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart", hTable[i].Fanart);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", hTable[i].Genre);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".new", hTable[i].New);
+
+            string artistbio = (string.IsNullOrEmpty(hTable[i].Summary) ? Translation.NoDescription : hTable[i].Summary);
+            string artistbiooutline = Utils.GetSentences(artistbio, Utils.latestPlotOutlineSentencesNum);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".thumb", hTable[i].Thumb);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artist", hTable[i].Artist);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artistbio", artistbio);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".artistbiooutline", artistbiooutline);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".album", hTable[i].Album);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".track", hTable[i].Title);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded", hTable[i].DateAdded);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart", hTable[i].Fanart);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", hTable[i].Genre);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".new", hTable[i].New);
             z++;
           }
           // hTable.Clear();
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.hasnew", Utils.HasNewMvCentral ? "true" : "false");
+          Utils.SetProperty("#latestMediaHandler.mvcentral.hasnew", Utils.HasNewMvCentral ? "true" : "false");
           logger.Debug("Updating Latest Media Info: MvCentral: Has new: " + (Utils.HasNewMvCentral ? "true" : "false"));
         }
         // hTable = null;
@@ -235,7 +242,7 @@ namespace LatestMediaHandler
       if ((latestMusicAlbums != null) && (latestMusicAlbums.Count > 0))
       {
         InitFacade();
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.latest.enabled", "true");
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest.enabled", "true");
       }
       else
         EmptyLatestMediaPropsMvCentral();
@@ -304,6 +311,10 @@ namespace LatestMediaHandler
           {
             string dateAdded = string.Empty;
             string sArtist = allTrack.ArtistInfo[0].Artist;
+            // string sArtistBio = mvCentralUtils.bioNoiseFilter(allTrack.ArtistInfo[0].bioContent);
+            string sArtistBio = allTrack.ArtistInfo[0].bioSummary;
+            // logger.Debug("*** "+allTrack.ArtistInfo[0].bioContent);
+            // logger.Debug("*** "+allTrack.ArtistInfo[0].bioSummary);
             bool isnew = false;
             try
             {
@@ -371,7 +382,9 @@ namespace LatestMediaHandler
                                                                 tmpGenre,
                                                                 allTrack.Rating.ToString(),
                                                                 allTrack.Rating.ToString(), 
-                                                                null, null, null, null, null, null, null, null, null, null,
+                                                                null, null, null, null, null, null, null, null,
+                                                                sArtistBio, 
+                                                                null,
                                                                 isnew)); 
 
             latestMusicAlbumsVideos.Add(i0, sPath);
@@ -522,12 +535,12 @@ namespace LatestMediaHandler
       {
         if (item != null && selectedFacadeItem1 != item.ItemId)
         {
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.thumb", latestMusicAlbums[(item.ItemId - 1)].Thumb);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.artist", latestMusicAlbums[(item.ItemId - 1)].Artist);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.album", latestMusicAlbums[(item.ItemId - 1)].Album);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.track", latestMusicAlbums[(item.ItemId - 1)].Title);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.dateAdded", latestMusicAlbums[(item.ItemId - 1)].DateAdded);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.genre", latestMusicAlbums[(item.ItemId - 1)].Genre);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.thumb", latestMusicAlbums[(item.ItemId - 1)].Thumb);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.artist", latestMusicAlbums[(item.ItemId - 1)].Artist);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.album", latestMusicAlbums[(item.ItemId - 1)].Album);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.track", latestMusicAlbums[(item.ItemId - 1)].Title);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.dateAdded", latestMusicAlbums[(item.ItemId - 1)].DateAdded);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.genre", latestMusicAlbums[(item.ItemId - 1)].Genre);
           selectedFacadeItem1 = item.ItemId;
 
           facade = Utils.GetLatestsFacade(ControlID);
@@ -557,20 +570,20 @@ namespace LatestMediaHandler
             Utils.LoadImage(_image, ref images);
             if (showFanart == 1)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", _image);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "false");
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", _image);
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "true");
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "false");
               Thread.Sleep(1000);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", "");
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", "");
               showFanart = 2;
             }
             else
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", _image);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "false");
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", _image);
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "true");
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "false");
               Thread.Sleep(1000);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", "");
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", "");
               showFanart = 1;
             }
             Utils.UnLoadImage(_image, ref images);
@@ -579,10 +592,10 @@ namespace LatestMediaHandler
         }
         else
         {
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "false");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "false");
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", " ");
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", " ");
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "false");
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "false");
           Utils.UnLoadImage(ref images);
           showFanart = 1;
           selectedFacadeItem2 = -1;
@@ -767,8 +780,8 @@ namespace LatestMediaHandler
           {
             if (NeedCleanup && NeedCleanupCount >= 5)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", " ");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", " ");
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.fanart1", " ");
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.fanart2", " ");
               Utils.UnLoadImage(ref images);
               ShowFanart = 1;
               SelectedFacadeItem2 = -1;
@@ -778,8 +791,8 @@ namespace LatestMediaHandler
             }
             else if (NeedCleanup && NeedCleanupCount == 0)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "false");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "false");
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart1", "false");
+              Utils.SetProperty("#latestMediaHandler.mvcentral.selected.showfanart2", "false");
               NeedCleanupCount++;
             }
             else if (NeedCleanup)

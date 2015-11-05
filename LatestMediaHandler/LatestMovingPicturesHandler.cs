@@ -383,24 +383,25 @@ namespace LatestMediaHandler
 
     internal void EmptyLatestMediaPropsMovingPictures()
     {
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.label", Translation.LabelLatestAdded);
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest.enabled", "false");
-      LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.hasnew", "false");
+      Utils.SetProperty("#latestMediaHandler.movingpicture.label", Translation.LabelLatestAdded);
+      Utils.SetProperty("#latestMediaHandler.movingpicture.latest.enabled", "false");
+      Utils.SetProperty("#latestMediaHandler.movingpicture.hasnew", "false");
       for (int z = 1; z < 4; z++)
       {
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".thumb", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".fanart", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".title", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".dateAdded", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".genre", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".rating", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".roundedRating", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".classification", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".runtime", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".year", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".id", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", string.Empty);
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".new", "false");
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".thumb", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".fanart", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".title", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".dateAdded", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".genre", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".rating", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".roundedRating", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".classification", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".runtime", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".year", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".id", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plotoutline", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".new", "false");
       }
     }
 
@@ -428,23 +429,24 @@ namespace LatestMediaHandler
           for (int i = 0; i < hTable.Count && i < Utils.LatestsMaxNum; i++)
           {
             logger.Info("Updating Latest Media Info: MovingPictures: Movie " + z + ": " + hTable[i].Title + " " + hTable[i].DateAdded);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".thumb", hTable[i].Thumb);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".fanart", hTable[i].Fanart);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".title", hTable[i].Title);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".dateAdded", hTable[i].DateAdded);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".genre", hTable[i].Genre);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".rating", hTable[i].Rating);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".roundedRating", hTable[i].RoundedRating);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".classification", hTable[i].Classification);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".runtime", hTable[i].Runtime);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".year", hTable[i].Year);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".id", hTable[i].Id);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", hTable[i].Summary);
-            LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".new", hTable[i].New);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".thumb", hTable[i].Thumb);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".fanart", hTable[i].Fanart);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".title", hTable[i].Title);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".dateAdded", hTable[i].DateAdded);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".genre", hTable[i].Genre);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".rating", hTable[i].Rating);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".roundedRating", hTable[i].RoundedRating);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".classification", hTable[i].Classification);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".runtime", hTable[i].Runtime);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".year", hTable[i].Year);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".id", hTable[i].Id);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", hTable[i].Summary);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plotoutline", Utils.GetSentences(hTable[i].Summary, Utils.latestPlotOutlineSentencesNum));
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".new", hTable[i].New);
             z++;
           }
           // hTable.Clear();
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.hasnew", Utils.HasNewMovingPictures ? "true" : "false");
+          Utils.SetProperty("#latestMediaHandler.movingpicture.hasnew", Utils.HasNewMovingPictures ? "true" : "false");
           logger.Debug("Updating Latest Media Info: MovingPictures: Has new: " + (Utils.HasNewMovingPictures ? "true" : "false"));
         }
         // hTable = null;
@@ -465,7 +467,7 @@ namespace LatestMediaHandler
       if ((latestMovies != null) && (latestMovies.Count > 0))
       {
         InitFacade();
-        LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.latest.enabled", "true");
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest.enabled", "true");
       }
       else
         EmptyLatestMediaPropsMovingPictures();
@@ -605,10 +607,10 @@ namespace LatestMediaHandler
       {
         if (item != null && selectedFacadeItem1 != item.ItemId)
         {
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.thumb", item.IconImageBig);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.title", item.Label);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.dateAdded", item.Label3);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.genre", item.Label2);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.thumb", item.IconImageBig);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.title", item.Label);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.dateAdded", item.Label3);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.genre", item.Label2);
           //decimal d = 0;
           string _rating = "0";
           string _roundedRating = "0";
@@ -624,13 +626,13 @@ namespace LatestMediaHandler
           }
           catch
           {   }
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.rating", "" + _rating);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.roundedRating", "" + _roundedRating);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.classification", "");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.runtime", "" + item.Duration);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.year", "" + item.Year);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.id", "" + item.ItemId);
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.plot", item.Path);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.rating", "" + _rating);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.roundedRating", "" + _roundedRating);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.classification", "");
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.runtime", "" + item.Duration);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.year", "" + item.Year);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.id", "" + item.ItemId);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.plot", item.Path);
           selectedFacadeItem1 = item.ItemId;
 
           facade = Utils.GetLatestsFacade(ControlID);
@@ -660,20 +662,20 @@ namespace LatestMediaHandler
             Utils.LoadImage(_image, ref images);
             if (showFanart == 1)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.fanart1", _image);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart1", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart2", "false");
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.fanart1", _image);
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart1", "true");
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart2", "false");
               Thread.Sleep(1000);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.fanart2", "");
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.fanart2", "");
               showFanart = 2;
             }
             else
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.fanart2", _image);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart2", "true");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart1", "false");
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.fanart2", _image);
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart2", "true");
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart1", "false");
               Thread.Sleep(1000);
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.fanart1", "");
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.fanart1", "");
               showFanart = 1;
             }
             Utils.UnLoadImage(_image, ref images);
@@ -682,10 +684,10 @@ namespace LatestMediaHandler
         }
         else
         {
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.fanart1", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.fanart2", " ");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart1", "false");
-          LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart2", "false");
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.fanart1", " ");
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.fanart2", " ");
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart1", "false");
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart2", "false");
           Utils.UnLoadImage(ref images);
           showFanart = 1;
           selectedFacadeItem2 = -1;
@@ -861,8 +863,8 @@ namespace LatestMediaHandler
           {
             if (NeedCleanup && NeedCleanupCount >= 5)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.fanart1", " ");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.fanart2", " ");
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.fanart1", " ");
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.fanart2", " ");
               Utils.UnLoadImage(ref images);
               ShowFanart = 1;
               SelectedFacadeItem2 = -1;
@@ -872,8 +874,8 @@ namespace LatestMediaHandler
             }
             else if (NeedCleanup && NeedCleanupCount == 0)
             {
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart1", "false");
-              LatestMediaHandlerSetup.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart2", "false");
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart1", "false");
+              Utils.SetProperty("#latestMediaHandler.movingpicture.selected.showfanart2", "false");
               NeedCleanupCount++;
             }
             else if (NeedCleanup)

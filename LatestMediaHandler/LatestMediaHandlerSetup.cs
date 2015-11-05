@@ -303,37 +303,6 @@ namespace LatestMediaHandler
       return newTick;
     }
 
-    internal static void SetProperty(string property, string value)
-    {
-      try
-      {
-        if (property == null)
-          return;
-
-        GUIPropertyManager.SetProperty(property, value);
-      }
-      catch (Exception ex)
-      {
-        logger.Error("SetProperty: " + ex.ToString());
-      }
-    }
-
-    internal static string GetProperty(string property)
-    {
-      try
-      {
-        if (property == null)
-          return string.Empty;
-
-        return GUIPropertyManager.GetProperty(property);
-      }
-      catch (Exception ex)
-      {
-        logger.Error("GetProperty: " + ex.ToString());
-      }
-      return string.Empty;
-    }
-
     /// <summary>
     /// Get value from xml node
     /// </summary>
@@ -637,7 +606,7 @@ namespace LatestMediaHandler
 
       ReorgTimerTick = Environment.TickCount;
       //
-      SetProperty("#latestMediaHandler.scanned", "false");
+      Utils.SetProperty("#latestMediaHandler.scanned", "false");
       //
       Lmh.EmptyLatestMediaPropsMusic();
       Lmvh.EmptyLatestMediaPropsMyVideos();

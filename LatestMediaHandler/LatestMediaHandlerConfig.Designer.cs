@@ -62,6 +62,7 @@ namespace LatestMediaHandler
             this.label3 = new System.Windows.Forms.Label();
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.comboBoxTVSeriesType = new System.Windows.Forms.ComboBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox14 = new System.Windows.Forms.CheckBox();
@@ -239,6 +240,7 @@ namespace LatestMediaHandler
             this.groupBox11.Controls.Add(this.checkBox14);
             this.groupBox11.Controls.Add(this.checkBoxRecordingsUnfinished);
             this.groupBox11.Controls.Add(this.checkBox11);
+            this.groupBox11.Controls.Add(this.comboBoxTVSeriesType);
             this.groupBox11.Controls.Add(this.checkBox10);
             this.groupBox11.Controls.Add(this.checkBox2);
             this.groupBox11.Controls.Add(this.checkBox3);
@@ -416,6 +418,14 @@ namespace LatestMediaHandler
             this.checkBox2.Text = "TV Series";
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            // 
+            // comboBoxTVSeriesType
+            // 
+            this.comboBoxTVSeriesType.FormattingEnabled = true;
+            this.comboBoxTVSeriesType.Location = new System.Drawing.Point(451, 123);
+            this.comboBoxTVSeriesType.Name = "comboBoxTVSeriesType";
+            this.comboBoxTVSeriesType.Size = new System.Drawing.Size(213, 20);
+            this.comboBoxTVSeriesType.TabIndex = 13;
             // 
             // checkBox3
             // 
@@ -613,6 +623,7 @@ namespace LatestMediaHandler
         private System.Windows.Forms.CheckBox checkBoxRecordingsUnfinished;
         private System.Windows.Forms.CheckBox checkBox11;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBoxTVSeriesType;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox groupBox1;

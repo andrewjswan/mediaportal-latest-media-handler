@@ -35,7 +35,6 @@ namespace LatestMediaHandler
         {
           _return = true;
         }
-
       }
       catch (Exception ex)
       {
@@ -54,7 +53,6 @@ namespace LatestMediaHandler
         {
           _return = true;
         }
-
       }
       catch (Exception ex)
       {
@@ -73,7 +71,6 @@ namespace LatestMediaHandler
         {
           _return = true;
         }
-
       }
       catch (Exception ex)
       {
@@ -92,7 +89,6 @@ namespace LatestMediaHandler
         {
           _return = true;
         }
-
       }
       catch (Exception ex)
       {
@@ -111,7 +107,6 @@ namespace LatestMediaHandler
         {
           _return = true;
         }
-
       }
       catch (Exception ex)
       {
@@ -130,7 +125,6 @@ namespace LatestMediaHandler
         {
           _return = true;
         }
-
       }
       catch (Exception ex)
       {
@@ -149,7 +143,6 @@ namespace LatestMediaHandler
         {
           _return = true;
         }
-
       }
       catch (Exception ex)
       {
@@ -167,7 +160,6 @@ namespace LatestMediaHandler
         {
           _return = true;
         }
-
       }
       catch (Exception ex)
       {

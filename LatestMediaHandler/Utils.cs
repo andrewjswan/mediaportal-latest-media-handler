@@ -60,6 +60,7 @@ namespace LatestMediaHandler
     public static string latestTVSeries { get; set; }
     public static string latestTVSeriesWatched { get; set; }
     public static string latestTVSeriesRatings { get; set; }
+    public static int latestTVSeriesType { get; set; }
     public static string latestTVRecordings { get; set; }
     public static string latestTVRecordingsWatched { get; set; }
     public static string latestTVRecordingsUnfinished { get; set; }
@@ -82,6 +83,7 @@ namespace LatestMediaHandler
 
     public static DateTime NewDateTime { get; set; }
 
+    public static int latestPlotOutlineSentencesNum { get; set; }
     public static string[] PipesArray;
 
     // SyncPoint
@@ -122,7 +124,6 @@ namespace LatestMediaHandler
       get { return Utils.usedArgus; }
       set { Utils.usedArgus = value; }
     }
-
     #endregion
 
     /// <summary>
@@ -545,6 +546,79 @@ namespace LatestMediaHandler
       }
     }
 
+    internal static string GetSentences(string Text, int num)
+    {
+      if (string.IsNullOrEmpty(Text) || num <=0)
+        return Text;
+
+      string result = string.Empty;
+      try
+      {
+        int i = 1;
+        string text = Text.Trim() + " ";
+        string[] Sentences = text.Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string sentence in Sentences)
+        {
+          result = result + sentence.Trim() + ". ";
+          if (i >= num)
+          {
+            break;
+          }
+          i++;
+        }
+        result = result.Trim();
+      }
+      catch (Exception ex)
+      {
+        result = string.Empty;
+        logger.Error("GetSentences: " + ex.ToString());
+      }
+      // logger.Debug("GetSentences: " + Text);
+      // logger.Debug("GetSentences: " + result);
+      return result;
+    }
+
+    internal static void SetProperty(string property, string value)
+    {
+      if (property == null)
+        return;
+
+      try
+      {
+        GUIPropertyManager.SetProperty(property, value);
+        //logger.Debug("SetProperty: "+property+" -> "+value) ;
+      }
+      catch (Exception ex)
+      {
+        logger.Error("SetProperty: " + ex.ToString());
+      }
+    }
+
+    internal static string GetProperty (string property)
+    {
+      string result = string.Empty;
+      if (property == null)
+        return result;
+
+      try
+      {
+        result = GUIPropertyManager.GetProperty(property);
+        if (string.IsNullOrEmpty(result))
+          return result;
+
+        result = result.Trim();
+        if (result.Equals(property, StringComparison.CurrentCultureIgnoreCase))
+          result = string.Empty;
+        //logger.Debug("GetProperty: "+property+" -> "+value) ;
+      }
+      catch (Exception ex)
+      {
+        result = string.Empty;
+        logger.Error("GetProperty: " + ex);
+      }
+      return result;
+    }
+
     /*
     internal static void HandleOldImages(ref ArrayList al)
     {
@@ -734,6 +808,8 @@ namespace LatestMediaHandler
       latestPictures = "True";
       latestMusic = "True";
       latestMusicType = LatestMusicHandler.MusicTypeLatestAdded;
+      latestTVSeriesType = 1;
+      latestPlotOutlineSentencesNum = 2;
       latestMyVideos = "True";
       latestMyVideosWatched = "True";
       latestMovingPictures = "False";
@@ -770,6 +846,8 @@ namespace LatestMediaHandler
           latestTVSeries = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVSeries", latestTVSeries);
           latestTVSeriesWatched = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVSeriesWatched", latestTVSeriesWatched);
           latestTVSeriesRatings = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVSeriesRatings", latestTVSeriesRatings);
+          latestTVSeriesType = xmlreader.GetValueAsInt("LatestMediaHandler", "latestTVSeriesType", latestTVSeriesType);
+          latestPlotOutlineSentencesNum = xmlreader.GetValueAsInt("LatestMediaHandler", "latestPlotOutlineSentencesNum", latestPlotOutlineSentencesNum);
           latestTVRecordings = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVRecordings", latestTVRecordings);
           latestTVRecordingsWatched = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVRecordingsWatched", latestTVRecordingsWatched);
           latestTVRecordingsUnfinished = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVRecordingsUnfinished", latestTVRecordingsUnfinished);
@@ -828,6 +906,7 @@ namespace LatestMediaHandler
                                 Check(latestMyFilms) + Check(latestMyFilmsWatched) + " MyFilms, " +
                                 Check(latestMvCentral) + " MvCentral");
       logger.Debug("Music Type: " + latestMusicType) ;
+      logger.Debug("TVSeries Type: " + (latestTVSeriesType == 2 ? "Series" : (latestTVSeriesType == 1 ? "Seasons" : "Episodes")));
       logger.Debug("TVSeries ratings: " + latestTVSeriesRatings) ;
       logger.Debug("DB: " + Check(refreshDbPicture) + " Pictures, " + 
                             Check(refreshDbMusic) + " Music, "+
@@ -856,6 +935,8 @@ namespace LatestMediaHandler
           xmlwriter.SetValue("LatestMediaHandler", "latestTVSeries", latestTVSeries);
           xmlwriter.SetValue("LatestMediaHandler", "latestTVSeriesWatched", latestTVSeriesWatched);
           xmlwriter.SetValue("LatestMediaHandler", "latestTVSeriesRatings", latestTVSeriesRatings);
+          xmlwriter.SetValue("LatestMediaHandler", "latestTVSeriesType", latestTVSeriesType);
+          // xmlwriter.SetValue("LatestMediaHandler", "latestPlotOutlineSentencesNum", latestPlotOutlineSentencesNum);
           xmlwriter.SetValue("LatestMediaHandler", "latestTVRecordings", latestTVRecordings);
           xmlwriter.SetValue("LatestMediaHandler", "latestTVRecordingsWatched", latestTVRecordingsWatched);
           xmlwriter.SetValue("LatestMediaHandler", "latestTVRecordingsUnfinished", latestTVRecordingsUnfinished);
