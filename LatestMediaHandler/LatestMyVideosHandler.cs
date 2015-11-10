@@ -486,6 +486,7 @@ namespace LatestMediaHandler
           for (int i = 0; i < hTable.Count && i < Utils.LatestsMaxNum; i++)
           {
             logger.Info("Updating Latest Media Info: MyVideo: Video " + z + ": " + hTable[i].Title);
+
             Utils.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".thumb", hTable[i].Thumb);
             Utils.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".fanart", hTable[i].Fanart);
             Utils.SetProperty("#latestMediaHandler.myvideo.latest" + z + ".title", hTable[i].Title);

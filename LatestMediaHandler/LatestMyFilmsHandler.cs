@@ -648,6 +648,9 @@ namespace LatestMediaHandler
           for (int i = 0; i < ht.Count && i < Utils.LatestsMaxNum; i++)
           {
             logger.Info("Updating Latest Media Info: MyFilms: Films " + z + ": " + ht[i].Title);
+
+            string plot = (string.IsNullOrEmpty(ht[i].Summary) ? Translation.NoDescription : ht[i].Summary);
+            string plotoutline = Utils.GetSentences(plot, Utils.latestPlotOutlineSentencesNum);
             Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".poster", ht[i].Thumb); //  _al.Add(ht[i].Fanart);                                                
             Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".fanart", ht[i].Fanart);
             Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".title", ht[i].Title);
@@ -658,8 +661,8 @@ namespace LatestMediaHandler
             Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".id", ht[i].Id);
             Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".genre", ht[i].Genre);
             Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".runtime", ht[i].Runtime);
-            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plot", ht[i].Summary);
-            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plotoutline", Utils.GetSentences(ht[i].Summary, Utils.latestPlotOutlineSentencesNum));
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plot", plot);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plotoutline", plotoutline);
             Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".new", ht[i].New);
             z++;
           }

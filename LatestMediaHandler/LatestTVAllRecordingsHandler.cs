@@ -144,7 +144,7 @@ namespace LatestMediaHandler
     {
       Utils.SetProperty("#latestMediaHandler.tvrecordings.label", Translation.LabelLatestAdded);
       //Active Recordings
-      for (int z = 1; z < 4; z++)
+      for (int z = 1; z <= Utils.LatestsMaxTVNum; z++)
       {
         Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".title", string.Empty);
         Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".genre", string.Empty);
@@ -157,7 +157,7 @@ namespace LatestMediaHandler
       }
 
       //Scheduled recordings
-      for (int z = 1; z < 4; z++)
+      for (int z = 1; z <= Utils.LatestsMaxTVNum; z++)
       {
         Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".title", string.Empty);
         Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".startTime", string.Empty);
@@ -174,7 +174,7 @@ namespace LatestMediaHandler
       Utils.SetProperty("#latestMediaHandler.tvrecordings.label", Translation.LabelLatestAdded);
       Utils.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "false");
       Utils.SetProperty("#latestMediaHandler.tvrecordings.hasnew", "false");
-      for (int z = 1; z < 4; z++)
+      for (int z = 1; z <= Utils.LatestsMaxTVNum; z++)
       {
         Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", string.Empty);
         Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", string.Empty);
@@ -444,7 +444,7 @@ namespace LatestMediaHandler
           {
             EmptyLatestMediaPropsTVRecordings();
             z = 1;
-            for (int i = 0; i < latestTVRecordings.Count && i < 4; i++)
+            for (int i = 0; i < latestTVRecordings.Count && i < Utils.LatestsMaxTVNum; i++)
             {
               logger.Info("Updating Latest Media Info: TV Recording: Recording " + z + ": " + latestTVRecordings[i].Title);
 

@@ -200,30 +200,17 @@ namespace LatestMediaHandler
         {
           IList<TvDatabase.Recording> recordings = TvDatabase.Recording.ListAllActive();
 
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active1.title", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active1.genre", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active1.startTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active1.startDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active1.endTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active1.endDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active1.channel", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active1.channelLogo", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active2.title", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active2.genre", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active2.startTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active2.startDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active2.endTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active2.endDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active2.channel", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active2.channelLogo", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active3.title", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active3.genre", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active3.startTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active3.startDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active3.endTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active3.endDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active3.channel", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.active3.channelLogo", string.Empty);
+          for (int z = 1; z <= Utils.LatestsMaxTVNum; z++)
+          {
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".title", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".genre", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".startTime", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".startDate", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".endTime", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".endDate", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".channel", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".channelLogo", string.Empty);
+          }
 
           int i = 1;
           RecordingsCollection latestRecordings = new RecordingsCollection();
@@ -255,7 +242,7 @@ namespace LatestMediaHandler
             Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + i + ".endDate", latestRecordings[x0].EndDate);
             Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + i + ".channel", latestRecordings[x0].Channel);
             Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + i + ".channelLogo", latestRecordings[x0].ChannelLogo);
-            if (i == Utils.LatestsMaxNum)
+            if (i == Utils.LatestsMaxTVNum)
             {
               break;
             }
@@ -278,27 +265,16 @@ namespace LatestMediaHandler
         {
           IList<TvDatabase.Schedule> schedules = TvDatabase.Schedule.ListAll();
 
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled1.title", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled1.startTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled1.startDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled1.endTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled1.endDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled1.channel", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled1.channelLogo", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled2.title", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled2.startTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled2.startDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled2.endTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled2.endDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled2.channel", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled2.channelLogo", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled3.title", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled3.startTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled3.startDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled3.endTime", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled3.endDate", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled3.channel", string.Empty);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled3.channelLogo", string.Empty);
+          for (int z = 1; z <= Utils.LatestsMaxTVNum; z++)
+          {
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".title", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".startTime", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".startDate", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".endTime", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".endDate", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".channel", string.Empty);
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".channelLogo", string.Empty);
+          }
 
           int i = 1;
           RecordingsCollection latestRecordings = new RecordingsCollection();
@@ -362,7 +338,7 @@ namespace LatestMediaHandler
             Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channel", latestRecordings[x0].Channel);
             Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channelLogo", latestRecordings[x0].ChannelLogo);
 
-            if (i == Utils.LatestsMaxNum)
+            if (i == Utils.LatestsMaxTVNum)
               break;
             i++;
           }

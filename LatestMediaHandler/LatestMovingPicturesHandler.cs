@@ -429,6 +429,9 @@ namespace LatestMediaHandler
           for (int i = 0; i < hTable.Count && i < Utils.LatestsMaxNum; i++)
           {
             logger.Info("Updating Latest Media Info: MovingPictures: Movie " + z + ": " + hTable[i].Title + " " + hTable[i].DateAdded);
+
+            string plot = (string.IsNullOrEmpty(hTable[i].Summary) ? Translation.NoDescription : hTable[i].Summary);
+            string plotoutline = Utils.GetSentences(plot, Utils.latestPlotOutlineSentencesNum);
             Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".thumb", hTable[i].Thumb);
             Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".fanart", hTable[i].Fanart);
             Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".title", hTable[i].Title);
@@ -440,8 +443,8 @@ namespace LatestMediaHandler
             Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".runtime", hTable[i].Runtime);
             Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".year", hTable[i].Year);
             Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".id", hTable[i].Id);
-            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", hTable[i].Summary);
-            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plotoutline", Utils.GetSentences(hTable[i].Summary, Utils.latestPlotOutlineSentencesNum));
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", plot);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plotoutline", plotoutline);
             Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".new", hTable[i].New);
             z++;
           }

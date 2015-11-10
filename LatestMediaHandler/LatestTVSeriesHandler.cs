@@ -456,6 +456,8 @@ namespace LatestMediaHandler
                       seasonTitle = season[DBSeason.cTitle];
                       seasonRating = season[DBSeason.cRating];
                       seasonSummary = season[DBSeason.cSummary];
+                      if (string.IsNullOrEmpty(seasonSummary))
+                        seasonSummary = seriesSummary;
                       string seasonThumb = ImageAllocator.GetSeasonBannerAsFilename(season);
                       if (!string.IsNullOrEmpty(seasonThumb))
                         thumb = seasonThumb;
@@ -624,6 +626,8 @@ namespace LatestMediaHandler
           {
             logger.Info("Updating Latest Media Info: TVSeries: Episode " + z + ": " + hTable[i].Title + " - " + hTable[i].Subtitle);
 
+            string plot = (string.IsNullOrEmpty(hTable[i].Summary) ? Translation.NoDescription : hTable[i].Summary);
+            string plotoutline = Utils.GetSentences(plot, Utils.latestPlotOutlineSentencesNum);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".thumb", hTable[i].Thumb);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieThumb", hTable[i].ThumbSeries); //  _al.Add(hTable[i].Fanart);                                                
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".fanart", hTable[i].Fanart);
@@ -638,8 +642,8 @@ namespace LatestMediaHandler
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".classification", hTable[i].Classification);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".runtime", hTable[i].Runtime);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".firstAired", hTable[i].Year);
-            Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plot", hTable[i].Summary);
-            Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plotoutline", Utils.GetSentences(hTable[i].Summary, Utils.latestPlotOutlineSentencesNum));
+            Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plot", plot);
+            Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plotoutline", plotoutline);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".new", hTable[i].New);
             z++;
           }
