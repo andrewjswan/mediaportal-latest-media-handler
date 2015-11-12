@@ -438,8 +438,8 @@ namespace LatestMediaHandler
                   // Series
                   string seriesTitle = series.ToString();
                   string seriesGenre = series[DBOnlineSeries.cGenre];
-                  string thumbSeries = ImageAllocator.GetSeriesPosterAsFilename(series);
-                  string thumb = thumbSeries;
+                  string seriesThumb = ImageAllocator.GetSeriesPosterAsFilename(series);
+                  string thumb = seriesThumb;
                   string fanart = Fanart.getFanart(episode[DBEpisode.cSeriesID]).FanartFilename;
                   string firstAired = series[DBOnlineSeries.cFirstAired];
                   string seriesRating = series[DBOnlineSeries.cRating];
@@ -466,7 +466,24 @@ namespace LatestMediaHandler
                   // Episodes
                   if (resultType == ResultTypes.Episodes)
                   {
-                    string episodeThumb = ImageAllocator.GetEpisodeImage(episode);
+                    bool HideEpisodeImage = true;
+                    string episodeThumb = string.Empty;
+
+                    if (episode[DBOnlineEpisode.cWatched] || !DBOption.GetOptions(DBOption.cHideUnwatchedThumbnail))
+                      HideEpisodeImage = false;
+
+                    if (!HideEpisodeImage && !String.IsNullOrEmpty(episode.Image) && System.IO.File.Exists(episode.Image))
+                    {
+                      // show episode image
+                      episodeThumb = episode.Image;
+                    }
+                    else
+                    {
+                      // show a fanart thumb instead
+                      Fanart _fanart = Fanart.getFanart(episode[DBOnlineEpisode.cSeriesID]);
+                      episodeThumb = _fanart.FanartThumbFilename;
+                    }
+
                     if (!string.IsNullOrEmpty(episodeThumb))
                       thumb = episodeThumb;
                     firstAired = episode[DBOnlineEpisode.cFirstAired];
@@ -517,11 +534,11 @@ namespace LatestMediaHandler
                   string latestTitle = (resultType == ResultTypes.Episodes ? episodeTitle : (resultType == ResultTypes.Seasons ? seasonTitle : seriesTitle));
                   string latestRuntime = (resultType == ResultTypes.Episodes ? episodeRuntime : (resultType == ResultTypes.Seasons ? "" : ""));
                   string latestSummary = (resultType == ResultTypes.Episodes ? episodeSummary : (resultType == ResultTypes.Seasons ? seasonSummary : seriesSummary));
-                  // logger.Debug(i0+"|"+dateAdded+"|"+thumb+"|"+fanart+"|"+seriesTitle+"|"+latestTitle+"|"+seriesGenre+"|"+latestRating+"|"+mathRoundToString+"|"+contentRating+"|"+latestRuntime+"|"+firstAired+"|"+seasonIdx+"|"+episodeIdx+"|"+thumbSeries+"|"+latestSummary+"|"+seriesIdx+"|"+isnew);
+                  // logger.Debug(i0+"|"+dateAdded+"|"+thumb+"|"+fanart+"|"+seriesTitle+"|"+latestTitle+"|"+seriesGenre+"|"+latestRating+"|"+mathRoundToString+"|"+contentRating+"|"+latestRuntime+"|"+firstAired+"|"+seasonIdx+"|"+episodeIdx+"|"+seriesThumb+"|"+latestSummary+"|"+seriesIdx+"|"+isnew);
                   latestTVSeries.Add(new LatestMediaHandler.Latest(dateAdded, thumb, fanart, seriesTitle, latestTitle, 
                                                                    null,
                                                                    null, 
-                                                                   seriesGenre, latestRating, mathRoundToString, contentRating, latestRuntime, firstAired, seasonIdx, episodeIdx, thumbSeries, 
+                                                                   seriesGenre, latestRating, mathRoundToString, contentRating, latestRuntime, firstAired, seasonIdx, episodeIdx, seriesThumb, 
                                                                    null, null, 
                                                                    latestSummary, seriesIdx, isnew));
                   latestTVSeriesForPlay.Add(i0, episode);
@@ -629,7 +646,7 @@ namespace LatestMediaHandler
             string plot = (string.IsNullOrEmpty(hTable[i].Summary) ? Translation.NoDescription : hTable[i].Summary);
             string plotoutline = Utils.GetSentences(plot, Utils.latestPlotOutlineSentencesNum);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".thumb", hTable[i].Thumb);
-            Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieThumb", hTable[i].ThumbSeries); //  _al.Add(hTable[i].Fanart);                                                
+            Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieThumb", hTable[i].ThumbSeries);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".fanart", hTable[i].Fanart);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".serieName", hTable[i].Title);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".seasonIndex", hTable[i].SeasonIndex);

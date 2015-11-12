@@ -268,12 +268,12 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>* Fix for TV Recordings properties
-+ Set the show summary if season summary if not available
+    <VersionDescription>* Fix for TVSeries episode thumb
+* Cosmetic
 </VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2015-11-10T09:06:46</ReleaseDate>
+    <ReleaseDate>2015-11-12T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>

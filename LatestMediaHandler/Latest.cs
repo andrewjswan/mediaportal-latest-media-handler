@@ -174,14 +174,6 @@ namespace LatestMediaHandler
                     string seriesIndex, bool isnew = false)
     {
       this.dateAdded = dateAdded;
-      if (!string.IsNullOrEmpty(thumbSeries))
-      {
-        this.thumbSeries = thumbSeries.Replace("/", @"\");
-      }
-      else
-      {
-        this.thumbSeries = thumbSeries;
-      }
       if (!string.IsNullOrEmpty(thumb))
       {
         this.thumb = thumb.Replace("/", @"\");
@@ -197,6 +189,14 @@ namespace LatestMediaHandler
       else
       {
         this.fanart = fanart;
+      }
+      if (!string.IsNullOrEmpty(thumbSeries))
+      {
+        this.thumbSeries = thumbSeries.Replace("/", @"\");
+      }
+      else
+      {
+        this.thumbSeries = thumbSeries;
       }
       this.title = title;
       this.subtitle = subtitle;
