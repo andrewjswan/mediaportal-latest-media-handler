@@ -326,11 +326,11 @@ namespace LatestMediaHandler
             catch { }
 
             String sPath = allTrack.LocalMedia[0].File.FullName;
-            if (sPath != null && sPath.Length > 0) // && sPath.IndexOf("\\") > 0)
+            if (!string.IsNullOrEmpty(sPath))
               sPath = Path.GetDirectoryName(sPath);
 
             string thumb = allTrack.ArtistInfo[0].ArtThumbFullPath;
-            if (thumb == null || thumb.Length < 1)
+            if (string.IsNullOrEmpty(thumb))
               thumb = "defaultAudioBig.png";
 
             string sFilename1 = "";

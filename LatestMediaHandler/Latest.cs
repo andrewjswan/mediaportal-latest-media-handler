@@ -202,7 +202,7 @@ namespace LatestMediaHandler
       this.subtitle = subtitle;
       this.artist = artist;
       this.album = album;
-      if (genre != null && genre.Length > 0)
+      if (!string.IsNullOrEmpty(genre))
       {
         this.genre = genre.Replace("|", ",").Replace("/", ",");
       }

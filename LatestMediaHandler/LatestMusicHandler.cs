@@ -252,7 +252,7 @@ namespace LatestMediaHandler
 
             string SharePath = xmlreader.GetValueAsString("music", strSharePath, string.Empty);
 
-            if (SharePath.Length > 0)
+            if (!string.IsNullOrEmpty(SharePath))
             {
               m_Shares.Add(SharePath);
             }
@@ -900,6 +900,7 @@ namespace LatestMediaHandler
                                     "GROUP_CONCAT(strGenre,'|') AS strGenre, "+
                                     "GROUP_CONCAT(strPath,'|') AS strPath "+
                              "FROM tracks "+
+                             "WHERE strAlbumArtist IS NOT null AND TRIM(strAlbumArtist) <> '' "+
                              "GROUP BY strAlbumArtist, strAlbum, strFileType "+
                              "ORDER BY {0} DESC LIMIT {1}) AS T";
         // Add artistinfo.strAMGBio to strLyrics
@@ -927,7 +928,7 @@ namespace LatestMediaHandler
         List<Song> songInfo = new List<Song>();
         m_db.GetSongsByFilter(sqlQuery, out songInfo, "tracks");
 
-        logger.Debug ("GetLatestMusic: Mode: " + type + " - " + songInfo.Count) ;
+        logger.Debug ("GetLatestMusic: Mode: " + type + " Received: " + songInfo.Count + " songs.") ;
 
         int i0 = 1;
         foreach (Song mySong in songInfo)
@@ -940,22 +941,13 @@ namespace LatestMediaHandler
           string dateAdded = string.Empty;
           bool   isnew     = false;
 
-          try
-          {
-            dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", mySong.DateTimeModified);
-            isnew = ((mySong.DateTimeModified > Utils.NewDateTime) && (mySong.TimesPlayed <= 0));
-          }
-          catch 
-          { 
-            dateAdded = string.Empty;
-            isnew = false;
-          }
-
-          // logger.Debug ("*** GetLatestMusic: "+Utils.Check(isnew)+" AlbumArtist: "+artist+ " Album: "+album+" Date: "+dateAdded+"/"+mySong.DateTimePlayed+" sPath: "+sPaths.Length+" Genre:"+sGenres);
+          // logger.Debug ("*** GetLatestMusic: "+Utils.Check(isnew)+" AlbumArtist: "+artist+ " Album: "+album+" Date: "+mySong.DateTimeModified+"/"+mySong.DateTimePlayed+" sPath: "+sPaths.Length+" Genre:"+sGenres);
           
-          key = artist + "#" + ((string.IsNullOrEmpty(album)) ? " " : album);
+          key = artist + "#" + ((string.IsNullOrEmpty(album)) ? "-" : album) + "#" + ((string.IsNullOrEmpty(sFileType)) ? "-" : sFileType);
+          // logger.Debug ("*** GetLatestMusic: Key: "+key+" - "+ht.Contains(key));
           if (!ht.Contains(key))
           {
+            ht.Add(key, key);
             //Get Fanart
             string CurrSelectedMusic = string.Empty;
             string sFilename1 = string.Empty;
@@ -993,28 +985,52 @@ namespace LatestMediaHandler
 
             string thumb = string.Empty;
             string sArtist = artist;
-            thumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, sArtist + "-" + mySong.Album);
-            if (thumb == null || thumb.Length < 1 || !File.Exists(thumb))
+            string sAlbum = mySong.Album;
+            if (!string.IsNullOrEmpty(sAlbum))
+            {
+              thumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, MediaPortal.Util.Utils.MakeFileName(sArtist) + "-" + MediaPortal.Util.Utils.MakeFileName(sAlbum));
+            }
+            if (string.IsNullOrEmpty(thumb) || !File.Exists(thumb))
             {
               if (!string.IsNullOrEmpty(sArtist))
               {
                 string[] sArtists = sArtist.Split(Utils.PipesArray, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string _sArtist in sArtists)
                 {
-                  thumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicArtists, _sArtist.Trim());
-                  if (thumb != null && thumb.Length > 0 && File.Exists(thumb))
+                  if (string.IsNullOrEmpty(_sArtist))
+                  {
+                    continue;
+                  }
+                  if (!string.IsNullOrEmpty(sAlbum))
+                  {
+                    thumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, MediaPortal.Util.Utils.MakeFileName(_sArtist.Trim()) + "-" + MediaPortal.Util.Utils.MakeFileName(sAlbum));
+                  }
+                  if (string.IsNullOrEmpty(thumb) || !File.Exists(thumb))
+                  {
+                    thumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicArtists, MediaPortal.Util.Utils.MakeFileName(_sArtist.Trim()));
+                  }
+                  if (!string.IsNullOrEmpty(thumb) && File.Exists(thumb))
                     break;
                 }
               }
             }
-            if (thumb == null || thumb.Length < 1 || !File.Exists(thumb))
+            if (string.IsNullOrEmpty(thumb) || !File.Exists(thumb))
             {
-              thumb = "";
+              thumb = "defaultAudioBig.png";
               if (!artistsWithImageMissing.Contains(UtilsFanartHandler.GetFHArtistName(sArtist)))
                 artistsWithImageMissing.Add(UtilsFanartHandler.GetFHArtistName(sArtist), UtilsFanartHandler.GetFHArtistName(sArtist));
             }
-            if (thumb == null || thumb.Length < 1)
-              thumb = "defaultAudioBig.png";
+
+            try
+            {
+              dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", mySong.DateTimeModified);
+              isnew = ((mySong.DateTimeModified > Utils.NewDateTime) && (mySong.TimesPlayed <= 0));
+            }
+            catch 
+            { 
+              dateAdded = string.Empty;
+              isnew = false;
+            }
 
             latestMusicAlbums.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, sPaths, 
                                                                 null, 
@@ -1027,7 +1043,6 @@ namespace LatestMediaHandler
                                                                 null,
                                                                 isnew));
             latestMusicAlbumsFolders.Add(i0, sPaths);
-            ht.Add(key, key);
             Utils.ThreadToSleep();
             //
             x++;

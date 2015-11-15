@@ -518,7 +518,7 @@ namespace LatestMediaHandler
                   ni.NumberDecimalSeparator = ".";
                   string latestRating = (resultType == ResultTypes.Episodes ? episodeRating : (resultType == ResultTypes.Seasons ? seasonRating : seriesRating));
                   string mathRoundToString = string.Empty;
-                  if (latestRating != null && latestRating.Length > 0)
+                  if (!string.IsNullOrEmpty(latestRating))
                   {
                     try
                     {
@@ -528,10 +528,11 @@ namespace LatestMediaHandler
                     catch
                     {   }
                   }
-                  if (thumb == null || thumb.Length < 1)
+                  if (string.IsNullOrEmpty(thumb))
                     thumb = "DefaultFolderBig.png";
                   //
-                  string latestTitle = (resultType == ResultTypes.Episodes ? episodeTitle : (resultType == ResultTypes.Seasons ? seasonTitle : seriesTitle));
+                  // string latestTitle = (resultType == ResultTypes.Episodes ? episodeTitle : (resultType == ResultTypes.Seasons ? seasonTitle : seriesTitle));
+                  string latestTitle = (!string.IsNullOrEmpty(episodeTitle) ? episodeTitle : (!string.IsNullOrEmpty(seasonTitle) ? seasonTitle : seriesTitle));
                   string latestRuntime = (resultType == ResultTypes.Episodes ? episodeRuntime : (resultType == ResultTypes.Seasons ? "" : ""));
                   string latestSummary = (resultType == ResultTypes.Episodes ? episodeSummary : (resultType == ResultTypes.Seasons ? seasonSummary : seriesSummary));
                   // logger.Debug(i0+"|"+dateAdded+"|"+thumb+"|"+fanart+"|"+seriesTitle+"|"+latestTitle+"|"+seriesGenre+"|"+latestRating+"|"+mathRoundToString+"|"+contentRating+"|"+latestRuntime+"|"+firstAired+"|"+seasonIdx+"|"+episodeIdx+"|"+seriesThumb+"|"+latestSummary+"|"+seriesIdx+"|"+isnew);

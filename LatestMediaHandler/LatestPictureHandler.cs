@@ -489,7 +489,7 @@ namespace LatestMediaHandler
               catch {   }
 
               string title = Utils.GetFilenameNoPath(tmpThumb).ToUpperInvariant();
-              if (thumb != null && thumb.Trim().Length > 0)
+              if (!string.IsNullOrEmpty(thumb))
               {
                 if (File.Exists(thumb))
                 {

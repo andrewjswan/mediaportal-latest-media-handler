@@ -333,7 +333,7 @@ namespace LatestMediaHandler
             sTimestamp = item.DateAdded;
             string titleExt = item.Title + "{" + item.ID + "}";
             string thumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt); //item.ThumbURL;
-            if (thumb == null || thumb.Length < 1)
+            if (string.IsNullOrEmpty(thumb))
               thumb = "DefaultFolderBig.png";
 
             bool isnew = false;

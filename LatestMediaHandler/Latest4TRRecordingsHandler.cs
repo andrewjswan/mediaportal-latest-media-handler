@@ -248,7 +248,7 @@ namespace LatestMediaHandler
               {
                 string logoImagePath = ChannelLogosCache.GetLogoPath(_tvSchedulerAgent, rec.Program.Channel.ChannelId,
                   rec.Program.Channel.DisplayName, 84, 84);
-                if (logoImagePath == null || !System.IO.File.Exists(logoImagePath))
+                if (string.IsNullOrEmpty(logoImagePath) || !System.IO.File.Exists(logoImagePath))
                 {
                   logoImagePath = "defaultVideoBig.png";
                 }
@@ -321,7 +321,7 @@ namespace LatestMediaHandler
               {
                 string logoImagePath = ChannelLogosCache.GetLogoPath(_tvSchedulerAgent, rec.Program.Channel.ChannelId,
                   rec.Program.Channel.DisplayName, 84, 84);
-                if (logoImagePath == null || !System.IO.File.Exists(logoImagePath))
+                if (string.IsNullOrEmpty(logoImagePath) || !System.IO.File.Exists(logoImagePath))
                 {
                   logoImagePath = "defaultVideoBig.png";
                 }
@@ -836,7 +836,7 @@ namespace LatestMediaHandler
         string endDate, string endTime, string channel, string channelLogo)
       {
         this.title = title;
-        if (genre != null && genre.Length > 0)
+        if (!string.IsNullOrEmpty(genre))
         {
           this.genre = genre.Replace("|", ",");
         }

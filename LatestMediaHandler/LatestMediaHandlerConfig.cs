@@ -387,7 +387,7 @@ namespace LatestMediaHandler
       SetupConfigFile();
       Utils.LoadSettings(true);
 
-      if (LatestTVSeriesRatings != null && LatestTVSeriesRatings.Length > 0)
+      if (!string.IsNullOrEmpty(LatestTVSeriesRatings))
       {
         string[] s = LatestTVSeriesRatings.Split(';');
         for (int i = 0; i < s.Length; i++)
@@ -403,7 +403,7 @@ namespace LatestMediaHandler
         }
       }
 
-      if (DateFormat != null && DateFormat.Length > 0)
+      if (!string.IsNullOrEmpty(DateFormat))
       {
         comboBox3.SelectedItem = DateFormat;
       }
@@ -412,7 +412,7 @@ namespace LatestMediaHandler
         comboBox3.SelectedItem = "yyyy-MM-dd";
       }
 
-      if (ReorgInterval != null && ReorgInterval.Length > 0)
+      if (!string.IsNullOrEmpty(ReorgInterval))
       {
         comboBox1.SelectedItem = ReorgInterval;
       }
@@ -421,7 +421,7 @@ namespace LatestMediaHandler
         comboBox1.SelectedItem = "1440";
       }
 
-      if (LatestMusicType != null && LatestMusicType.Length > 0)
+      if (!string.IsNullOrEmpty(LatestMusicType))
       {
         comboBox2.SelectedItem = LatestMusicType;
       }
@@ -430,7 +430,7 @@ namespace LatestMediaHandler
         comboBox2.SelectedItem = Translation.PrefsLatestAddedMusic;
       }
 
-      if (LatestMyFilms != null && LatestMyFilms.Length > 0)
+      if (!string.IsNullOrEmpty(LatestMyFilms))
       {
         if (LatestMyFilms.Equals("True", StringComparison.CurrentCulture))
           checkBox1.Checked = true;
@@ -443,7 +443,7 @@ namespace LatestMediaHandler
         checkBox1.Checked = true;
       }
 
-      if (LatestPictures != null && LatestPictures.Length > 0)
+      if (!string.IsNullOrEmpty(LatestPictures))
       {
         if (LatestPictures.Equals("True", StringComparison.CurrentCulture))
           checkBox5.Checked = true;
@@ -456,7 +456,7 @@ namespace LatestMediaHandler
         checkBox5.Checked = false;
       }
 
-      /*          if (useLatestMediaCache != null && useLatestMediaCache.Length > 0)
+      /*          if (!string.IsNullOrEmpty(useLatestMediaCache))
             {
                 if (useLatestMediaCache.Equals("True", StringComparison.CurrentCulture))
                     checkBox16.Checked = true;
@@ -470,7 +470,7 @@ namespace LatestMediaHandler
             }
 */
 
-      if (LatestMusic != null && LatestMusic.Length > 0)
+      if (!string.IsNullOrEmpty(LatestMusic))
       {
         if (LatestMusic.Equals("True", StringComparison.CurrentCulture))
           checkBox6.Checked = true;
@@ -483,7 +483,7 @@ namespace LatestMediaHandler
         checkBox6.Checked = true;
       }
 
-      if (LatestMyVideos != null && LatestMyVideos.Length > 0)
+      if (!string.IsNullOrEmpty(LatestMyVideos))
       {
         if (LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
           checkBox9.Checked = true;
@@ -496,7 +496,7 @@ namespace LatestMediaHandler
         checkBox9.Checked = true;
       }
 
-      if (LatestMvCentral != null && LatestMvCentral.Length > 0)
+      if (!string.IsNullOrEmpty(LatestMvCentral))
       {
         if (LatestMvCentral.Equals("True", StringComparison.CurrentCulture))
           checkBox15.Checked = true;
@@ -509,7 +509,7 @@ namespace LatestMediaHandler
         checkBox15.Checked = false;
       }
 
-      if (LatestMyVideos.Equals("True", StringComparison.CurrentCulture) && LatestMyVideosWatched != null && LatestMyVideosWatched.Length > 0)
+      if (LatestMyVideos.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestMyVideosWatched))
       {
         if (LatestMyVideosWatched.Equals("True", StringComparison.CurrentCulture))
           checkBox8.Checked = true;
@@ -522,7 +522,7 @@ namespace LatestMediaHandler
         checkBox8.Checked = true;
       }
 
-      if (LatestMovingPictures != null && LatestMovingPictures.Length > 0)
+      if (!string.IsNullOrEmpty(LatestMovingPictures))
       {
         if (LatestMovingPictures.Equals("True", StringComparison.CurrentCulture))
           checkBox7.Checked = true;
@@ -535,8 +535,7 @@ namespace LatestMediaHandler
         checkBox7.Checked = true;
       }
 
-      if (LatestMovingPictures.Equals("True", StringComparison.CurrentCulture) && LatestMovingPicturesWatched != null &&
-          LatestMovingPicturesWatched.Length > 0)
+      if (LatestMovingPictures.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestMovingPicturesWatched))
       {
         if (LatestMovingPicturesWatched.Equals("True", StringComparison.CurrentCulture))
           checkBox10.Checked = true;
@@ -549,7 +548,7 @@ namespace LatestMediaHandler
         checkBox10.Checked = true;
       }
 
-      if (LatestTVSeries != null && LatestTVSeries.Length > 0)
+      if (!string.IsNullOrEmpty(LatestTVSeries))
       {
         if (LatestTVSeries.Equals("True", StringComparison.CurrentCulture))
           checkBox2.Checked = true;
@@ -562,7 +561,7 @@ namespace LatestMediaHandler
         checkBox2.Checked = true;
       }
 
-      if (LatestTVSeries.Equals("True", StringComparison.CurrentCulture) && LatestTVSeriesWatched != null && LatestTVSeriesWatched.Length > 0)
+      if (LatestTVSeries.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestTVSeriesWatched))
       {
         if (LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture))
           checkBox11.Checked = true;
@@ -577,7 +576,7 @@ namespace LatestMediaHandler
 
       comboBoxTVSeriesType.SelectedIndex = LatestTVSeriesType;
 
-      if (RefreshDbPicture != null && RefreshDbPicture.Length > 0)
+      if (!string.IsNullOrEmpty(RefreshDbPicture))
       {
         if (RefreshDbPicture.Equals("True", StringComparison.CurrentCulture))
           checkBox12.Checked = true;
@@ -590,7 +589,7 @@ namespace LatestMediaHandler
         checkBox12.Checked = false;
       }
 
-      if (RefreshDbMusic != null && RefreshDbMusic.Length > 0)
+      if (!string.IsNullOrEmpty(RefreshDbMusic))
       {
         if (RefreshDbMusic.Equals("True", StringComparison.CurrentCulture))
           checkBox13.Checked = true;
@@ -603,7 +602,7 @@ namespace LatestMediaHandler
         checkBox13.Checked = false;
       }
 
-      if (LatestTVRecordings != null && LatestTVRecordings.Length > 0)
+      if (!string.IsNullOrEmpty(LatestTVRecordings))
       {
         if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
           checkBox3.Checked = true;
@@ -616,7 +615,7 @@ namespace LatestMediaHandler
         checkBox3.Checked = true;
       }
 
-      if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture) && LatestTVRecordingsWatched != null && LatestTVRecordingsWatched.Length > 0)
+      if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestTVRecordingsWatched))
       {
         checkBox14.Checked = LatestTVRecordingsWatched.Equals("True", StringComparison.CurrentCulture) ;
       }
@@ -626,7 +625,7 @@ namespace LatestMediaHandler
         checkBox14.Checked = true;
       }
 
-      if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture) && LatestTVRecordingsUnfinished != null && LatestTVRecordingsUnfinished.Length > 0)
+      if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestTVRecordingsUnfinished))
       {
         checkBoxRecordingsUnfinished.Checked = LatestTVRecordingsUnfinished.Equals("True", StringComparison.CurrentCulture);
       }
@@ -636,7 +635,7 @@ namespace LatestMediaHandler
         checkBoxRecordingsUnfinished.Checked = true;
       }
 
-      if (LatestMyFilms.Equals("True", StringComparison.CurrentCulture) && LatestMyFilmsWatched != null && LatestMyFilmsWatched.Length > 0)
+      if (LatestMyFilms.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestMyFilmsWatched))
       {
         if (LatestMyFilmsWatched.Equals("True", StringComparison.CurrentCulture))
           checkBox4.Checked = true;

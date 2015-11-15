@@ -26,15 +26,15 @@ List of latests properties:
  #latestMediaHandler.music.label
  #latestMediaHandler.music.latest.enabled
  #latestMediaHandler.music.hasnew
- #latestMediaHandler.music.latest[1,2,3].thumb
- #latestMediaHandler.music.latest[1,2,3].artist
- #latestMediaHandler.music.latest[1,2,3].artistbio
- #latestMediaHandler.music.latest[1,2,3].artistbiooutline
- #latestMediaHandler.music.latest[1,2,3].album
- #latestMediaHandler.music.latest[1,2,3].dateAdded
- #latestMediaHandler.music.latest[1,2,3].fanart
- #latestMediaHandler.music.latest[1,2,3].genre
- #latestMediaHandler.music.latest[1,2,3].new
+ #latestMediaHandler.music.latest[1,2,3,4].thumb
+ #latestMediaHandler.music.latest[1,2,3,4].artist
+ #latestMediaHandler.music.latest[1,2,3,4].artistbio
+ #latestMediaHandler.music.latest[1,2,3,4].artistbiooutline
+ #latestMediaHandler.music.latest[1,2,3,4].album
+ #latestMediaHandler.music.latest[1,2,3,4].dateAdded
+ #latestMediaHandler.music.latest[1,2,3,4].fanart
+ #latestMediaHandler.music.latest[1,2,3,4].genre
+ #latestMediaHandler.music.latest[1,2,3,4].new
 
  #latestMediaHandler.music.selected.thumb
  #latestMediaHandler.music.selected.artist
@@ -50,20 +50,20 @@ List of latests properties:
  #latestMediaHandler.myvideo.label
  #latestMediaHandler.myvideo.latest.enabled
  #latestMediaHandler.myvideo.hasnew
- #latestMediaHandler.myvideo.latest[1,2,3].thumb
- #latestMediaHandler.myvideo.latest[1,2,3].fanart
- #latestMediaHandler.myvideo.latest[1,2,3].title
- #latestMediaHandler.myvideo.latest[1,2,3].dateAdded
- #latestMediaHandler.myvideo.latest[1,2,3].genre
- #latestMediaHandler.myvideo.latest[1,2,3].rating
- #latestMediaHandler.myvideo.latest[1,2,3].roundedRating
- #latestMediaHandler.myvideo.latest[1,2,3].classification
- #latestMediaHandler.myvideo.latest[1,2,3].runtime
- #latestMediaHandler.myvideo.latest[1,2,3].year
- #latestMediaHandler.myvideo.latest[1,2,3].id
- #latestMediaHandler.myvideo.latest[1,2,3].plot
- #latestMediaHandler.myvideo.latest[1,2,3].plotoutline
- #latestMediaHandler.myvideo.latest[1,2,3].new
+ #latestMediaHandler.myvideo.latest[1,2,3,4].thumb
+ #latestMediaHandler.myvideo.latest[1,2,3,4].fanart
+ #latestMediaHandler.myvideo.latest[1,2,3,4].title
+ #latestMediaHandler.myvideo.latest[1,2,3,4].dateAdded
+ #latestMediaHandler.myvideo.latest[1,2,3,4].genre
+ #latestMediaHandler.myvideo.latest[1,2,3,4].rating
+ #latestMediaHandler.myvideo.latest[1,2,3,4].roundedRating
+ #latestMediaHandler.myvideo.latest[1,2,3,4].classification
+ #latestMediaHandler.myvideo.latest[1,2,3,4].runtime
+ #latestMediaHandler.myvideo.latest[1,2,3,4].year
+ #latestMediaHandler.myvideo.latest[1,2,3,4].id
+ #latestMediaHandler.myvideo.latest[1,2,3,4].plot
+ #latestMediaHandler.myvideo.latest[1,2,3,4].plotoutline
+ #latestMediaHandler.myvideo.latest[1,2,3,4].new
 
  #latestMediaHandler.myvideo.selected.thumb
  #latestMediaHandler.myvideo.selected.title
@@ -84,12 +84,12 @@ List of latests properties:
  #latestMediaHandler.picture.label
  #latestMediaHandler.picture.latest.enabled
  #latestMediaHandler.picture.hasnew
- #latestMediaHandler.picture.latest[1,2,3].title
- #latestMediaHandler.picture.latest[1,2,3].thumb
- #latestMediaHandler.picture.latest[1,2,3].filename
- #latestMediaHandler.picture.latest[1,2,3].fanart
- #latestMediaHandler.picture.latest[1,2,3].dateAdded
- #latestMediaHandler.picture.latest[1,2,3].new
+ #latestMediaHandler.picture.latest[1,2,3,4].title
+ #latestMediaHandler.picture.latest[1,2,3,4].thumb
+ #latestMediaHandler.picture.latest[1,2,3,4].filename
+ #latestMediaHandler.picture.latest[1,2,3,4].fanart
+ #latestMediaHandler.picture.latest[1,2,3,4].dateAdded
+ #latestMediaHandler.picture.latest[1,2,3,4].new
 
  #latestMediaHandler.picture.selected.thumb
  #latestMediaHandler.picture.selected.title
@@ -106,23 +106,23 @@ List of latests properties:
  #latestMediaHandler.tvseries.hasnew
  #latestMediaHandler.tvseries.latest.mode - episodes, seasons, series
  #latestMediaHandler.tvseries.latest.type
- #latestMediaHandler.tvseries.latest[1,2,3].thumb
- #latestMediaHandler.tvseries.latest[1,2,3].serieThumb
- #latestMediaHandler.tvseries.latest[1,2,3].fanart
- #latestMediaHandler.tvseries.latest[1,2,3].serieName
- #latestMediaHandler.tvseries.latest[1,2,3].seasonIndex
- #latestMediaHandler.tvseries.latest[1,2,3].episodeName
- #latestMediaHandler.tvseries.latest[1,2,3].episodeIndex
- #latestMediaHandler.tvseries.latest[1,2,3].dateAdded
- #latestMediaHandler.tvseries.latest[1,2,3].genre
- #latestMediaHandler.tvseries.latest[1,2,3].rating
- #latestMediaHandler.tvseries.latest[1,2,3].roundedRating
- #latestMediaHandler.tvseries.latest[1,2,3].classification
- #latestMediaHandler.tvseries.latest[1,2,3].runtime
- #latestMediaHandler.tvseries.latest[1,2,3].firstAired
- #latestMediaHandler.tvseries.latest[1,2,3].plot
- #latestMediaHandler.tvseries.latest[1,2,3].plotoutline
- #latestMediaHandler.tvseries.latest[1,2,3].new
+ #latestMediaHandler.tvseries.latest[1,2,3,4].thumb
+ #latestMediaHandler.tvseries.latest[1,2,3,4].serieThumb
+ #latestMediaHandler.tvseries.latest[1,2,3,4].fanart
+ #latestMediaHandler.tvseries.latest[1,2,3,4].serieName
+ #latestMediaHandler.tvseries.latest[1,2,3,4].seasonIndex
+ #latestMediaHandler.tvseries.latest[1,2,3,4].episodeName
+ #latestMediaHandler.tvseries.latest[1,2,3,4].episodeIndex
+ #latestMediaHandler.tvseries.latest[1,2,3,4].dateAdded
+ #latestMediaHandler.tvseries.latest[1,2,3,4].genre
+ #latestMediaHandler.tvseries.latest[1,2,3,4].rating
+ #latestMediaHandler.tvseries.latest[1,2,3,4].roundedRating
+ #latestMediaHandler.tvseries.latest[1,2,3,4].classification
+ #latestMediaHandler.tvseries.latest[1,2,3,4].runtime
+ #latestMediaHandler.tvseries.latest[1,2,3,4].firstAired
+ #latestMediaHandler.tvseries.latest[1,2,3,4].plot
+ #latestMediaHandler.tvseries.latest[1,2,3,4].plotoutline
+ #latestMediaHandler.tvseries.latest[1,2,3,4].new
 
  #latestMediaHandler.tvseries.selected.thumb
  #latestMediaHandler.tvseries.selected.serieThumb
@@ -148,20 +148,20 @@ List of latests properties:
  #latestMediaHandler.movingpicture.label
  #latestMediaHandler.movingpicture.latest.enabled
  #latestMediaHandler.movingpicture.hasnew
- #latestMediaHandler.movingpicture.latest[1,2,3].thumb
- #latestMediaHandler.movingpicture.latest[1,2,3].fanart
- #latestMediaHandler.movingpicture.latest[1,2,3].title
- #latestMediaHandler.movingpicture.latest[1,2,3].dateAdded
- #latestMediaHandler.movingpicture.latest[1,2,3].genre
- #latestMediaHandler.movingpicture.latest[1,2,3].rating
- #latestMediaHandler.movingpicture.latest[1,2,3].roundedRating
- #latestMediaHandler.movingpicture.latest[1,2,3].classification
- #latestMediaHandler.movingpicture.latest[1,2,3].runtime
- #latestMediaHandler.movingpicture.latest[1,2,3].year
- #latestMediaHandler.movingpicture.latest[1,2,3].id
- #latestMediaHandler.movingpicture.latest[1,2,3].plot
- #latestMediaHandler.movingpicture.latest[1,2,3].plotoutline
- #latestMediaHandler.movingpicture.latest[1,2,3].new
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].thumb
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].fanart
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].title
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].dateAdded
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].genre
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].rating
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].roundedRating
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].classification
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].runtime
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].year
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].id
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].plot
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].plotoutline
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].new
   
  #latestMediaHandler.movingpicture.selected.thumb
  #latestMediaHandler.movingpicture.selected.title
@@ -183,17 +183,17 @@ List of latests properties:
  #latestMediaHandler.myfilms.label
  #latestMediaHandler.myfilms.latest.enabled
  #latestMediaHandler.myfilms.hasnew
- #latestMediaHandler.myfilms.latest[1,2,3].poster
- #latestMediaHandler.myfilms.latest[1,2,3].fanart
- #latestMediaHandler.myfilms.latest[1,2,3].title
- #latestMediaHandler.myfilms.latest[1,2,3].dateAdded
- #latestMediaHandler.myfilms.latest[1,2,3].rating
- #latestMediaHandler.myfilms.latest[1,2,3].roundedRating
- #latestMediaHandler.myfilms.latest[1,2,3].year
- #latestMediaHandler.myfilms.latest[1,2,3].id
- #latestMediaHandler.myfilms.latest[1,2,3].plot
- #latestMediaHandler.myfilms.latest[1,2,3].plotoutline
- #latestMediaHandler.myfilms.latest[1,2,3].new
+ #latestMediaHandler.myfilms.latest[1,2,3,4].poster
+ #latestMediaHandler.myfilms.latest[1,2,3,4].fanart
+ #latestMediaHandler.myfilms.latest[1,2,3,4].title
+ #latestMediaHandler.myfilms.latest[1,2,3,4].dateAdded
+ #latestMediaHandler.myfilms.latest[1,2,3,4].rating
+ #latestMediaHandler.myfilms.latest[1,2,3,4].roundedRating
+ #latestMediaHandler.myfilms.latest[1,2,3,4].year
+ #latestMediaHandler.myfilms.latest[1,2,3,4].id
+ #latestMediaHandler.myfilms.latest[1,2,3,4].plot
+ #latestMediaHandler.myfilms.latest[1,2,3,4].plotoutline
+ #latestMediaHandler.myfilms.latest[1,2,3,4].new
 
  #latestMediaHandler.myfilms.selected.thumb
  #latestMediaHandler.myfilms.selected.title
@@ -214,16 +214,16 @@ List of latests properties:
  #latestMediaHandler.mvcentral.label
  #latestMediaHandler.mvcentral.latest.enabled
  #latestMediaHandler.mvcentral.hasnew
- #latestMediaHandler.mvcentral.latest[1,2,3].thumb
- #latestMediaHandler.mvcentral.latest[1,2,3].artist
- #latestMediaHandler.mvcentral.latest[1,2,3].artistbio
- #latestMediaHandler.mvcentral.latest[1,2,3].artistbiooutline
- #latestMediaHandler.mvcentral.latest[1,2,3].album
- #latestMediaHandler.mvcentral.latest[1,2,3].track
- #latestMediaHandler.mvcentral.latest[1,2,3].dateAdded
- #latestMediaHandler.mvcentral.latest[1,2,3].fanart
- #latestMediaHandler.mvcentral.latest[1,2,3].genre
- #latestMediaHandler.mvcentral.latest[1,2,3].new
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].thumb
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].artist
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].artistbio
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].artistbiooutline
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].album
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].track
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].dateAdded
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].fanart
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].genre
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].new
 
  #latestMediaHandler.mvcentral.selected.thumb
  #latestMediaHandler.mvcentral.selected.artist

@@ -358,7 +358,7 @@ namespace LatestMediaHandler
           windowId            = GetNodeValue(myXPathNodeIterator);
 
           bool _flagLatest = false;
-          if (!string.IsNullOrEmpty(windowId) && windowId.Length > 0)
+          if (!string.IsNullOrEmpty(windowId))
           {
             HandleXmlImports(fi.FullName, windowId, ref _flagLatest);
 

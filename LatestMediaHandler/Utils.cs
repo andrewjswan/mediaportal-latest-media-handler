@@ -102,7 +102,7 @@ namespace LatestMediaHandler
     public const int ThreadSleep = 0;
     //
     public const int FacadeMaxNum = 10;
-    public const int LatestsMaxNum = 3;
+    public const int LatestsMaxNum = 4;
     public const int LatestsMaxTVNum = 4;
     //
     internal static DateTime LastRefreshRecording
@@ -205,7 +205,7 @@ namespace LatestMediaHandler
     {
       string result = string.Empty;
 
-      Input  = Input.Trim();
+      Input = (Input != null ? Input.Trim() : string.Empty);
       if (string.IsNullOrEmpty(Input))
         return result ;
 
@@ -335,7 +335,7 @@ namespace LatestMediaHandler
       {
         try
         {
-          if (filename != null && filename.Length > 0)
+          if (!string.IsNullOrEmpty(filename))
           {
             GUITextureManager.Load(filename, 0, 0, 0, true);
           }
@@ -432,7 +432,7 @@ namespace LatestMediaHandler
           name = "";
 
         //load images as MP resource
-        if (name != null && name.Length > 0)
+        if (!string.IsNullOrEmpty(name))
         {
           if (Images != null && !Images.Contains(name))
           {
@@ -462,7 +462,7 @@ namespace LatestMediaHandler
           name = "";
 
         //load images as MP resource
-        if (name != null && name.Length > 0)
+        if (!string.IsNullOrEmpty(name))
         {
           if (Images != null)
           {

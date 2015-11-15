@@ -287,7 +287,7 @@ namespace LatestMediaHandler
 
             sTimestamp = item.DateAdded.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture);
             string fanart = item.CoverThumbFullPath;
-            if (fanart == null || fanart.Length < 1)
+            if (string.IsNullOrEmpty(fanart))
               fanart = "DefaultFolderBig.png";
             
             latests.Add(new Latest(sTimestamp, fanart, item.BackdropFullPath, item.Title, 
@@ -314,7 +314,7 @@ namespace LatestMediaHandler
 
             sTimestamp = item.DateAdded.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture);
             string fanart = item.CoverThumbFullPath;
-            if (fanart == null || fanart.Length < 1)
+            if (string.IsNullOrEmpty(fanart))
               fanart = "DefaultFolderBig.png";
 
             latests.Add(new Latest(sTimestamp, fanart, item.BackdropFullPath, item.Title, 
