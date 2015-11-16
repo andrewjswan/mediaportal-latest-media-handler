@@ -209,7 +209,6 @@ namespace LatestMediaHandler
       if (string.IsNullOrEmpty(Input))
         return result ;
 
-      Input = Input.Replace(",", "|");
       Hashtable ht = new Hashtable();
       try
       {

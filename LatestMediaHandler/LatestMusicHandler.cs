@@ -936,7 +936,7 @@ namespace LatestMediaHandler
           string artist    = mySong.AlbumArtist;
           string album     = mySong.Album;
           string sPaths    = Utils.GetDistinct(mySong.FileName);
-          string sGenres   = Utils.GetDistinct(mySong.Genre);
+          string sGenres   = Utils.GetDistinct(mySong.Genre != null ? mySong.Genre.Replace(",", "|") : string.Empty);
           string sFileType = mySong.FileType;
           string dateAdded = string.Empty;
           bool   isnew     = false;
