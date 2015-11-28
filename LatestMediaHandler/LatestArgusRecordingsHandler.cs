@@ -522,13 +522,17 @@ namespace LatestMediaHandler
       {
         if (item != null && selectedFacadeItem1 != item.ItemId)
         {
+          string summary = (string.IsNullOrEmpty(result[(item.ItemId - 1)].Summary) ? Translation.NoDescription : result[(item.ItemId - 1)].Summary);
+          string summaryoutline = Utils.GetSentences(summary, Utils.latestPlotOutlineSentencesNum);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.thumb", item.IconImageBig);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.title", item.Label);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.dateAdded", item.Label3);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.genre", item.Label2);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.startTime", item.Label3);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.endTime", result[(item.ItemId - 1)].Subtitle);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.summary", result[(item.ItemId - 1)].Summary);
+          Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.summary", summary);
+          Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.summaryoutline", summaryoutline);
+          Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.new", result[(item.ItemId - 1)].New);
           selectedFacadeItem1 = item.ItemId;
 
           GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);

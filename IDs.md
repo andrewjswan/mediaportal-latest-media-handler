@@ -4,51 +4,56 @@ Latest Media Handler Control IDs:
 List of IDs:
 <pre>
 * Music:
- 919199970
- 91919997
- 91919998
- 91919999
+ 919199970 - Facade control
+ 91919997  - Latest 1
+ 91919998  - Latest 2
+ 91919999  - Latest 3
 
 * MyVideo
- 919198710
- 91915991
- 91915992
- 91915993
+ 919198710 - Facade control 
+ 91915991  - Latest 1       
+ 91915992  - Latest 2       
+ 91915993  - Latest 3       
 
 * Pictures
- 919199710
- 91919971
- 91919972
- 91919973
+ 919199710 - Facade control 
+ 91919971  - Latest 1       
+ 91919972  - Latest 2       
+ 91919973  - Latest 3       
 
 * TV Series
- 919199940
- 91919994
- 91919995
- 91919996
+ 919199940 - Facade control 
+ 91919994  - Latest 1       
+ 91919995  - Latest 2       
+ 91919996  - Latest 3
+
+ Facade control:
+ IconImage - for Season - Season thumb, for Episodes and Series - Series thumb
+ IconImageBig - for Season - Season thumb, for Episodes and Series - Series thumb
+ ThumbnailImage - for Season - Season thumb, for Episodes - Episode thumb for Series - Series thumb       
 
 * Moving Pictures:
- 919199910
- 91919991
- 91919992
- 91919993
+ 919199910 - Facade control 
+ 91919991  - Latest 1       
+ 91919992  - Latest 2       
+ 91919993  - Latest 3       
 
 * MyFilms
- 919199880
- 91919988
- 91919989
- 91919990
+ 919199880 - Facade control 
+ 91919988  - Latest 1       
+ 91919989  - Latest 2       
+ 91919990  - Latest 3       
 
 * MvCentral:
- 919299280 
- 91929928
- 91929929
- 91929930
+ 919299280 - Facade control 
+ 91929928  - Latest 1       
+ 91929929  - Latest 2       
+ 91929930  - Latest 3       
 
 * TVRecording
- 919199840
- 91919984
- 91919985
- 91919986
- 91919987
+ 919199840 - Facade control 
+ 91919984  - Latest 1       
+ 91919985  - Latest 2       
+ 91919986  - Latest 3       
+ 91919987  - Latest 4
 </pre>

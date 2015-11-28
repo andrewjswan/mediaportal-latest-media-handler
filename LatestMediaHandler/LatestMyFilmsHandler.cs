@@ -408,6 +408,9 @@ namespace LatestMediaHandler
       {
         if (item != null && selectedFacadeItem1 != item.ItemId)
         {
+          int i = item.ItemId - 1;
+          string plot = (string.IsNullOrEmpty(latestMyFilms[i].Summary) ? Translation.NoDescription : latestMyFilms[i].Summary);
+          string plotoutline = Utils.GetSentences(plot, Utils.latestPlotOutlineSentencesNum);
           Utils.SetProperty("#latestMediaHandler.myfilms.selected.thumb", item.IconImageBig);
           Utils.SetProperty("#latestMediaHandler.myfilms.selected.title", item.Label);
           Utils.SetProperty("#latestMediaHandler.myfilms.selected.dateAdded", item.Label3);
@@ -417,8 +420,10 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.myfilms.selected.runtime", "" + item.Duration);
           Utils.SetProperty("#latestMediaHandler.myfilms.selected.year", "" + item.Year);
           Utils.SetProperty("#latestMediaHandler.myfilms.selected.id", "" + item.ItemId);
-          Utils.SetProperty("#latestMediaHandler.myfilms.selected.plot", item.Path);
-          Utils.SetProperty("#latestMediaHandler.myfilms.selected.plotoutline", string.Empty);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.rating", latestMyFilms[i].Rating);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.plot", plot);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.plotoutline", plotoutline);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.new", latestMyFilms[i].New);
           selectedFacadeItem1 = item.ItemId;
 
           facade = Utils.GetLatestsFacade(ControlID);
@@ -560,6 +565,7 @@ namespace LatestMediaHandler
 
     private void OnMessage(GUIMessage message)
     {
+      Utils.ThreadToSleep();
       if (LatestMediaHandlerSetup.LatestMyFilms.Equals("True", StringComparison.CurrentCulture))
       {
         try
@@ -687,7 +693,14 @@ namespace LatestMediaHandler
 
       if ((latestMyFilms != null) && (latestMyFilms.Count > 0))
       {
-        InitFacade();
+        // if (System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+        // {
+        //   System.Windows.Forms.Form.ActiveForm.Invoke(InitFacade);
+        // }
+        // else
+        // {
+          InitFacade();
+        // }
         Utils.SetProperty("#latestMediaHandler.myfilms.latest.enabled", "true");
       }
       else

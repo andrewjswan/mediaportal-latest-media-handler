@@ -268,10 +268,40 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>* Fix for play music from latests where , in filenames</VersionDescription>
+    <VersionDescription>New properties:
+#latestMediaHandler.music.selected.artistbio
+#latestMediaHandler.music.selected.artistbiooutline
+#latestMediaHandler.music.selected.new
+ 
+#latestMediaHandler.myvideo.selected.plotoutline
+#latestMediaHandler.myvideo.selected.new
+ 
+#latestMediaHandler.picture.selected.new
+ 
+#latestMediaHandler.tvseries.selected.plotoutline
+ 
+#latestMediaHandler.movingpicture.selected.plotoutline
+#latestMediaHandler.movingpicture.selected.new
+ 
+#latestMediaHandler.myfilms.selected.plotoutline
+#latestMediaHandler.myfilms.selected.new
+ 
+#latestMediaHandler.mvcentral.selected.artistbio
+#latestMediaHandler.mvcentral.selected.artistbiooutline
+#latestMediaHandler.mvcentral.selected.new
+ 
+#latestMediaHandler.tvrecordings.selected.summaryoutline
+#latestMediaHandler.tvrecordings.selected.new
+
+For TVSeries - facade control:
+IconImage - for Season - Season thumb, for Episodes and Series - Series thumb
+IconImageBig - for Season - Season thumb, for Episodes and Series - Series thumb
+ThumbnailImage - for Season - Season thumb, for Episodes - Episode thumb for Series - Series thumb
+
+* Cosmetic</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2015-11-16T09:06:46</ReleaseDate>
+    <ReleaseDate>2015-11-28T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>

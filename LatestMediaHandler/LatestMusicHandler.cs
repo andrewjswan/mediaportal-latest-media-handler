@@ -269,6 +269,7 @@ namespace LatestMediaHandler
       {
         RefreshWorker MyRefreshWorker = new RefreshWorker();
         MyRefreshWorker.RunWorkerCompleted += MyRefreshWorker.OnRunWorkerCompleted;
+        // System.Threading.SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
         MyRefreshWorker.RunWorkerAsync(this);
       }
       catch (Exception ex)
@@ -294,6 +295,7 @@ namespace LatestMediaHandler
         Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".artistbio", string.Empty);
         Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".artistbiooutline", string.Empty);
         Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".album", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".year", string.Empty);
         Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".dateAdded", string.Empty);
         Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".fanart", string.Empty);
         Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".genre", string.Empty);
@@ -334,6 +336,7 @@ namespace LatestMediaHandler
             Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".artistbio", artistbio);
             Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".artistbiooutline", artistbiooutline);
             Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".album", hTable[i].Album);
+            Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".year", hTable[i].SeriesIndex);
             Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".dateAdded", hTable[i].DateAdded);
             Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".fanart", hTable[i].Fanart);
             Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".genre", hTable[i].Genre);
@@ -360,7 +363,14 @@ namespace LatestMediaHandler
       
       if ((latestMusicAlbums != null) && (latestMusicAlbums.Count > 0))
       {
-        InitFacade();
+        // if (System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+        // {
+        //   System.Windows.Forms.Form.ActiveForm.Invoke(InitFacade);
+        // }
+        // else
+        // {
+          InitFacade();
+        // }
         Utils.SetProperty("#latestMediaHandler.music.latest.enabled", "true");
       }
       else
@@ -890,10 +900,10 @@ namespace LatestMediaHandler
         //                   "FROM tracks "+
         //                   "GROUP BY strAlbumArtist, strAlbum, strFileType "+
         //                   "ORDER BY {0} DESC LIMIT {1}";
-        string sqlQuery = "SELECT strAlbumArtist, strAlbum, strFileType, dateAdded, iTimesPlayed, dateLastPlayed, strGenre, strPath, "+
+        string sqlQuery = "SELECT strAlbumArtist, strAlbum, iYear, strFileType, dateAdded, iTimesPlayed, dateLastPlayed, strGenre, strPath, "+
                                  "(SELECT strAMGBio FROM artistinfo WHERE LOWER(TRIM(T.strAlbumArtist,'| ')) = LOWER(TRIM(strArtist))) AS strLyrics "+
                           "FROM "+
-                            "(SELECT strAlbumArtist, strAlbum, strFileType, "+
+                            "(SELECT strAlbumArtist, strAlbum, iYear, strFileType, "+
                                     "MAX(dateAdded) AS dateAdded, "+
                                     "CAST(ROUND(AVG(iTimesPlayed)) AS INTEGER) AS iTimesPlayed, "+
                                     "MAX(dateLastPlayed) AS dateLastPlayed, "+
@@ -935,11 +945,7 @@ namespace LatestMediaHandler
         {
           string artist    = mySong.AlbumArtist;
           string album     = mySong.Album;
-          string sPaths    = Utils.GetDistinct(mySong.FileName);
-          string sGenres   = Utils.GetDistinct(mySong.Genre != null ? mySong.Genre.Replace(",", "|") : string.Empty);
           string sFileType = mySong.FileType;
-          string dateAdded = string.Empty;
-          bool   isnew     = false;
 
           // logger.Debug ("*** GetLatestMusic: "+Utils.Check(isnew)+" AlbumArtist: "+artist+ " Album: "+album+" Date: "+mySong.DateTimeModified+"/"+mySong.DateTimePlayed+" sPath: "+sPaths.Length+" Genre:"+sGenres);
           
@@ -948,6 +954,13 @@ namespace LatestMediaHandler
           if (!ht.Contains(key))
           {
             ht.Add(key, key);
+            //
+            string sPaths    = Utils.GetDistinct(mySong.FileName);
+            string sGenres   = Utils.GetDistinct(mySong.Genre != null ? mySong.Genre.Replace(",", "|") : string.Empty);
+            string sYear     = (mySong.Year == 0 ? string.Empty : (mySong.Year == 1900 ? string.Empty : mySong.Year.ToString()));
+            string dateAdded = string.Empty;
+            bool   isnew     = false;
+
             //Get Fanart
             string CurrSelectedMusic = string.Empty;
             string sFilename1 = string.Empty;
@@ -1032,15 +1045,15 @@ namespace LatestMediaHandler
               isnew = false;
             }
 
-            latestMusicAlbums.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, sPaths, 
-                                                                null, 
+            latestMusicAlbums.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, 
+                                                                sPaths, sFileType, // FileType 
                                                                 sArtist, mySong.Album, sGenres, 
                                                                 null, null, 
                                                                 sFileType, 
                                                                 null, null, null, null, null, null, 
                                                                 mySong.DateTimePlayed.ToString(), 
                                                                 mySong.Lyrics, // Artist.BIO
-                                                                null,
+                                                                sYear, // Year
                                                                 isnew));
             latestMusicAlbumsFolders.Add(i0, sPaths);
             Utils.ThreadToSleep();
@@ -1226,6 +1239,15 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.music.selected.album", item.Label2);
           Utils.SetProperty("#latestMediaHandler.music.selected.dateAdded", item.Label3);
           Utils.SetProperty("#latestMediaHandler.music.selected.genre", item.Path);
+
+          int i = item.ItemId - 1;
+          string artistbio = (string.IsNullOrEmpty(latestMusicAlbums[i].Summary) ? Translation.NoDescription : latestMusicAlbums[i].Summary);
+          string artistbiooutline = Utils.GetSentences(artistbio, Utils.latestPlotOutlineSentencesNum);
+          Utils.SetProperty("#latestMediaHandler.music.selected.artistbio", artistbio);
+          Utils.SetProperty("#latestMediaHandler.music.selected.artistbiooutline", artistbiooutline);
+          Utils.SetProperty("#latestMediaHandler.music.selected.year", latestMusicAlbums[i].SeriesIndex);
+          Utils.SetProperty("#latestMediaHandler.music.selected.new", latestMusicAlbums[i].New);
+
           selectedFacadeItem1 = item.ItemId;
 
           facade = Utils.GetLatestsFacade(ControlID);
@@ -1334,6 +1356,7 @@ namespace LatestMediaHandler
 
     private void OnMessage(GUIMessage message)
     {
+      Utils.ThreadToSleep();
       if (LatestMediaHandlerSetup.LatestMusic.Equals("True", StringComparison.CurrentCulture))
       {
         bool Update = false;

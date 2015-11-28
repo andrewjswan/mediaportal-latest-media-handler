@@ -469,7 +469,14 @@ namespace LatestMediaHandler
 
       if ((latestMovies != null) && (latestMovies.Count > 0))
       {
-        InitFacade();
+        // if (System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+        // {
+        //   System.Windows.Forms.Form.ActiveForm.Invoke(InitFacade);
+        // }
+        // else
+        // {
+          InitFacade();
+        // }
         Utils.SetProperty("#latestMediaHandler.movingpicture.latest.enabled", "true");
       }
       else
@@ -635,7 +642,13 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.movingpicture.selected.runtime", "" + item.Duration);
           Utils.SetProperty("#latestMediaHandler.movingpicture.selected.year", "" + item.Year);
           Utils.SetProperty("#latestMediaHandler.movingpicture.selected.id", "" + item.ItemId);
-          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.plot", item.Path);
+
+          int i = item.ItemId - 1;
+          string plot = (string.IsNullOrEmpty(latestMovies[i].Summary) ? Translation.NoDescription : latestMovies[i].Summary);
+          string plotoutline = Utils.GetSentences(plot, Utils.latestPlotOutlineSentencesNum);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.plot", plot);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.plotoutline", plotoutline);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.new", latestMovies[i].New);
           selectedFacadeItem1 = item.ItemId;
 
           facade = Utils.GetLatestsFacade(ControlID);
@@ -807,6 +820,7 @@ namespace LatestMediaHandler
 
     private void OnMessage(GUIMessage message)
     {
+      Utils.ThreadToSleep();
       if (LatestMediaHandlerSetup.LatestMovingPictures.Equals("True", StringComparison.CurrentCulture))
       {
         try

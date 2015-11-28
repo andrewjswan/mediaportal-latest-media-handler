@@ -241,7 +241,14 @@ namespace LatestMediaHandler
 
       if ((latestMusicAlbums != null) && (latestMusicAlbums.Count > 0))
       {
-        InitFacade();
+        // if (System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+        // {
+        //   System.Windows.Forms.Form.ActiveForm.Invoke(InitFacade);
+        // }
+        // else
+        // {
+          InitFacade();
+        // }
         Utils.SetProperty("#latestMediaHandler.mvcentral.latest.enabled", "true");
       }
       else
@@ -535,12 +542,18 @@ namespace LatestMediaHandler
       {
         if (item != null && selectedFacadeItem1 != item.ItemId)
         {
-          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.thumb", latestMusicAlbums[(item.ItemId - 1)].Thumb);
-          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.artist", latestMusicAlbums[(item.ItemId - 1)].Artist);
-          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.album", latestMusicAlbums[(item.ItemId - 1)].Album);
-          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.track", latestMusicAlbums[(item.ItemId - 1)].Title);
-          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.dateAdded", latestMusicAlbums[(item.ItemId - 1)].DateAdded);
-          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.genre", latestMusicAlbums[(item.ItemId - 1)].Genre);
+          int i = item.ItemId - 1;
+          string artistbio = (string.IsNullOrEmpty(latestMusicAlbums[i].Summary) ? Translation.NoDescription : latestMusicAlbums[i].Summary);
+          string artistbiooutline = Utils.GetSentences(artistbio, Utils.latestPlotOutlineSentencesNum);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.thumb", latestMusicAlbums[i].Thumb);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.artist", latestMusicAlbums[i].Artist);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.album", latestMusicAlbums[i].Album);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.track", latestMusicAlbums[i].Title);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.dateAdded", latestMusicAlbums[i].DateAdded);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.genre", latestMusicAlbums[i].Genre);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.artistbio", artistbio);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.artistbiooutline", artistbiooutline);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.new", latestMusicAlbums[i].New);
           selectedFacadeItem1 = item.ItemId;
 
           facade = Utils.GetLatestsFacade(ControlID);
@@ -739,6 +752,7 @@ namespace LatestMediaHandler
 */
     private void OnMessage(GUIMessage message)
     {
+      Utils.ThreadToSleep();
       if (LatestMediaHandlerSetup.LatestMvCentral.Equals("True", StringComparison.CurrentCulture))
       {
         try

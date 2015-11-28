@@ -682,6 +682,7 @@ namespace LatestMediaHandler
     private void OnMessage(GUIMessage message)
     {
       bool Update = false;
+      Utils.ThreadToSleep();
       if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
       {
         try

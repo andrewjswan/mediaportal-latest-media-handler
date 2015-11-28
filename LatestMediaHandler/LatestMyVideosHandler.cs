@@ -524,7 +524,14 @@ namespace LatestMediaHandler
 
       if ((latestMyVideos != null) && (latestMyVideos.Count > 0))
       {
-        InitFacade();
+        // if (System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+        // {
+        //   System.Windows.Forms.Form.ActiveForm.Invoke(InitFacade);
+        // }
+        // else
+        // {
+          InitFacade();
+        // }
         Utils.SetProperty("#latestMediaHandler.myvideo.latest.enabled", "true");
       }
       else
@@ -666,6 +673,7 @@ namespace LatestMediaHandler
       {
         if (item != null && selectedFacadeItem1 != item.ItemId)
         {
+          int i = item.ItemId - 1;
           Utils.SetProperty("#latestMediaHandler.myvideo.selected.thumb", item.IconImageBig);
           Utils.SetProperty("#latestMediaHandler.myvideo.selected.title", item.Label);
           Utils.SetProperty("#latestMediaHandler.myvideo.selected.dateAdded", item.Label3);
@@ -675,7 +683,10 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.myvideo.selected.runtime", "" + item.Duration);
           Utils.SetProperty("#latestMediaHandler.myvideo.selected.year", "" + item.Year);
           Utils.SetProperty("#latestMediaHandler.myvideo.selected.id", "" + item.ItemId);
-          Utils.SetProperty("#latestMediaHandler.myvideo.selected.plot", item.Path);
+          Utils.SetProperty("#latestMediaHandler.myvideo.selected.rating", latestMyVideos[i].Rating);
+          Utils.SetProperty("#latestMediaHandler.myvideo.selected.plot", latestMyVideos[i].Summary);
+          Utils.SetProperty("#latestMediaHandler.myvideo.selected.plotoutline", latestMyVideos[i].Subtitle);
+          Utils.SetProperty("#latestMediaHandler.myvideo.selected.new", latestMyVideos[i].New);
           selectedFacadeItem1 = item.ItemId;
 
           facade = Utils.GetLatestsFacade(ControlID);
@@ -791,6 +802,7 @@ namespace LatestMediaHandler
     private void OnMessage(GUIMessage message)
     {
       bool Update = false;
+      Utils.ThreadToSleep();
       if (LatestMediaHandlerSetup.LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
       {
         try

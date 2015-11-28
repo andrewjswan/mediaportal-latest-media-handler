@@ -1079,6 +1079,7 @@ namespace LatestMediaHandler
 
     private void OnMessage(GUIMessage message)
     {
+      Utils.ThreadToSleep();
       try
       {
         if (message.Object is ShowLMHDialog)
@@ -1352,35 +1353,38 @@ namespace LatestMediaHandler
         {
           if (Utils.IsIdle())
           {
-            GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            if (fWindow != null)
+            if (GUIWindowManager.ActiveWindow > (int)GUIWindow.Window.WINDOW_INVALID)
             {
-              /*                            
-              Utils.LogDevMsg("*******************************");
-              Utils.LogDevMsg("Lmvh.images.Count:" + Lmvh.images.Count);
-              Utils.LogDevMsg("Lmch.images.Count:" + Lmch.images.Count);
-              Utils.LogDevMsg("Lmvh.imagesThumbs.Count:" + Lmvh.imagesThumbs.Count);
-              Utils.LogDevMsg("Lmph.images.Count:" + Lmph.images.Count);
-              Utils.LogDevMsg("Lmph.imagesThumbs.Count:" + Lmph.imagesThumbs.Count);
-              Utils.LogDevMsg("Ltvsh.images.Count:" + Ltvsh.images.Count);
-              Utils.LogDevMsg("Ltvsh.imagesThumbs.Count:" + Ltvsh.imagesThumbs.Count);
-              Utils.LogDevMsg("Lmh.images.Count:" + Lmh.images.Count);
-              Utils.LogDevMsg("Lmh.imagesThumbs.Count:" + Lmh.imagesThumbs.Count);
-              Utils.LogDevMsg("Lph.images.Count:" + Lph.images.Count);
-              Utils.LogDevMsg("Lph.imagesThumbs.Count:" + Lph.imagesThumbs.Count);
-              Utils.LogDevMsg("Lmfh.images.Count:" + Lmfh.images.Count);
-              Utils.LogDevMsg("Lmfh.imagesThumbs.Count:" + Lmfh.imagesThumbs.Count);
-              Utils.LogDevMsg("L4trrh.images.Count:" + L4trrh.images.Count);
-              Utils.LogDevMsg("L4trrh.imagesThumbs.Count:" + L4trrh.imagesThumbs.Count);
-              */
-              Lmh.UpdateImageTimer(fWindow, stateInfo, e);
-              Lph.UpdateImageTimer(fWindow, stateInfo, e);
-              Lmvh.UpdateImageTimer(fWindow, stateInfo, e);
-              Ltvsh.UpdateImageTimer(fWindow, stateInfo, e);
-              Lmph.UpdateImageTimer(fWindow, stateInfo, e);
-              Lmfh.UpdateImageTimer(fWindow, stateInfo, e);
-              Lmch.UpdateImageTimer(fWindow, stateInfo, e);
-              Ltvrh.UpdateImageTimer(fWindow, stateInfo, e);
+              GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+              if (fWindow != null)
+              {
+                /*                            
+                Utils.LogDevMsg("*******************************");
+                Utils.LogDevMsg("Lmvh.images.Count:" + Lmvh.images.Count);
+                Utils.LogDevMsg("Lmch.images.Count:" + Lmch.images.Count);
+                Utils.LogDevMsg("Lmvh.imagesThumbs.Count:" + Lmvh.imagesThumbs.Count);
+                Utils.LogDevMsg("Lmph.images.Count:" + Lmph.images.Count);
+                Utils.LogDevMsg("Lmph.imagesThumbs.Count:" + Lmph.imagesThumbs.Count);
+                Utils.LogDevMsg("Ltvsh.images.Count:" + Ltvsh.images.Count);
+                Utils.LogDevMsg("Ltvsh.imagesThumbs.Count:" + Ltvsh.imagesThumbs.Count);
+                Utils.LogDevMsg("Lmh.images.Count:" + Lmh.images.Count);
+                Utils.LogDevMsg("Lmh.imagesThumbs.Count:" + Lmh.imagesThumbs.Count);
+                Utils.LogDevMsg("Lph.images.Count:" + Lph.images.Count);
+                Utils.LogDevMsg("Lph.imagesThumbs.Count:" + Lph.imagesThumbs.Count);
+                Utils.LogDevMsg("Lmfh.images.Count:" + Lmfh.images.Count);
+                Utils.LogDevMsg("Lmfh.imagesThumbs.Count:" + Lmfh.imagesThumbs.Count);
+                Utils.LogDevMsg("L4trrh.images.Count:" + L4trrh.images.Count);
+                Utils.LogDevMsg("L4trrh.imagesThumbs.Count:" + L4trrh.imagesThumbs.Count);
+                */
+                Lmh.UpdateImageTimer(fWindow, stateInfo, e);
+                Lph.UpdateImageTimer(fWindow, stateInfo, e);
+                Lmvh.UpdateImageTimer(fWindow, stateInfo, e);
+                Ltvsh.UpdateImageTimer(fWindow, stateInfo, e);
+                Lmph.UpdateImageTimer(fWindow, stateInfo, e);
+                Lmfh.UpdateImageTimer(fWindow, stateInfo, e);
+                Lmch.UpdateImageTimer(fWindow, stateInfo, e);
+                Ltvrh.UpdateImageTimer(fWindow, stateInfo, e);
+              }
             }
           }
         }

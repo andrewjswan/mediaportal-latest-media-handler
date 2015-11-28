@@ -17,6 +17,8 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 
+using MediaPortal.GUI.Library;
+
 namespace LatestMediaHandler
 {
 
@@ -31,7 +33,7 @@ namespace LatestMediaHandler
 
     public RefreshWorker()
     {
-      WorkerReportsProgress = true;
+      WorkerReportsProgress = false; // true
       WorkerSupportsCancellation = true;
     }
 
@@ -39,6 +41,14 @@ namespace LatestMediaHandler
     {
       if (Utils.GetIsStopping() == false)
       {
+        // if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_INVALID)
+        //   return;
+        
+        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_SECOND_HOME)
+        {
+          Thread.Sleep(Utils.scanDelay);
+        }
+        
         try
         {
           if (LatestMediaHandlerSetup.LMHThreadPriority.Equals("Lowest", StringComparison.CurrentCulture))
@@ -52,6 +62,7 @@ namespace LatestMediaHandler
           logger.Debug("RefreshWorker: Start: "+Argument.ToString());
 
           Utils.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
+          Utils.ThreadToSleep();
 
           if (Argument is LatestMusicHandler)
           {
@@ -96,6 +107,7 @@ namespace LatestMediaHandler
       {
         Utils.ReleaseDelayStop("RefreshWorker-OnDoWork-"+Argument.ToString().Trim());
         logger.Debug("RefreshWorker: Complete: "+Argument.ToString());
+        Utils.ThreadToSleep();
 
         Utils.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
       }

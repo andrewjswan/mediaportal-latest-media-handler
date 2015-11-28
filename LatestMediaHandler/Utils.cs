@@ -72,6 +72,8 @@ namespace LatestMediaHandler
     public static string reorgInterval { get; set; }
     public static string dateFormat { get; set; }
 
+    public static int scanDelay { get; set; }
+
     public static bool HasNewPictures { get; set; }
     public static bool HasNewMusic { get; set; }
     public static bool HasNewMyVideos { get; set; }
@@ -565,11 +567,15 @@ namespace LatestMediaHandler
       {
         result = GUIPropertyManager.GetProperty(property);
         if (string.IsNullOrEmpty(result))
-          return result;
+        {
+          result = string.Empty;
+        }
 
         result = result.Trim();
         if (result.Equals(property, StringComparison.CurrentCultureIgnoreCase))
+        {
           result = string.Empty;
+        }
         //logger.Debug("GetProperty: "+property+" -> "+value) ;
       }
       catch (Exception ex)
@@ -633,9 +639,21 @@ namespace LatestMediaHandler
 
     internal static GUIFacadeControl GetLatestsFacade(int ControlID)
     {
-      GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-      GUIControl gc = gw.GetControl(ControlID);
-      return gc as GUIFacadeControl;
+      try
+      {
+        if (GUIWindowManager.ActiveWindow > (int)GUIWindow.Window.WINDOW_INVALID)
+        {
+          GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+          GUIControl gc = gw.GetControl(ControlID);
+          return gc as GUIFacadeControl;
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Debug("GetLatestsFacade: " + GUIWindowManager.ActiveWindow + " - " + ControlID);
+        logger.Error("GetLatestsFacade: " + ex);
+      }
+      return null;
     }
 
     internal static void ClearFacade(ref GUIFacadeControl facade)
@@ -791,6 +809,8 @@ namespace LatestMediaHandler
 
       dateFormat = "yyyy-MM-dd";
 
+      scanDelay = 0;
+
       try
       {
         logger.Debug("Load settings from: "+ConfigFilename);
@@ -820,6 +840,7 @@ namespace LatestMediaHandler
           reorgInterval = xmlreader.GetValueAsString("LatestMediaHandler", "reorgInterval", reorgInterval);
           //useLatestMediaCache = xmlreader.GetValueAsString("LatestMediaHandler", "useLatestMediaCache", useLatestMediaCache);
           dateFormat = xmlreader.GetValueAsString("LatestMediaHandler", "dateFormat", dateFormat);
+          scanDelay = xmlreader.GetValueAsInt("LatestMediaHandler", "ScanDelay", scanDelay);
         }
         #endregion
         logger.Debug("Load settings from: "+ConfigFilename+" complete.");
@@ -873,6 +894,29 @@ namespace LatestMediaHandler
                             Check(refreshDbMusic) + " Music, "+
                             "Interval: " + reorgInterval);
       logger.Debug("Date Format: " + dateFormat) ;
+      logger.Debug("Scan Delay: " + scanDelay + "s") ;
+      logger.Debug("Plugin enabled: " + Check(PluginIsEnabled("Music")) + " Music, " +
+                                        Check(PluginIsEnabled("Pictures")) + " Pictures, " +
+                                        Check(PluginIsEnabled("Videos")) + " MyVideo, " +
+                                        Check(PluginIsEnabled("MP-TV Series")) + " TVSeries, " +
+                                        Check(PluginIsEnabled("Moving Pictures")) + " MovingPictures, " +
+                                        Check(PluginIsEnabled("MyFilms")) + " MyFilms, " +
+                                        Check(PluginIsEnabled(GetProperty("#mvCentral.Settings.HomeScreenName"))) + " MvCentral") ;
+      #endregion
+
+      #region Post setting 
+      if (!Conf)
+      {
+        latestMusic = PluginIsEnabled("Music") ? latestMusic : "False" ;
+        latestPictures = PluginIsEnabled("Pictures") ? latestPictures : "False" ;
+        latestMyVideos = PluginIsEnabled("Videos") ? latestMyVideos : "False" ;
+        latestTVSeries = PluginIsEnabled("MP-TV Series") ? latestTVSeries : "False" ;
+        latestMovingPictures = PluginIsEnabled("Moving Pictures") ? latestMovingPictures : "False" ;
+        latestMyFilms = PluginIsEnabled("MyFilms") ? latestMyFilms : "False" ;
+        latestMvCentral = PluginIsEnabled(GetProperty("#mvCentral.Settings.HomeScreenName")) ? latestMvCentral : "False" ;
+      }
+
+      scanDelay = scanDelay * 1000;
       #endregion
 
       HasNewInit();

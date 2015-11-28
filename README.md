@@ -38,9 +38,12 @@ List of latests properties:
 
  #latestMediaHandler.music.selected.thumb
  #latestMediaHandler.music.selected.artist
+ #latestMediaHandler.music.selected.artistbio
+ #latestMediaHandler.music.selected.artistbiooutline
  #latestMediaHandler.music.selected.album
  #latestMediaHandler.music.selected.dateAdded
  #latestMediaHandler.music.selected.genre
+ #latestMediaHandler.music.selected.new
  #latestMediaHandler.music.selected.fanart1
  #latestMediaHandler.music.selected.fanart2
  #latestMediaHandler.music.selected.showfanart1
@@ -75,6 +78,8 @@ List of latests properties:
  #latestMediaHandler.myvideo.selected.year
  #latestMediaHandler.myvideo.selected.id
  #latestMediaHandler.myvideo.selected.plot
+ #latestMediaHandler.myvideo.selected.plotoutline
+ #latestMediaHandler.myvideo.selected.new
  #latestMediaHandler.myvideo.selected.fanart1
  #latestMediaHandler.myvideo.selected.fanart2
  #latestMediaHandler.myvideo.selected.showfanart1
@@ -95,6 +100,7 @@ List of latests properties:
  #latestMediaHandler.picture.selected.title
  #latestMediaHandler.picture.selected.dateAdded
  #latestMediaHandler.picture.selected.filename
+ #latestMediaHandler.picture.selected.new
  #latestMediaHandler.picture.selected.fanart1
  #latestMediaHandler.picture.selected.fanart2
  #latestMediaHandler.picture.selected.showfanart1
@@ -138,6 +144,7 @@ List of latests properties:
  #latestMediaHandler.tvseries.selected.runtime
  #latestMediaHandler.tvseries.selected.firstAired
  #latestMediaHandler.tvseries.selected.plot
+ #latestMediaHandler.tvseries.selected.plotoutline
  #latestMediaHandler.tvseries.selected.new
  #latestMediaHandler.tvseries.selected.fanart1
  #latestMediaHandler.tvseries.selected.fanart2
@@ -174,6 +181,8 @@ List of latests properties:
  #latestMediaHandler.movingpicture.selected.year
  #latestMediaHandler.movingpicture.selected.id
  #latestMediaHandler.movingpicture.selected.plot
+ #latestMediaHandler.movingpicture.selected.plotoutline
+ #latestMediaHandler.movingpicture.selected.new
  #latestMediaHandler.movingpicture.selected.fanart1
  #latestMediaHandler.movingpicture.selected.fanart2
  #latestMediaHandler.movingpicture.selected.showfanart1
@@ -205,6 +214,8 @@ List of latests properties:
  #latestMediaHandler.myfilms.selected.year
  #latestMediaHandler.myfilms.selected.id
  #latestMediaHandler.myfilms.selected.plot
+ #latestMediaHandler.myfilms.selected.plotoutline
+ #latestMediaHandler.myfilms.selected.new
  #latestMediaHandler.myfilms.selected.fanart1
  #latestMediaHandler.myfilms.selected.fanart2
  #latestMediaHandler.myfilms.selected.showfanart1
@@ -227,10 +238,13 @@ List of latests properties:
 
  #latestMediaHandler.mvcentral.selected.thumb
  #latestMediaHandler.mvcentral.selected.artist
+ #latestMediaHandler.mvcentral.selected.artistbio
+ #latestMediaHandler.mvcentral.selected.artistbiooutline
  #latestMediaHandler.mvcentral.selected.album
  #latestMediaHandler.mvcentral.selected.track
  #latestMediaHandler.mvcentral.selected.dateAdded
  #latestMediaHandler.mvcentral.selected.genre
+ #latestMediaHandler.mvcentral.selected.new
  #latestMediaHandler.mvcentral.selected.fanart1
  #latestMediaHandler.mvcentral.selected.fanart2
  #latestMediaHandler.mvcentral.selected.showfanart1
@@ -276,6 +290,8 @@ List of latests properties:
  #latestMediaHandler.tvrecordings.selected.startTime
  #latestMediaHandler.tvrecordings.selected.endTime
  #latestMediaHandler.tvrecordings.selected.summary
+ #latestMediaHandler.tvrecordings.selected.summaryoutline
+ #latestMediaHandler.tvrecordings.selected.new
  #latestMediaHandler.tvrecordings.selected.fanart1
  #latestMediaHandler.tvrecordings.selected.fanart2
  #latestMediaHandler.tvrecordings.selected.showfanart1

@@ -618,6 +618,7 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.picture.selected.title", item.Label);
           Utils.SetProperty("#latestMediaHandler.picture.selected.dateAdded", item.Label2);
           Utils.SetProperty("#latestMediaHandler.picture.selected.filename", item.Label);
+          Utils.SetProperty("#latestMediaHandler.picture.selected.new", latestPictures[item.ItemId - 1].New);
           selectedFacadeItem1 = item.ItemId;
 
           facade = Utils.GetLatestsFacade(ControlID);
@@ -710,6 +711,7 @@ namespace LatestMediaHandler
     private void OnMessage(GUIMessage message)
     {
       bool Update = false;
+      Utils.ThreadToSleep();
       if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture))
       {
         try
@@ -895,7 +897,14 @@ namespace LatestMediaHandler
 
       if ((latestPictures != null) && (latestPictures.Count > 0))
       {
-        InitFacade();
+        // if (System.Windows.Forms.Form.ActiveForm.InvokeRequired)
+        // {
+        //   System.Windows.Forms.Form.ActiveForm.Invoke(InitFacade);
+        // }
+        // else
+        // {
+          InitFacade();
+        // }
         Utils.SetProperty("#latestMediaHandler.picture.latest.enabled", "true");
       }
       else
