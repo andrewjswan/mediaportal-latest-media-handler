@@ -428,14 +428,11 @@ namespace LatestMediaHandler
     {
       XPathDocument myXPathDocument = new XPathDocument(filename);
       StringBuilder sb = new StringBuilder();
-      string _xml = string.Empty;
-
       using (XmlWriter xmlWriter = XmlWriter.Create(sb))
       {
         myXPathDocument.CreateNavigator().WriteSubtree(xmlWriter);
       }
-
-      _xml = sb.ToString();
+      string _xml = sb.ToString();
       _flagLatest = (_xml.Contains(".latest.") && _xml.Contains("#latestMediaHandler.")) ? true : _flagLatest;
 
       sb = null;
@@ -522,10 +519,7 @@ namespace LatestMediaHandler
       {
         UtilsFanartHandler.SetupFanartHandlerSubcribeScaperFinishedEvent();
       }
-      catch (Exception ex)
-      {
-        logger.Error("SetupFanartHandlerSubcribeScaperFinishedEvent: " + ex.ToString());
-      }
+      catch { }        
     }
     #endregion
 
@@ -1035,6 +1029,39 @@ namespace LatestMediaHandler
       if (!ControlIDFacades.Contains(FocusControlID) && !ControlIDPlays.Contains(FocusControlID))
         return;
 
+      if ((Lmph != null) && (Lmph.ControlIDFacades.Contains(FocusControlID) || Lmph.ControlIDPlays.Contains(FocusControlID)))
+      {
+        Lmph.MyContextMenu();
+      }
+      else if ((Lmvh != null) && (Lmvh.ControlIDFacades.Contains(FocusControlID) || Lmvh.ControlIDPlays.Contains(FocusControlID)))
+      {
+        Lmvh.MyContextMenu();
+      }
+      else if ((Lmch != null) && (Lmch.ControlIDFacades.Contains(FocusControlID) || Lmch.ControlIDPlays.Contains(FocusControlID)))
+      {
+        Lmch.MyContextMenu();
+      }
+      else if ((Lph != null) && (Lph.ControlIDFacades.Contains(FocusControlID) || Lph.ControlIDPlays.Contains(FocusControlID)))
+      {
+        Lph.MyContextMenu();
+      }
+      else if ((Ltvsh != null) && (Ltvsh.ControlIDFacades.Contains(FocusControlID) || Ltvsh.ControlIDPlays.Contains(FocusControlID)))
+      {
+        Ltvsh.MyContextMenu();
+      }
+      else if ((Lmfh != null) && (Lmfh.ControlIDFacades.Contains(FocusControlID) || Lmfh.ControlIDPlays.Contains(FocusControlID)))
+      {
+        Lmfh.MyContextMenu();
+      }
+      else if ((Ltvrh != null) && (Ltvrh.ControlIDFacades.Contains(FocusControlID) || Ltvrh.ControlIDPlays.Contains(FocusControlID)))
+      {
+        Ltvrh.MyContextMenu();
+      }
+      else if ((Lmh != null) && (Lmh.ControlIDFacades.Contains(FocusControlID) || Lmh.ControlIDPlays.Contains(FocusControlID)))
+      {
+        Lmh.MyContextMenu();
+      }
+      /*
       if ((FocusControlID == LatestMovingPicturesHandler.ControlID) || 
           (FocusControlID == LatestMovingPicturesHandler.Play1ControlID) || (FocusControlID == LatestMovingPicturesHandler.Play2ControlID) || (FocusControlID == LatestMovingPicturesHandler.Play3ControlID))
       {
@@ -1075,6 +1102,7 @@ namespace LatestMediaHandler
       {
         Lmh.MyContextMenu();
       }
+      */
     }
 
     private void OnMessage(GUIMessage message)

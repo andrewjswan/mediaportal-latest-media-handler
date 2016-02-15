@@ -50,6 +50,8 @@ namespace LatestMediaHandler
     private const string ConfigFilename = "LatestMediaHandler.xml";
     public  const string DefTVSeriesRatings = "TV-Y;TV-Y7;TV-G;TV-PG;TV-14;TV-MA";
 
+    public static bool FanartHandler { get; set; }
+
     public static string latestPictures { get; set; }
     public static string latestMusic { get; set; }
     public static string latestMusicType { get; set; }
@@ -784,6 +786,7 @@ namespace LatestMediaHandler
     
     public static void LoadSettings(bool Conf = false)
     {
+      FanartHandler = false;
       latestPictures = "True";
       latestMusic = "True";
       latestMusicType = LatestMusicHandler.MusicTypeLatestAdded;
@@ -901,12 +904,15 @@ namespace LatestMediaHandler
                                         Check(PluginIsEnabled("MP-TV Series")) + " TVSeries, " +
                                         Check(PluginIsEnabled("Moving Pictures")) + " MovingPictures, " +
                                         Check(PluginIsEnabled("MyFilms")) + " MyFilms, " +
-                                        Check(PluginIsEnabled(GetProperty("#mvCentral.Settings.HomeScreenName"))) + " MvCentral") ;
+                                        Check(PluginIsEnabled(GetProperty("#mvCentral.Settings.HomeScreenName"))) + " MvCentral" + 
+                                        Check(PluginIsEnabled("FanartHandler")) + " FanartHandler");
       #endregion
 
       #region Post setting 
       if (!Conf)
       {
+        FanartHandler = PluginIsEnabled("FanartHandler");
+
         latestMusic = PluginIsEnabled("Music") ? latestMusic : "False" ;
         latestPictures = PluginIsEnabled("Pictures") ? latestPictures : "False" ;
         latestMyVideos = PluginIsEnabled("Videos") ? latestMyVideos : "False" ;

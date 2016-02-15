@@ -60,6 +60,7 @@ namespace LatestMediaHandler
     public const int Play1ControlID = 91915991;
     public const int Play2ControlID = 91915992;
     public const int Play3ControlID = 91915993;
+    public const int Play4ControlID = 91919902;
 
     public List<int> ControlIDFacades;
     public List<int> ControlIDPlays;
@@ -133,6 +134,7 @@ namespace LatestMediaHandler
       ControlIDPlays.Add(Play1ControlID);
       ControlIDPlays.Add(Play2ControlID);
       ControlIDPlays.Add(Play3ControlID);
+      ControlIDPlays.Add(Play4ControlID);
     }
 
     internal bool PlayMovie(GUIWindow fWindow)
@@ -393,7 +395,7 @@ namespace LatestMediaHandler
       }
       catch (FileNotFoundException)
       {
-        //do nothing    
+        //do nothing
       }
       catch (MissingMethodException)
       {
@@ -412,11 +414,29 @@ namespace LatestMediaHandler
 
     private string GetFanart(string title, int id)
     {
-      string _movieid = id.ToString();
-      string fanart = UtilsFanartHandler.GetMyVideoFanartForLatest(_movieid);
+      string fanart = string.Empty;
+
+      if (Utils.FanartHandler)
+      {
+        string _movieid = id.ToString();
+        fanart = UtilsFanartHandler.GetMyVideoFanartForLatest(_movieid);
+        if (String.IsNullOrEmpty(fanart))
+        {
+          fanart = UtilsFanartHandler.GetMyVideoFanartForLatest(title);
+        }
+      }
+
       if (String.IsNullOrEmpty(fanart))
       {
-        fanart = UtilsFanartHandler.GetMyVideoFanartForLatest(title);
+        for (int i = 0; i < 3; i++)
+        {
+          string fanartFilename = FanArt.SetFanArtFileName(id, i);
+          if (!string.IsNullOrEmpty(fanartFilename) && File.Exists(fanartFilename))
+          {
+            fanart = fanartFilename;
+            break; 
+          }
+        }
       }
       return fanart;
     }
@@ -511,7 +531,7 @@ namespace LatestMediaHandler
       }
       catch (FileNotFoundException)
       {
-        //do nothing    
+        //do nothing
       }
       catch (MissingMethodException)
       {

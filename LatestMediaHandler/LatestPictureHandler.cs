@@ -68,6 +68,7 @@ namespace LatestMediaHandler
     public const int Play1ControlID = 91919971;
     public const int Play2ControlID = 91919972;
     public const int Play3ControlID = 91919973;
+    public const int Play4ControlID = 91919903;
 
     public List<int> ControlIDFacades;
     public List<int> ControlIDPlays;
@@ -135,6 +136,7 @@ namespace LatestMediaHandler
       ControlIDPlays.Add(Play1ControlID);
       ControlIDPlays.Add(Play2ControlID);
       ControlIDPlays.Add(Play3ControlID);
+      ControlIDPlays.Add(Play4ControlID);
     }
 
     /// <summary>

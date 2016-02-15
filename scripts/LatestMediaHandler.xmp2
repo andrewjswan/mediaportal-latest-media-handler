@@ -68,6 +68,13 @@
               <ZipFileName>Installer{CopyFile}\{0e27f0e5-ba0c-4d06-bd92-9715a1518443}-de.xml</ZipFileName>
               <DestinationFilename>%Language%\LatestMediaHandler\de.xml</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Installer\language\es.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9ddb4c07-6510-4e0a-a732-210d92d2a152}-es.xml</ZipFileName>
+              <DestinationFilename>%Language%\LatestMediaHandler\es.xml</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -268,40 +275,23 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>New properties:
-#latestMediaHandler.music.selected.artistbio
-#latestMediaHandler.music.selected.artistbiooutline
-#latestMediaHandler.music.selected.new
- 
-#latestMediaHandler.myvideo.selected.plotoutline
-#latestMediaHandler.myvideo.selected.new
- 
-#latestMediaHandler.picture.selected.new
- 
-#latestMediaHandler.tvseries.selected.plotoutline
- 
-#latestMediaHandler.movingpicture.selected.plotoutline
-#latestMediaHandler.movingpicture.selected.new
- 
-#latestMediaHandler.myfilms.selected.plotoutline
-#latestMediaHandler.myfilms.selected.new
- 
-#latestMediaHandler.mvcentral.selected.artistbio
-#latestMediaHandler.mvcentral.selected.artistbiooutline
-#latestMediaHandler.mvcentral.selected.new
- 
-#latestMediaHandler.tvrecordings.selected.summaryoutline
-#latestMediaHandler.tvrecordings.selected.new
+    <VersionDescription>Added controls:
+91919901  - Latest 4 Music
+91919902  - Latest 4 MyVideo
+91919903  - Latest 4 Pictures
+91919904  - Latest 4 TV Series
+91919905  - Latest 4 Moving Pictures
+91919906  - Latest 4 MyFilms
+91919907  - Latest 4 MvCentral
+Added Spanish translation (tnx XMaM)
+Fix TVSeries support (tnx Hawkeye)
+Fix FH compatibility (when FH not installed)
+Cosmetic
 
-For TVSeries - facade control:
-IconImage - for Season - Season thumb, for Episodes and Series - Series thumb
-IconImageBig - for Season - Season thumb, for Episodes and Series - Series thumb
-ThumbnailImage - for Season - Season thumb, for Episodes - Episode thumb for Series - Series thumb
-
-* Cosmetic</VersionDescription>
+</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2015-11-28T09:06:46</ReleaseDate>
+    <ReleaseDate>2016-02-15T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>
@@ -386,6 +376,13 @@ ThumbnailImage - for Season - Season thumb, for Episodes - Episode thumb for Ser
         <LocalFileName>..\Installer\language\de.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{0e27f0e5-ba0c-4d06-bd92-9715a1518443}-de.xml</ZipFileName>
         <DestinationFilename>%Language%\LatestMediaHandler\de.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Installer\language\es.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9ddb4c07-6510-4e0a-a732-210d92d2a152}-es.xml</ZipFileName>
+        <DestinationFilename>%Language%\LatestMediaHandler\es.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />

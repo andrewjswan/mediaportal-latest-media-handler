@@ -12,22 +12,23 @@
 extern alias RealCornerstone;
 extern alias RealNLog;
 
-using System;
-using System.Timers;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Windows.Forms;
-
-using MediaPortal.Profile;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.TagReader;
+
+using mvCentral;
+using mvCentral.Database;
 
 using RealNLog.NLog;
 
-using mvCentral.Database;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Timers;
 
 namespace LatestMediaHandler
 {
@@ -66,6 +67,7 @@ namespace LatestMediaHandler
     public const int Play1ControlID = 91929928;
     public const int Play2ControlID = 91929929;
     public const int Play3ControlID = 91929930;
+    public const int Play4ControlID = 91919907;
 
     public List<int> ControlIDFacades;
     public List<int> ControlIDPlays;
@@ -135,6 +137,7 @@ namespace LatestMediaHandler
       ControlIDPlays.Add(Play1ControlID);
       ControlIDPlays.Add(Play2ControlID);
       ControlIDPlays.Add(Play3ControlID);
+      ControlIDPlays.Add(Play4ControlID);
     }
 
     internal bool IsInitialized
@@ -145,6 +148,7 @@ namespace LatestMediaHandler
 
     internal void GetLatestMediaInfoThread()
     {
+      // logger.Debug("*** mvCentral: GetLatestMediaInfoThread...") ;
       // mvCentral
       if (LatestMediaHandlerSetup.LatestMvCentral.Equals("True", StringComparison.CurrentCulture))
       {
@@ -183,10 +187,12 @@ namespace LatestMediaHandler
 
     internal void GetLatestMediaInfo(bool _onStartUp)
     {
+      // logger.Debug("*** mvCentral: GetLatestMediaInfo...") ;
       int sync = Interlocked.CompareExchange(ref Utils.SyncPointMvCMusicUpdate, 1, 0);
       if (sync != 0)
         return;
 
+      // logger.Debug("*** mvCentral: GetLatestMediaInfo...") ;
       artistsWithImageMissing = new Hashtable();
       if (!LatestMediaHandlerSetup.LatestMvCentral.Equals("True", StringComparison.CurrentCulture))
       {
@@ -194,6 +200,7 @@ namespace LatestMediaHandler
         return;    
       }
 
+      // logger.Debug("*** mvCentral: GetLatestMediaInfo...") ;
       //MvCentral
       try
       {
@@ -232,6 +239,7 @@ namespace LatestMediaHandler
       }
       catch (MissingMethodException)
       {
+        // logger.Debug("*** mvCentral: GetLatestMediaInfo... MissingMethodException") ;
         //do nothing    
       }
       catch (Exception ex)
@@ -301,6 +309,7 @@ namespace LatestMediaHandler
     /// <returns>Hashtable containg artist names</returns>
     internal LatestsCollection GetLatestMusic(bool _onStartUp)
     {
+      // logger.Debug("*** mvCentral: GetLatestMusic...") ;
       latestMusicAlbums = new LatestsCollection();
       latestMusicAlbumsVideos = new Hashtable();
 
@@ -311,6 +320,7 @@ namespace LatestMediaHandler
         Utils.HasNewMvCentral = false;
 
         List<DBTrackInfo> allTracks = DBTrackInfo.GetAll();
+        // logger.Debug("*** mvCentral: GetLatestMusic: "+allTracks.Count) ;
         if (allTracks.Count > 0)
         {
           allTracks.Sort(delegate(DBTrackInfo p1, DBTrackInfo p2) { return p2.DateAdded.CompareTo(p1.DateAdded); });
@@ -330,11 +340,8 @@ namespace LatestMediaHandler
               if (isnew)
                 Utils.HasNewMvCentral = true;
             }
-            catch { }
-
-            String sPath = allTrack.LocalMedia[0].File.FullName;
-            if (!string.IsNullOrEmpty(sPath))
-              sPath = Path.GetDirectoryName(sPath);
+            catch 
+            {   }
 
             string thumb = allTrack.ArtistInfo[0].ArtThumbFullPath;
             if (string.IsNullOrEmpty(thumb))
@@ -344,17 +351,32 @@ namespace LatestMediaHandler
             string sFilename2 = "";
             try
             {
-              Hashtable ht2 = UtilsFanartHandler.GetMusicFanartForLatest(sArtist);
+              Hashtable ht2 = (Utils.FanartHandler ? UtilsFanartHandler.GetMusicFanartForLatest(sArtist) : null);
               if (ht2 == null || ht2.Count < 1 && !_onStartUp)
               {
-                UtilsFanartHandler.ScrapeFanartAndThumb(sArtist, "");
-                ht2 = UtilsFanartHandler.GetMusicFanartForLatest(sArtist);
+                if (Utils.FanartHandler)
+                {
+                  UtilsFanartHandler.ScrapeFanartAndThumb(sArtist, "");
+                  ht2 = UtilsFanartHandler.GetMusicFanartForLatest(sArtist);
+                }
               }
 
               if (ht2 == null || ht2.Count < 1)
               {
-                if (!artistsWithImageMissing.Contains(UtilsFanartHandler.GetFHArtistName(sArtist)))
-                  artistsWithImageMissing.Add(UtilsFanartHandler.GetFHArtistName(sArtist), UtilsFanartHandler.GetFHArtistName(sArtist));
+                if (Utils.FanartHandler)
+                {
+                  if (!artistsWithImageMissing.Contains(UtilsFanartHandler.GetFHArtistName(sArtist)))
+                  {
+                    artistsWithImageMissing.Add(UtilsFanartHandler.GetFHArtistName(sArtist), UtilsFanartHandler.GetFHArtistName(sArtist));
+                  }
+                }
+                else
+                {
+                  if (!artistsWithImageMissing.Contains(sArtist))
+                  {
+                    artistsWithImageMissing.Add(sArtist, sArtist);
+                  }
+                }
               }
               IDictionaryEnumerator _enumerator = ht2.GetEnumerator();
 
@@ -394,7 +416,7 @@ namespace LatestMediaHandler
                                                                 null,
                                                                 isnew)); 
 
-            latestMusicAlbumsVideos.Add(i0, sPath);
+            latestMusicAlbumsVideos.Add(i0, allTrack.LocalMedia[0].File.FullName);
             Utils.ThreadToSleep();
 
             x++;
@@ -672,9 +694,11 @@ namespace LatestMediaHandler
     internal void PlayMusicAlbum(int index)
     {
       string _songFolder = latestMusicAlbumsVideos[index].ToString();
+      if (!string.IsNullOrEmpty(_songFolder))
+        _songFolder = Path.GetDirectoryName(_songFolder);
       if (Directory.Exists(_songFolder))
       {
-        LoadSongsFromFolder(_songFolder, false);
+        LoadSongsFromFolder(latestMusicAlbumsVideos[index].ToString(), _songFolder, false);
         StartPlayback(index);
       }
     }
@@ -682,11 +706,11 @@ namespace LatestMediaHandler
     private void StartPlayback(int index)
     {
       // if we got a playlist start playing it
-      if (playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP).Count > 0)
+      if (playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_VIDEO).Count > 0)
       {
-        playlistPlayer.CurrentPlaylistType = MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP;
+        playlistPlayer.CurrentPlaylistType = MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_VIDEO;
         playlistPlayer.Reset();
-        playlistPlayer.Play((index - 1));
+        playlistPlayer.Play(0);
       }
     }
 
@@ -822,10 +846,10 @@ namespace LatestMediaHandler
       }
     }
 
+    
     private bool IsMusicFile(string fileName)
     {
-      string supportedExtensions = MediaPortal.Util.Utils.AudioExtensionsDefault;
-        // ".mp3,.wma,.ogg,.flac,.wav,.cda,.m4a,.m4p,.mp4,.wv,.ape,.mpc,.aif,.aiff";
+      string supportedExtensions = MediaPortal.Util.Utils.VideoExtensionsDefault;
       if (supportedExtensions.IndexOf(Path.GetExtension(fileName).ToLower()) > -1)
       {
         return true;
@@ -855,7 +879,7 @@ namespace LatestMediaHandler
       }
     }
 
-    private void LoadSongsFromFolder(string folder, bool includeSubFolders)
+    private void LoadSongsFromFolder(string startfile, string folder, bool includeSubFolders)
     {
       using (Settings xmlreader = new MPSettings())
       {
@@ -864,20 +888,24 @@ namespace LatestMediaHandler
 
       // clear current playlist
       playlistPlayer = MediaPortal.Playlists.PlayListPlayer.SingletonPlayer;
-      //playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC).Clear();
-      playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+      //playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_VIDEO_TEMP).Clear();
+      playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_VIDEO).Clear();
       int numSongs = 0;
       try
       {
         List<string> files = new List<string>();
+        files.Add(startfile);
         GetFiles(folder, ref files, includeSubFolders);
-        foreach (string file in files)
+        List<string> unique = files.Distinct().ToList();
+        foreach (string file in unique)
         {
           if (IsMusicFile(file))
           {
             MediaPortal.Playlists.PlayListItem item = new MediaPortal.Playlists.PlayListItem();
+
             item.FileName = file;
-            item.Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.Audio;
+            item.Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.Video;
+            /*
             MusicTag tag = TagReader.ReadTag(file);
             if (tag != null)
             {
@@ -889,7 +917,8 @@ namespace LatestMediaHandler
               item.MusicTag = tag;
               item.Duration = tag.Duration;
             }
-            playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_TEMP).Add(item);
+            */
+            playlistPlayer.GetPlaylist(MediaPortal.Playlists.PlayListType.PLAYLIST_MUSIC_VIDEO).Add(item);
             numSongs++;
           }
         }

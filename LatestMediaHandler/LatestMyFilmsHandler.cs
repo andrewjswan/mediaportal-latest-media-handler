@@ -61,6 +61,7 @@ namespace LatestMediaHandler
     public const int Play1ControlID = 91919988;
     public const int Play2ControlID = 91919989;
     public const int Play3ControlID = 91919990;
+    public const int Play4ControlID = 91919906;
 
     public List<int> ControlIDFacades;
     public List<int> ControlIDPlays;
@@ -134,6 +135,7 @@ namespace LatestMediaHandler
       ControlIDPlays.Add(Play1ControlID);
       ControlIDPlays.Add(Play2ControlID);
       ControlIDPlays.Add(Play3ControlID);
+      ControlIDPlays.Add(Play4ControlID);
     }
 
     internal void MyContextMenu()

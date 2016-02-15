@@ -445,7 +445,7 @@ namespace LatestMediaHandler
                 catch
                 {
                 }
-                latests[x0].Fanart = UtilsFanartHandler.GetFanartForLatest(latests[x0].Title);
+                latests[x0].Fanart = (Utils.FanartHandler ? UtilsFanartHandler.GetFanartForLatest(latests[x0].Title) : string.Empty);
 
                 resultTmp.Add(latests[x0]);
                 if (result == null || result.Count == 0)

@@ -13,6 +13,7 @@
 extern alias RealNLog;
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Threading;
 
@@ -26,16 +27,55 @@ namespace LatestMediaHandler
 
     internal static void SetupFanartHandlerSubcribeScaperFinishedEvent()
     {
-      FanartHandler.ExternalAccess.ScraperCompleted += new FanartHandler.ExternalAccess.ScraperCompletedHandler(LatestMediaHandlerSetup.TriggerGetLatestMediaInfoOnEvent);
+      try
+      {
+        FanartHandler.ExternalAccess.ScraperCompleted += new FanartHandler.ExternalAccess.ScraperCompletedHandler(LatestMediaHandlerSetup.TriggerGetLatestMediaInfoOnEvent);
+      }
+      catch (FileNotFoundException)
+      {
+        Utils.FanartHandler = false;
+        logger.Debug("FanartHandler not found, scraper events disabled.");
+      }
+      catch (MissingMethodException)
+      {
+        Utils.FanartHandler = false;
+        logger.Debug("Old FanartHandler found, please update.");
+      }
+      catch 
+      { 
+        Utils.FanartHandler = false;
+      }
     }
 
     internal static void DisposeFanartHandlerSubcribeScaperFinishedEvent()
     {
-      FanartHandler.ExternalAccess.ScraperCompleted -= new FanartHandler.ExternalAccess.ScraperCompletedHandler(LatestMediaHandlerSetup.TriggerGetLatestMediaInfoOnEvent);
+      try
+      {
+        FanartHandler.ExternalAccess.ScraperCompleted -= new FanartHandler.ExternalAccess.ScraperCompletedHandler(LatestMediaHandlerSetup.TriggerGetLatestMediaInfoOnEvent);
+      }
+      catch (FileNotFoundException)
+      {
+        Utils.FanartHandler = false;
+        logger.Debug("FanartHandler not found, scraper events disabled.");
+      }
+      catch (MissingMethodException)
+      {
+        Utils.FanartHandler = false;
+        logger.Debug("Old FanartHandler found, please update.");
+      }
+      catch 
+      { 
+        Utils.FanartHandler = false;
+      }
     }
 
     internal static string GetFanartForLatest(string tvshow)
     {
+      if (!Utils.FanartHandler)
+      {
+        return string.Empty;
+      }  
+
       try
       {
         Hashtable ht = FanartHandler.ExternalAccess.GetTVFanart(tvshow);
@@ -43,33 +83,51 @@ namespace LatestMediaHandler
         {
           return ht[0].ToString();
         }
-        return "";
       }
+      catch (FileNotFoundException) { }
+      catch (MissingMethodException) { }
       catch (Exception ex)
       {
         logger.Error("GetFanartForLatest: " + ex.ToString());
-        return "";
       }
+      return string.Empty;
     }
 
     internal static string GetMyVideoFanartForLatest(string title)
     {
+      if (!Utils.FanartHandler)
+      {
+        return string.Empty;
+      }  
+
       try
       {
         return FanartHandler.ExternalAccess.GetMyVideoFanart(title);
       }
+      catch (FileNotFoundException) { }
+      catch (MissingMethodException) { }
       catch (Exception ex)
       {
         logger.Error("GetMyVideoFanartForLatest: " + ex.ToString());
-        return null;
       }
+      return string.Empty;
     }
 
     internal static Hashtable GetMusicFanartForLatest(string artist, string albumartist, string album)
     {
+      if (!Utils.FanartHandler)
+      {
+        return null;
+      }  
+
       try
       {
         return FanartHandler.ExternalAccess.GetMusicFanartForLatestMedia(artist, albumartist, album);
+      }
+      catch (FileNotFoundException) { }
+      catch (MissingMethodException)
+      { 
+        logger.Error("GetMusicFanartForLatest: Update Fanart Handler plugin.");
       }
       catch (Exception ex)
       {
@@ -81,32 +139,51 @@ namespace LatestMediaHandler
 
     internal static Hashtable GetMusicFanartForLatest(string artist, string album = (string) null)
     {
+      if (!Utils.FanartHandler)
+      {
+        return null;
+      }  
+
       try
       {
         return FanartHandler.ExternalAccess.GetMusicFanartForLatestMedia(artist, album);
       }
+      catch (FileNotFoundException) { }
+      catch (MissingMethodException) { }
       catch (Exception ex)
       {
         logger.Error("GetMusicFanartForLatest: " + ex.ToString());
-        return null;
       }
+      return null;
     }
 
     internal static string GetFHArtistName(string artist)
     {
+      if (!Utils.FanartHandler)
+      {
+        return string.Empty;
+      }  
+
       try
       {
         return FanartHandler.ExternalAccess.GetFHArtistName(artist);
       }
+      catch (FileNotFoundException) { }
+      catch (MissingMethodException) { }
       catch (Exception ex)
       {
         logger.Error("GetFHArtistName: " + ex.ToString());
-        return null;
       }
+      return string.Empty;
     }
 
     internal static void ScrapeFanartAndThumb(string artist, string album)
     {
+      if (!Utils.FanartHandler)
+      {
+        return;
+      }  
+
       try
       {
         int i = 0;
@@ -120,6 +197,8 @@ namespace LatestMediaHandler
           i++;
         }
       }
+      catch (FileNotFoundException) { }
+      catch (MissingMethodException) { }
       catch (Exception ex)
       {
         logger.Error("ScrapeFanartAndThumb: " + ex.ToString());

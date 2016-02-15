@@ -76,6 +76,7 @@ namespace LatestMediaHandler
     public const int Play1ControlID = 91919997;
     public const int Play2ControlID = 91919998;
     public const int Play3ControlID = 91919999;
+    public const int Play4ControlID = 91919901;
 
     public const string MusicTypeLatestAdded = "Latest Added Music";
     public const string MusicTypeMostPlayed = "Most Played Music";
@@ -150,6 +151,7 @@ namespace LatestMediaHandler
       ControlIDPlays.Add(Play1ControlID);
       ControlIDPlays.Add(Play2ControlID);
       ControlIDPlays.Add(Play3ControlID);
+      ControlIDPlays.Add(Play4ControlID);
     }
 
     internal bool IsInitialized
@@ -947,9 +949,8 @@ namespace LatestMediaHandler
           string album     = mySong.Album;
           string sFileType = mySong.FileType;
 
-          // logger.Debug ("*** GetLatestMusic: "+Utils.Check(isnew)+" AlbumArtist: "+artist+ " Album: "+album+" Date: "+mySong.DateTimeModified+"/"+mySong.DateTimePlayed+" sPath: "+sPaths.Length+" Genre:"+sGenres);
-          
           key = artist + "#" + ((string.IsNullOrEmpty(album)) ? "-" : album) + "#" + ((string.IsNullOrEmpty(sFileType)) ? "-" : sFileType);
+          // logger.Debug ("*** GetLatestMusic: "+Utils.Check(isnew)+" AlbumArtist: "+artist+ " Album: "+album+" Date: "+mySong.DateTimeModified+"/"+mySong.DateTimePlayed+" sPath: "+sPaths.Length+" Genre:"+sGenres);
           // logger.Debug ("*** GetLatestMusic: Key: "+key+" - "+ht.Contains(key));
           if (!ht.Contains(key))
           {
@@ -967,18 +968,31 @@ namespace LatestMediaHandler
             string sFilename2 = string.Empty;
             try
             {
-              Hashtable ht2 = UtilsFanartHandler.GetMusicFanartForLatest(mySong.Artist, mySong.AlbumArtist, mySong.Album);
-              if ((ht2 == null || ht2.Count < 1) && !_onStartUp)
+              Hashtable ht2 = (Utils.FanartHandler ? UtilsFanartHandler.GetMusicFanartForLatest(mySong.Artist, mySong.AlbumArtist, mySong.Album) : null);
+              if (Utils.FanartHandler)
               {
-                UtilsFanartHandler.ScrapeFanartAndThumb(mySong.AlbumArtist, mySong.Album);
-                ht2 = UtilsFanartHandler.GetMusicFanartForLatest(mySong.Artist, mySong.AlbumArtist, mySong.Album);
+                if ((ht2 == null || ht2.Count < 1) && !_onStartUp)
+                {
+                  UtilsFanartHandler.ScrapeFanartAndThumb(mySong.AlbumArtist, mySong.Album);
+                  ht2 = UtilsFanartHandler.GetMusicFanartForLatest(mySong.Artist, mySong.AlbumArtist, mySong.Album);
+                }
+
+                if (ht2 == null || ht2.Count < 1)
+                {
+                  if (!artistsWithImageMissing.Contains(UtilsFanartHandler.GetFHArtistName(mySong.AlbumArtist)))
+                  {
+                    artistsWithImageMissing.Add(UtilsFanartHandler.GetFHArtistName(mySong.AlbumArtist), UtilsFanartHandler.GetFHArtistName(mySong.AlbumArtist));
+                  }
+                }
+              }
+              else
+              {
+                if (!artistsWithImageMissing.Contains(mySong.AlbumArtist))
+                {
+                  artistsWithImageMissing.Add(mySong.AlbumArtist, mySong.AlbumArtist);
+                }
               }
 
-              if (ht2 == null || ht2.Count < 1)
-              {
-                if (!artistsWithImageMissing.Contains(UtilsFanartHandler.GetFHArtistName(mySong.AlbumArtist)))
-                  artistsWithImageMissing.Add(UtilsFanartHandler.GetFHArtistName(mySong.AlbumArtist), UtilsFanartHandler.GetFHArtistName(mySong.AlbumArtist));
-              }
               IDictionaryEnumerator _enumerator = ht2.GetEnumerator();
 
               int i = 0;
@@ -1030,8 +1044,20 @@ namespace LatestMediaHandler
             if (string.IsNullOrEmpty(thumb) || !File.Exists(thumb))
             {
               thumb = "defaultAudioBig.png";
-              if (!artistsWithImageMissing.Contains(UtilsFanartHandler.GetFHArtistName(sArtist)))
-                artistsWithImageMissing.Add(UtilsFanartHandler.GetFHArtistName(sArtist), UtilsFanartHandler.GetFHArtistName(sArtist));
+              if (Utils.FanartHandler)
+              {
+                if (!artistsWithImageMissing.Contains(UtilsFanartHandler.GetFHArtistName(sArtist)))
+                {
+                  artistsWithImageMissing.Add(UtilsFanartHandler.GetFHArtistName(sArtist), UtilsFanartHandler.GetFHArtistName(sArtist));
+                }
+              }
+              else
+              {
+                if (!artistsWithImageMissing.Contains(sArtist))
+                {
+                  artistsWithImageMissing.Add(sArtist, sArtist);
+                }
+              }
             }
 
             try
@@ -1484,13 +1510,15 @@ namespace LatestMediaHandler
       }
     }
 
+    /*
     private bool IsMusicFile(string fileName)
     {
       string supportedExtensions = MediaPortal.Util.Utils.AudioExtensionsDefault;
       // ".mp3,.wma,.ogg,.flac,.wav,.cda,.m4a,.m4p,.mp4,.wv,.ape,.mpc,.aif,.aiff";
       return (supportedExtensions.IndexOf(Path.GetExtension(fileName).ToLower()) > -1);
     }
-
+    */
+    /*
     private void GetFiles(string folder, ref List<string> foundFiles, bool recursive)
     {
       if (!Directory.Exists(folder))
@@ -1515,7 +1543,8 @@ namespace LatestMediaHandler
         logger.Error("GetFiles: " + ex.ToString());
       }
     }
-
+    */
+    /*
     private void LoadSongsFromFolder(string folder, bool includeSubFolders)
     {
       // clear current playlist
@@ -1559,6 +1588,7 @@ namespace LatestMediaHandler
         logger.Error("LoadSongsFromFolder: Error retrieving songs from folder.");
       }
     }
+    */
 
     private void LoadSongsFromList(string SongsFiles)
     {

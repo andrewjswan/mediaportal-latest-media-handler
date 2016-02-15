@@ -73,6 +73,7 @@ namespace LatestMediaHandler
     public const int Play1ControlID = 91919994;
     public const int Play2ControlID = 91919995;
     public const int Play3ControlID = 91919996;
+    public const int Play4ControlID = 91919904;
 
     public List<int> ControlIDFacades;
     public List<int> ControlIDPlays;
@@ -174,6 +175,7 @@ namespace LatestMediaHandler
       ControlIDPlays.Add(Play1ControlID);
       ControlIDPlays.Add(Play2ControlID);
       ControlIDPlays.Add(Play3ControlID);
+      ControlIDPlays.Add(Play4ControlID);
     }
 
     internal void MyContextMenu()
@@ -405,7 +407,8 @@ namespace LatestMediaHandler
           {
             conditions.Add(new DBOnlineEpisode(), DBOnlineEpisode.cWatched, 1, SQLConditionType.NotEqual);
           }
-          conditions.AddOrderItem(DBEpisode.Q(DBEpisode.cFileDateCreated), SQLCondition.orderType.Descending);
+          // conditions.AddOrderItem(DBEpisode.Q(DBEpisode.cFileDateCreated), SQLCondition.orderType.Descending);
+          conditions.AddOrderItem(DBEpisode.Q(DBEpisode.cFileDateAdded), SQLCondition.orderType.Descending);
           episodes = DBEpisode.Get(conditions, false);        
         }
         else

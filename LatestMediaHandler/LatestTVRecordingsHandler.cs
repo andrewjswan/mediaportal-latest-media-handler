@@ -445,7 +445,7 @@ namespace LatestMediaHandler
               }
             }
 
-            latests[x0].Fanart = UtilsFanartHandler.GetFanartForLatest(latests[x0].Title);
+            latests[x0].Fanart = (Utils.FanartHandler ? UtilsFanartHandler.GetFanartForLatest(latests[x0].Title) : string.Empty);
             latests[x0].Thumb = thumbNail;
 
             resultTmp.Add(latests[x0]);
