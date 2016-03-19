@@ -8,6 +8,9 @@
 // Description      : 
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
+// The methods GetLogoPath and MakeValidFileName, and the string _cacheBasePath
+// and its initiation in the constructor are slightly modified copies of the
+// methods of the same name in ChannelLogosCache.cs in ArgusTV.Client.Common
 //***********************************************************************
 extern alias RealNLog;
 
@@ -15,6 +18,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Globalization;
 using System.Threading;
@@ -25,9 +29,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
 
-using ArgusTV.Client.Common;
 using ArgusTV.DataContracts;
-using ArgusTV.ServiceAgents;
+using ArgusTV.ServiceProxy;
 
 namespace LatestMediaHandler
 {
@@ -39,7 +42,7 @@ namespace LatestMediaHandler
     private bool _isGetTypeRunningOnThisThread /* = false*/;
     private ArgusTV.DataContracts.Recording _playingRecording;
     private string _playingRecordingFileName;
-    private Hashtable latest4TRRecordings;
+    private Hashtable latestArgusRecordings;
     private GUIFacadeControl facade = null;
     private ArrayList al = new ArrayList();
     internal ArrayList images = new ArrayList();
@@ -51,6 +54,7 @@ namespace LatestMediaHandler
     private int needCleanupCount = 0;
     private int lastFocusedId = 0;
     private LatestMediaHandler.LatestsCollection result = null;
+    private static string _cacheBasePath;
 
     #endregion
 
@@ -110,12 +114,14 @@ namespace LatestMediaHandler
 
     internal LatestArgusRecordingsHandler()
     {
+      _cacheBasePath = Path.Combine(
+      Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ARGUS TV\LogosCache");
     }
 
-    private Hashtable Latest4TRRecordings
+    private Hashtable LatestArgusRecordings
     {
-      get { return latest4TRRecordings; }
-      set { latest4TRRecordings = value; }
+      get { return latestArgusRecordings; }
+      set { latestArgusRecordings = value; }
     }
 
     internal bool IsGetTypeRunningOnThisThread
@@ -226,33 +232,28 @@ namespace LatestMediaHandler
 
         int i = 1;
         RecordingsCollection latestRecordings = new RecordingsCollection();
-        if (ServiceChannelFactories.IsInitialized)
+        if (Proxies.IsInitialized)
         {
-          using (ControlServiceAgent _tvControlAgent = new ControlServiceAgent())
+          List<ActiveRecording> recordings = null;
+          recordings = null;
+          recordings = Proxies.ControlService.GetActiveRecordings().Result;
+          if (recordings != null)
           {
-            ActiveRecording[] recordings = null;
-            recordings = null;
-            recordings = _tvControlAgent.GetActiveRecordings();
-            if (recordings != null)
+            foreach (ActiveRecording rec in recordings)
             {
-              SchedulerServiceAgent _tvSchedulerAgent = new SchedulerServiceAgent();
-              foreach (ActiveRecording rec in recordings)
+              string logoImagePath = GetLogoPath(rec.Program.Channel.ChannelId, rec.Program.Channel.DisplayName, 84, 84);
+              if (string.IsNullOrEmpty(logoImagePath) || !System.IO.File.Exists(logoImagePath))
               {
-                string logoImagePath = ChannelLogosCache.GetLogoPath(_tvSchedulerAgent, rec.Program.Channel.ChannelId,
-                  rec.Program.Channel.DisplayName, 84, 84);
-                if (string.IsNullOrEmpty(logoImagePath) || !System.IO.File.Exists(logoImagePath))
-                {
-                  logoImagePath = "defaultVideoBig.png";
-                }
-                latestRecordings.Add(new LatestRecording(rec.Program.Title, rec.Program.Category,
-                                                         rec.Program.ActualStartTime,
-                                                         String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStartTime),
-                                                         rec.Program.ActualStartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                                         String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.StopTime),
-                                                         rec.Program.StopTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                                         rec.Program.Channel.DisplayName, logoImagePath));
-                Utils.ThreadToSleep();
+                logoImagePath = "defaultVideoBig.png";
               }
+              latestRecordings.Add(new LatestRecording(rec.Program.Title, rec.Program.Category,
+                                                       rec.Program.ActualStartTime,
+                                                       String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStartTime),
+                                                       rec.Program.ActualStartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
+                                                       String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.StopTime),
+                                                       rec.Program.StopTime.ToString("HH:mm", CultureInfo.CurrentCulture),
+                                                       rec.Program.Channel.DisplayName, logoImagePath));
+              Utils.ThreadToSleep();
             }
           }
         }
@@ -296,53 +297,46 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".channel", string.Empty);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".channelLogo", string.Empty);
         }
-
-        if (ServiceChannelFactories.IsInitialized)
+        if (Proxies.IsInitialized)
         {
-          using (ControlServiceAgent _tvControlAgent = new ControlServiceAgent())
+          List<UpcomingRecording> recordings = null;
+          recordings = Proxies.ControlService.GetAllUpcomingRecordings(UpcomingRecordingsFilter.Recordings | UpcomingRecordingsFilter.CancelledByUser, false).Result;
+
+          int i = 1;
+          RecordingsCollection latestRecordings = new RecordingsCollection();
+          if (recordings != null)
           {
-            UpcomingRecording[] recordings = null;
-            recordings = null;
-            recordings = _tvControlAgent.GetAllUpcomingRecordings(UpcomingRecordingsFilter.Recordings | UpcomingRecordingsFilter.CancelledByUser, false);
-
-            int i = 1;
-            RecordingsCollection latestRecordings = new RecordingsCollection();
-            if (recordings != null)
+            foreach (UpcomingRecording rec in recordings)
             {
-              SchedulerServiceAgent _tvSchedulerAgent = new SchedulerServiceAgent();
+              string logoImagePath = GetLogoPath(rec.Program.Channel.ChannelId, rec.Program.Channel.DisplayName, 84, 84);
+              if (string.IsNullOrEmpty(logoImagePath) || !System.IO.File.Exists(logoImagePath))
+                logoImagePath = "defaultVideoBig.png";
 
-              foreach (UpcomingRecording rec in recordings)
-              {
-                string logoImagePath = ChannelLogosCache.GetLogoPath(_tvSchedulerAgent, rec.Program.Channel.ChannelId, rec.Program.Channel.DisplayName, 84, 84);
-                if (string.IsNullOrEmpty(logoImagePath) || !System.IO.File.Exists(logoImagePath))
-                  logoImagePath = "defaultVideoBig.png";
-
-                latestRecordings.Add(new LatestRecording(rec.Program.Title, null, rec.Program.ActualStartTime,
-                                                         String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStartTime),
-                                                         rec.Program.ActualStartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                                         String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStopTime),
-                                                         rec.Program.ActualStopTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                                         rec.Program.Channel.DisplayName, logoImagePath));
-                Utils.ThreadToSleep();
-              }
-
-              latestRecordings.Sort(new LatestRecordingsComparer());
-              for (int x0 = 0; x0 < latestRecordings.Count; x0++)
-              {
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".title", latestRecordings[x0].Title);
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".startTime", latestRecordings[x0].StartTime);
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".startDate", latestRecordings[x0].StartDate);
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".endTime", latestRecordings[x0].EndTime);
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".endDate", latestRecordings[x0].EndDate);
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channel", latestRecordings[x0].Channel);
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channelLogo", latestRecordings[x0].ChannelLogo);
-
-                if (i == Utils.LatestsMaxTVNum)
-                  break;
-                i++;
-              }
-
+              latestRecordings.Add(new LatestRecording(rec.Program.Title, null, rec.Program.ActualStartTime,
+                                                       String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStartTime),
+                                                       rec.Program.ActualStartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
+                                                       String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStopTime),
+                                                       rec.Program.ActualStopTime.ToString("HH:mm", CultureInfo.CurrentCulture),
+                                                       rec.Program.Channel.DisplayName, logoImagePath));
+              Utils.ThreadToSleep();
             }
+
+            latestRecordings.Sort(new LatestRecordingsComparer());
+            for (int x0 = 0; x0 < latestRecordings.Count; x0++)
+            {
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".title", latestRecordings[x0].Title);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".startTime", latestRecordings[x0].StartTime);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".startDate", latestRecordings[x0].StartDate);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".endTime", latestRecordings[x0].EndTime);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".endDate", latestRecordings[x0].EndDate);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channel", latestRecordings[x0].Channel);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".channelLogo", latestRecordings[x0].ChannelLogo);
+
+              if (i == Utils.LatestsMaxTVNum)
+                break;
+              i++;
+            }
+
           }
         }
       }
@@ -366,103 +360,112 @@ namespace LatestMediaHandler
         {
           al.Clear();
         }
-        if (ServiceChannelFactories.IsInitialized)
+        if (Proxies.IsInitialized)
         {
-          using (ControlServiceAgent _tvControlAgent = new ControlServiceAgent())
+          List<RecordingSummary> recordings = null;
+          DateTime _time = DateTime.Now;
+          List<Channel> channels = new List<Channel>();
+          channels = Proxies.SchedulerService.GetAllChannels(ChannelType.Television).Result;
+          List<Guid> chids = new List<Guid>();
+          foreach (Channel ch in channels)
           {
-            RecordingSummary[] recordings = null;
-            DateTime _time = DateTime.Now;
-            while (latests.Count < Utils.FacadeMaxNum && _time > DateTime.Now.AddMonths(-13)) //go max three moth back
+            chids.Add(ch.ChannelId);
+          }
+          IEnumerable<Guid> iechids = chids;
+          List<List<RecordingSummary>> rr = new List<List<RecordingSummary>>();
+          rr = Proxies.ControlService.GetRecordingsOnChannels(iechids).Result;
+          recordings = rr.SelectMany(z => z).ToList();
+          recordings.Sort(new RecordingsComparer());
+          if (recordings != null)
+          {
+            foreach (RecordingSummary rec in recordings)
             {
-              recordings = null;
-              recordings = _tvControlAgent.GetRecordingsForOneDay(ChannelType.Television, _time, false);
-              if (recordings != null)
+              logger.Debug("Recording: " + rec.ChannelId + " " + rec.RecordingStartTime.ToLocalTime() + " " + rec.Title);
+              if (latests.Count > Utils.FacadeMaxNum)
               {
-                foreach (RecordingSummary rec in recordings)
+                break;
+              }
+              if (rec.ChannelType == ChannelType.Television)
+              {
+                Recording recording = Proxies.ControlService.GetRecordingById(rec.RecordingId).Result;
+                string _summary = string.Empty;
+                if (recording != null)
                 {
-                  if (rec.ChannelType == ChannelType.Television)
+                  _summary = recording.Description;
+                }
+                string thumbNail = rec.ThumbnailFileName;
+                if (!File.Exists(thumbNail))
+                {
+                  thumbNail = "defaultTVBig.png";
+                }
+                if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("True", StringComparison.CurrentCulture))
+                {
+                  if (!rec.LastWatchedTime.HasValue)
                   {
-                    Recording recording = _tvControlAgent.GetRecordingById(rec.RecordingId);
-                    string _summary = string.Empty;
-                    if (recording != null)
-                    {
-                      _summary = recording.Description;
-                    }
-                    string thumbNail = rec.ThumbnailFileName;
-                    if (!File.Exists(thumbNail))
-                    {
-                      thumbNail = "defaultTVBig.png";
-                    }
-                    if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("True", StringComparison.CurrentCulture))
-                    {
-                      if (!rec.LastWatchedTime.HasValue)
-                      {
-                        latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail, 
-                                    null,
-                                    rec.Title, rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), 
-                                    null, null, 
-                                    rec.Category, 
-                                    null, null, null, null, null, null, null, null, 
-                                    rec, 
-                                    null, 
-                                    _summary, 
-                                    null));
-                      }
-                    }
-                    else if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False", StringComparison.CurrentCulture))
-                    {
-                      latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail, 
-                                  null, 
-                                  rec.Title, rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), 
-                                  null, null,
-                                  rec.Category, 
-                                  null, null, null, null, null, null, null, null, 
-                                  rec, 
-                                  null, 
-                                  _summary, 
-                                  null));
-                    }
+                    latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail, 
+                                null,
+                                rec.Title, rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), 
+                                null, null, 
+                                rec.Category, 
+                                null, null, null, null, null, null, null, null, 
+                                rec, 
+                                null, 
+                                _summary, 
+                                null));
                   }
-                  Utils.ThreadToSleep();
+                }
+                else if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False", StringComparison.CurrentCulture))
+                {
+                  latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail, 
+                              null, 
+                              rec.Title, rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), 
+                              null, null,
+                              rec.Category, 
+                              null, null, null, null, null, null, null, null, 
+                              rec, 
+                              null, 
+                              _summary, 
+                              null));
                 }
               }
-              _time = _time.AddDays(-1);
+              Utils.ThreadToSleep();
             }
-            int x = 0;
-            int i0 = 1;
-            if (latests != null && latests.Count > 0)
-            {
-              latests.Sort(new LatestAddedComparer());
-              latest4TRRecordings = new Hashtable();
-              for (int x0 = 0; x0 < latests.Count; x0++)
-              {
-                //latests[x0].DateAdded = latests[x0].DateAdded.Substring(0, 10);
-                try
-                {
-                  DateTime dTmp = DateTime.Parse(latests[x0].DateAdded);
-                  latests[x0].DateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", dTmp);
-                }
-                catch
-                {
-                }
-                latests[x0].Fanart = (Utils.FanartHandler ? UtilsFanartHandler.GetFanartForLatest(latests[x0].Title) : string.Empty);
+          }
 
-                resultTmp.Add(latests[x0]);
-                if (result == null || result.Count == 0)
-                {
-                  result = resultTmp;
-                }
-                latest4TRRecordings.Add(i0, latests[x].Playable);
-                //if (facade != null)
-                //{
-                AddToFilmstrip(latests[x], i0);
-                //}
-                x++;
-                i0++;
-                if (x == Utils.FacadeMaxNum)
-                {
-                  break;
-                }
+          int x = 0;
+          int i0 = 1;
+          if (latests != null && latests.Count > 0)
+          {
+            latests.Sort(new LatestAddedComparer());
+            latestArgusRecordings = new Hashtable();
+            for (int x0 = 0; x0 < latests.Count; x0++)
+            {
+              //latests[x0].DateAdded = latests[x0].DateAdded.Substring(0, 10);
+              try
+              {
+                DateTime dTmp = DateTime.Parse(latests[x0].DateAdded);
+                latests[x0].DateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", dTmp);
+              }
+              catch
+              {
+              }
+              latests[x0].Fanart = (Utils.FanartHandler ? UtilsFanartHandler.GetFanartForLatest(latests[x0].Title) : string.Empty);
+
+              resultTmp.Add(latests[x0]);
+              if (result == null || result.Count == 0)
+              {
+                result = resultTmp;
+              }
+              latestArgusRecordings.Add(i0, latests[x].Playable);
+              //if (facade != null)
+              //{
+              AddToFilmstrip(latests[x], i0);
+              //}
+              x++;
+              i0++;
+              if (x == Utils.FacadeMaxNum)
+              {
+                break;
               }
             }
           }
@@ -481,6 +484,48 @@ namespace LatestMediaHandler
       }
       result = resultTmp;
       return result;
+    }
+
+    private static string GetLogoPath(Guid channelId, string channelDisplayName, int width, int height)
+    {
+      string cachePath = Path.Combine(_cacheBasePath, width.ToString(CultureInfo.InvariantCulture) + "x" + height.ToString(CultureInfo.InvariantCulture));
+      Directory.CreateDirectory(cachePath);
+
+      string logoImagePath = Path.Combine(cachePath, MakeValidFileName(channelDisplayName) + ".png");
+
+      DateTime modifiedDateTime = DateTime.MinValue;
+      if (File.Exists(logoImagePath))
+      {
+        modifiedDateTime = File.GetLastWriteTime(logoImagePath);
+      }
+
+      byte[] imageBytes = Proxies.SchedulerService.GetChannelLogo(channelId, width, height, modifiedDateTime).Result;
+      if (imageBytes == null)
+      {
+        if (File.Exists(logoImagePath))
+        {
+          File.Delete(logoImagePath);
+        }
+      }
+      else if (imageBytes.Length > 0)
+      {
+        using (FileStream imageStream = new FileStream(logoImagePath, FileMode.Create))
+        {
+          imageStream.Write(imageBytes, 0, imageBytes.Length);
+          imageStream.Close();
+        }
+      }
+
+      return File.Exists(logoImagePath) ? logoImagePath : null;
+    }
+
+    private static string MakeValidFileName(string fileName)
+    {
+      foreach (char c in Path.GetInvalidFileNameChars())
+      {
+        fileName = fileName.Replace(c.ToString(), String.Empty);
+      }
+      return fileName.TrimEnd('.', ' ');
     }
 
     private void AddToFilmstrip(Latest latests, int x)
@@ -609,14 +654,10 @@ namespace LatestMediaHandler
 
     internal void PlayRecording(int index)
     {
-      RecordingSummary recSummary = (RecordingSummary) latest4TRRecordings[index];
+      RecordingSummary recSummary = (RecordingSummary) latestArgusRecordings[index];
       Recording rec = null;
 
-      using (ControlServiceAgent _tvControlAgent = new ControlServiceAgent())
-      {
-        rec = _tvControlAgent.GetRecordingById(recSummary.RecordingId);
-      }
-
+      rec = Proxies.ControlService.GetRecordingById(recSummary.RecordingId).Result;
 
       int jumpToTime = 0;
 
@@ -639,7 +680,7 @@ namespace LatestMediaHandler
       }
 
 
-      //send a message to the 4tr plugin, to start playing the recording
+      //send a message to the Argus plugin, to start playing the recording
       //I use this "GUI_MSG_RECORDER_VIEW_CHANNEL" event because it's a save one to use(no other components in mediaportal listen to this event)
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL, 0, 0, 0, 0, 0, null);
       msg.Object = rec;
@@ -661,10 +702,7 @@ namespace LatestMediaHandler
           // Temporary workaround before end of stream gets properly implemented.
           stoptime = 0;
         }
-        using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
-        {
-          tvControlAgent.SetRecordingLastWatchedPosition(filename, stoptime);
-        }
+        Proxies.ControlService.SetRecordingLastWatchedPosition(filename, stoptime);
       }
     }
 
@@ -676,10 +714,7 @@ namespace LatestMediaHandler
         _playingRecordingFileName = null;
         _playingRecording = null;
 
-        using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
-        {
-          tvControlAgent.SetRecordingLastWatchedPosition(filename, 0);
-        }
+        Proxies.ControlService.SetRecordingLastWatchedPosition(filename, 0);
       }
     }
 
@@ -693,10 +728,7 @@ namespace LatestMediaHandler
         {
           if (g_Player.CurrentPosition < g_Player.Duration)
           {
-            using (ControlServiceAgent tvControlAgent = new ControlServiceAgent())
-            {
-              tvControlAgent.SetRecordingLastWatchedPosition(_playingRecordingFileName, (int) g_Player.CurrentPosition);
-            }
+            Proxies.ControlService.SetRecordingLastWatchedPosition(_playingRecordingFileName, (int) g_Player.CurrentPosition);
           }
         }
       }
@@ -710,7 +742,9 @@ namespace LatestMediaHandler
         int returnValue = 1;
         if (latest1 is Latest && latest2 is Latest)
         {
-          returnValue = latest2.DateAdded.CompareTo(latest1.DateAdded);
+          if (latest1.DateAdded.CompareTo(latest2.DateAdded) > 0) return -1;
+          if (latest1.DateAdded.CompareTo(latest2.DateAdded) < 0) return 1;
+          return 0;
         }
         return returnValue;
       }
@@ -731,6 +765,21 @@ namespace LatestMediaHandler
           //returnValue = latest2.StartTime.CompareTo(latest1.StartTime);
         }
 
+        return returnValue;
+      }
+    }
+
+    private class RecordingsComparer : IComparer<RecordingSummary>
+    {
+      public int Compare(RecordingSummary rec1, RecordingSummary rec2)
+      {
+        int returnValue = 1;
+        if (rec1 is RecordingSummary && rec2 is RecordingSummary)
+        {
+          if (rec1.StartTime.CompareTo(rec2.StartTime) > 0) return -1;
+          else if (rec1.StartTime.CompareTo(rec2.StartTime) < 0) return 1;
+          else return 0;
+        }
         return returnValue;
       }
     }
