@@ -275,7 +275,9 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>Add:
+    <VersionDescription>Removed 4TR, updated argus to 2.3.
+
+Add:
 #latestMediaHandler.mvcentral.latest.thumbtype - track | album | artist
 Add to setting XML file:
 &lt;entry name="latestMvCentralThumbType"&gt;1&lt;/entry&gt;
