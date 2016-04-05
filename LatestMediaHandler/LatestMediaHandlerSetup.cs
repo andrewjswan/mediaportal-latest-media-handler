@@ -89,7 +89,7 @@ namespace LatestMediaHandler
      * 919199880 Lmfh  - LatestMyFilmsHandler.ControlID
      * 919299280 lmch  - LatestMvCentralHandler.ControlID
      * 919199840       - LatestTVAllRecordingsHandler.ControlID 
-                       - if (Utils.Used4TRTV) L4trrh else if (Utils.usedArgus) largusrh else Ltvrh
+                       - if (Utils.usedArgus) largusrh else Ltvrh
     */
 
     internal static string DateFormat
@@ -1401,8 +1401,6 @@ namespace LatestMediaHandler
                 Utils.LogDevMsg("Lph.imagesThumbs.Count:" + Lph.imagesThumbs.Count);
                 Utils.LogDevMsg("Lmfh.images.Count:" + Lmfh.images.Count);
                 Utils.LogDevMsg("Lmfh.imagesThumbs.Count:" + Lmfh.imagesThumbs.Count);
-                Utils.LogDevMsg("L4trrh.images.Count:" + L4trrh.images.Count);
-                Utils.LogDevMsg("L4trrh.imagesThumbs.Count:" + L4trrh.imagesThumbs.Count);
                 */
                 Lmh.UpdateImageTimer(fWindow, stateInfo, e);
                 Lph.UpdateImageTimer(fWindow, stateInfo, e);

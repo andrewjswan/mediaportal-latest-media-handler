@@ -56,21 +56,11 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ArgusTV.Client.Common, Version=2.0.1.0, Culture=neutral, PublicKeyToken=452db6a8c7afea30, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\ArgusTV.Client.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="ArgusTV.DataContracts, Version=2.0.1.0, Culture=neutral, PublicKeyToken=452db6a8c7afea30, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ArgusTV.DataContracts">
       <HintPath>..\External\ArgusTV.DataContracts.dll</HintPath>
     </Reference>
-    <Reference Include="ArgusTV.ServiceAgents, Version=2.0.1.0, Culture=neutral, PublicKeyToken=452db6a8c7afea30, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\ArgusTV.ServiceAgents.dll</HintPath>
-    </Reference>
-    <Reference Include="ArgusTV.ServiceContracts, Version=2.0.1.0, Culture=neutral, PublicKeyToken=452db6a8c7afea30, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\ArgusTV.ServiceContracts.dll</HintPath>
+    <Reference Include="ArgusTV.ServiceProxy">
+      <HintPath>..\External\ArgusTV.ServiceProxy.dll</HintPath>
     </Reference>
     <Reference Include="Common.GUIPlugins">
       <HintPath>..\External\Common.GUIPlugins.dll</HintPath>
@@ -99,22 +89,6 @@
     <Reference Include="FanartHandler, Version=2.2.6.518, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\FanartHandler.dll</HintPath>
-    </Reference>
-    <Reference Include="ForTheRecord.Client.Common, Version=1.6.0.2, Culture=neutral, PublicKeyToken=a9a5dfc20b8d6175, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\ForTheRecord.Client.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="ForTheRecord.Entities, Version=1.5.1.0, Culture=neutral, PublicKeyToken=a9a5dfc20b8d6175, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\ForTheRecord.Entities.dll</HintPath>
-    </Reference>
-    <Reference Include="ForTheRecord.ServiceAgents, Version=1.6.0.2, Culture=neutral, PublicKeyToken=a9a5dfc20b8d6175, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\ForTheRecord.ServiceAgents.dll</HintPath>
-    </Reference>
-    <Reference Include="ForTheRecord.ServiceContracts, Version=1.6.0.2, Culture=neutral, PublicKeyToken=a9a5dfc20b8d6175, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\ForTheRecord.ServiceContracts.dll</HintPath>
     </Reference>
     <Reference Include="Gentle.Common">
       <SpecificVersion>False</SpecificVersion>
@@ -156,6 +130,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="TvControl, Version=1.1.6.19737, Culture=neutral, processorArchitecture=x86">
@@ -178,7 +153,6 @@
   <ItemGroup>
     <Compile Include="ExternalAccess.cs" />
     <Compile Include="FanartImage.cs" />
-    <Compile Include="Latest4TRRecordingsHandler.cs" />
     <Compile Include="LatestArgusRecordingsHandler.cs" />
     <Compile Include="LatestMediaHandlerSetup.cs">
     </Compile>
