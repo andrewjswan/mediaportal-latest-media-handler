@@ -183,6 +183,20 @@ namespace LatestMediaHandler
         Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", string.Empty);
         Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".new", "false");
       }
+      Utils.SetProperty("#latestMediaHandler.mvcentral.latest.thumbtype", "track");
+      switch (Utils.latestMvCentralThumbType)
+      {
+        case 1:
+        {
+          Utils.SetProperty("#latestMediaHandler.mvcentral.latest.thumbtype", "artist");
+          break;
+        }
+        case 2:
+        {
+          Utils.SetProperty("#latestMediaHandler.mvcentral.latest.thumbtype", "album");
+          break;
+        }
+      }
     }
 
     internal void GetLatestMediaInfo(bool _onStartUp)
@@ -326,26 +340,40 @@ namespace LatestMediaHandler
           allTracks.Sort(delegate(DBTrackInfo p1, DBTrackInfo p2) { return p2.DateAdded.CompareTo(p1.DateAdded); });
           foreach (DBTrackInfo allTrack in allTracks)
           {
-            string dateAdded = string.Empty;
-            string sArtist = allTrack.ArtistInfo[0].Artist;
-            // string sArtistBio = mvCentralUtils.bioNoiseFilter(allTrack.ArtistInfo[0].bioContent);
-            string sArtistBio = allTrack.ArtistInfo[0].bioSummary;
-            // logger.Debug("*** "+allTrack.ArtistInfo[0].bioContent);
-            // logger.Debug("*** "+allTrack.ArtistInfo[0].bioSummary);
             bool isnew = false;
-            try
-            {
-              dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", allTrack.DateAdded);
-              isnew = (allTrack.DateAdded > Utils.NewDateTime);
-              if (isnew)
-                Utils.HasNewMvCentral = true;
-            }
-            catch 
-            {   }
 
-            string thumb = allTrack.ArtistInfo[0].ArtThumbFullPath;
+            string sArtist = allTrack.ArtistInfo[0].Artist;
+            string sArtistBio = allTrack.ArtistInfo[0].bioSummary;
+            string sGenre = allTrack.ArtistInfo[0].Genre;
+            string sAlbum = allTrack.AlbumInfo[0].Album;
+
+            string artistThumb = allTrack.ArtistInfo[0].ArtFullPath; // ArtThumbFullPath
+            string albumThumb = allTrack.AlbumInfo[0].ArtFullPath;
+            string trackThumb = allTrack.ArtFullPath;
+            string thumb = string.Empty;
+
+            switch (Utils.latestMvCentralThumbType)
+            {
+              case 1:
+              {
+                thumb = !string.IsNullOrEmpty(artistThumb) ? artistThumb : "defaultArtistBig.png";
+                break;
+              }
+              case 2:
+              {
+                thumb = !string.IsNullOrEmpty(albumThumb) ? albumThumb : !string.IsNullOrEmpty(artistThumb) ? artistThumb : string.Empty;
+                break;
+              }
+              case 3:
+              {
+                thumb = !string.IsNullOrEmpty(trackThumb) ? trackThumb : !string.IsNullOrEmpty(albumThumb) ? artistThumb : !string.IsNullOrEmpty(artistThumb) ? artistThumb : string.Empty;
+                break;
+              }
+            }
             if (string.IsNullOrEmpty(thumb))
+            {
               thumb = "defaultAudioBig.png";
+            }
 
             string sFilename1 = "";
             string sFilename2 = "";
@@ -394,21 +422,20 @@ namespace LatestMediaHandler
             }
             catch { }
 
-            string tmpArtist = string.Empty;
-            string tmpAlbum = string.Empty;
-            String tmpGenre = string.Empty;
-            if (allTrack.AlbumInfo != null && allTrack.AlbumInfo.Count > 0)
-              tmpAlbum = allTrack.AlbumInfo[0].Album;
-            if (allTrack.ArtistInfo != null && allTrack.ArtistInfo.Count > 0)
+            string dateAdded = string.Empty;
+            try
             {
-              tmpArtist = allTrack.ArtistInfo[0].Artist;
-              tmpGenre = allTrack.ArtistInfo[0].Genre;
+              dateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", allTrack.DateAdded);
+              isnew = (allTrack.DateAdded > Utils.NewDateTime);
+              if (isnew)
+                Utils.HasNewMvCentral = true;
             }
+            catch { }
 
             latestMusicAlbums.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, allTrack.Track,
                                                                 allTrack.LocalMedia[0].File.FullName,
-                                                                tmpArtist, tmpAlbum,
-                                                                tmpGenre,
+                                                                sArtist, sAlbum,
+                                                                sGenre,
                                                                 allTrack.Rating.ToString(),
                                                                 allTrack.Rating.ToString(), 
                                                                 null, null, null, null, null, null, null, null,

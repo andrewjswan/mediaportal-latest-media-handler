@@ -127,7 +127,7 @@
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>
@@ -286,7 +286,7 @@
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>
@@ -451,7 +451,7 @@
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>
@@ -609,7 +609,7 @@
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot3.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot4.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>
@@ -768,7 +768,7 @@
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot3.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot4.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>
@@ -943,7 +943,7 @@
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot3.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot4.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>
@@ -1099,7 +1099,7 @@
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot3.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot4.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>
@@ -1255,7 +1255,7 @@
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot3.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot4.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>
@@ -1409,7 +1409,7 @@
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot3.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot4.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>
@@ -1563,7 +1563,7 @@
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot3.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot4.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>
@@ -1747,7 +1747,7 @@ ThumbnailImage - for Season - Season thumb, for Episodes - Episode thumb for Ser
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot3.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot4.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>
@@ -1914,7 +1914,7 @@ Cosmetic
  If have .dll extension used like MP plugin configuration</Description>
             </SectionParam>
             <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot3.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot4.jpg</Value>
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
               <ValueType>String</ValueType>
               <Description>Online stored screenshot urls separated by ; </Description>
             </SectionParam>

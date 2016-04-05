@@ -69,6 +69,7 @@ namespace LatestMediaHandler
     public static string latestMyFilms { get; set; }
     public static string latestMyFilmsWatched { get; set; }
     public static string latestMvCentral { get; set; }
+    public static int latestMvCentralThumbType { get; set; }
     public static string refreshDbPicture { get; set; }
     public static string refreshDbMusic { get; set; }
     public static string reorgInterval { get; set; }
@@ -805,6 +806,7 @@ namespace LatestMediaHandler
       latestMyFilms = "False";
       latestMyFilmsWatched = "True";
       latestMvCentral = "False";
+      latestMvCentralThumbType = 1;
 
       refreshDbPicture = "False";
       refreshDbMusic = "False";
@@ -838,6 +840,7 @@ namespace LatestMediaHandler
           latestMyFilms = xmlreader.GetValueAsString("LatestMediaHandler", "latestMyFilms", latestMyFilms);
           latestMyFilmsWatched = xmlreader.GetValueAsString("LatestMediaHandler", "latestMyFilmsWatched", latestMyFilmsWatched);
           latestMvCentral = xmlreader.GetValueAsString("LatestMediaHandler", "latestMvCentral", latestMvCentral);
+          latestMvCentralThumbType = xmlreader.GetValueAsInt("LatestMediaHandler", "latestMvCentralThumbType", latestMvCentralThumbType);
           refreshDbPicture = xmlreader.GetValueAsString("LatestMediaHandler", "refreshDbPicture", refreshDbPicture);
           refreshDbMusic = xmlreader.GetValueAsString("LatestMediaHandler", "refreshDbMusic", refreshDbMusic);
           reorgInterval = xmlreader.GetValueAsString("LatestMediaHandler", "reorgInterval", reorgInterval);
@@ -892,6 +895,7 @@ namespace LatestMediaHandler
                                 Check(latestMvCentral) + " MvCentral");
       logger.Debug("Music Type: " + latestMusicType) ;
       logger.Debug("TVSeries Type: " + (latestTVSeriesType == 2 ? "Series" : (latestTVSeriesType == 1 ? "Seasons" : "Episodes")));
+      logger.Debug("MvCentral Thumb Type: " + (latestMvCentralThumbType == 2 ? "Album" : (latestTVSeriesType == 1 ? "Artist" : "Track")));
       logger.Debug("TVSeries ratings: " + latestTVSeriesRatings) ;
       logger.Debug("DB: " + Check(refreshDbPicture) + " Pictures, " + 
                             Check(refreshDbMusic) + " Music, "+
@@ -954,6 +958,7 @@ namespace LatestMediaHandler
           xmlwriter.SetValue("LatestMediaHandler", "latestMyFilms", latestMyFilms);
           xmlwriter.SetValue("LatestMediaHandler", "latestMyFilmsWatched", latestMyFilmsWatched);
           xmlwriter.SetValue("LatestMediaHandler", "latestMvCentral", latestMvCentral);
+          // xmlwriter.SetValue("LatestMediaHandler", "latestMvCentralThumbType", latestMvCentralThumbType);
           xmlwriter.SetValue("LatestMediaHandler", "refreshDbPicture", refreshDbPicture);
           xmlwriter.SetValue("LatestMediaHandler", "refreshDbMusic", refreshDbMusic);
           xmlwriter.SetValue("LatestMediaHandler", "reorgInterval", reorgInterval);

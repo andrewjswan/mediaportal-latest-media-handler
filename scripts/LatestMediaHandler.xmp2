@@ -275,18 +275,13 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>Added controls:
-91919901  - Latest 4 Music
-91919902  - Latest 4 MyVideo
-91919903  - Latest 4 Pictures
-91919904  - Latest 4 TV Series
-91919905  - Latest 4 Moving Pictures
-91919906  - Latest 4 MyFilms
-91919907  - Latest 4 MvCentral
-Added Spanish translation (tnx XMaM)
-Fix TVSeries support (tnx Hawkeye)
-Fix FH compatibility (when FH not installed)
-Cosmetic
+    <VersionDescription>Add:
+#latestMediaHandler.mvcentral.latest.thumbtype - track | album | artist
+Add to setting XML file:
+&lt;entry name="latestMvCentralThumbType"&gt;1&lt;/entry&gt;
+1. Artist thumb
+2. Album thumb
+3. Track thumb
 
 </VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
@@ -314,7 +309,7 @@ Cosmetic
  If have .dll extension used like MP plugin configuration</Description>
         </SectionParam>
         <SectionParam Name="Online Screenshots">
-          <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot1.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot2.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot3.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshot4.jpg</Value>
+          <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
           <ValueType>String</ValueType>
           <Description>Online stored screenshot urls separated by ; </Description>
         </SectionParam>
