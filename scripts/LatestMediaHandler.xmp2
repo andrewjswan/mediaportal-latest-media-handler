@@ -283,9 +283,7 @@ Add to setting XML file:
 &lt;entry name="latestMvCentralThumbType"&gt;1&lt;/entry&gt;
 1. Artist thumb
 2. Album thumb
-3. Track thumb
-
-</VersionDescription>
+3. Track thumb</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
     <ReleaseDate>2016-02-15T09:06:46</ReleaseDate>
