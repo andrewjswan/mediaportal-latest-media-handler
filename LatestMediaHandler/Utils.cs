@@ -43,7 +43,6 @@ namespace LatestMediaHandler
     private static bool isStopping /* = false*/; //is the plugin about to stop, then this will be true
     private static Hashtable delayStop = null;
 
-    private static bool used4TRTV = false;
     private static bool usedArgus = false;
     private static DateTime lastRefreshRecording;
 
@@ -114,12 +113,6 @@ namespace LatestMediaHandler
     {
       get { return Utils.lastRefreshRecording; }
       set { Utils.lastRefreshRecording = value; }
-    }
-
-    internal static bool Used4TRTV
-    {
-      get { return Utils.used4TRTV; }
-      set { Utils.used4TRTV = value; }
     }
 
     internal static bool UsedArgus

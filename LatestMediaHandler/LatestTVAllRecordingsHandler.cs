@@ -38,7 +38,6 @@ namespace LatestMediaHandler
     private Logger logger = LogManager.GetCurrentClassLogger();
 
     private LatestTVRecordingsHandler ltvrh = null;
-    private Latest4TRRecordingsHandler l4trrh = null;
     private LatestArgusRecordingsHandler largusrh = null;
 
     private LatestTVRecordingsWorker MyLatestTVRecordingsWorker = null;
@@ -59,12 +58,6 @@ namespace LatestMediaHandler
         set { ltvrh = value; }
     }
 
-    public Latest4TRRecordingsHandler L4trrh
-    {
-        get { return l4trrh; }
-        set { l4trrh = value; }
-    }
-
     public LatestArgusRecordingsHandler Largusrh
     {
         get { return largusrh; }
@@ -74,7 +67,6 @@ namespace LatestMediaHandler
     public LatestTVAllRecordingsHandler()
     {
       Ltvrh = new LatestTVRecordingsHandler();
-      L4trrh = new Latest4TRRecordingsHandler();
       Largusrh = new LatestArgusRecordingsHandler();
 
       ControlIDFacades = new List<int>();
@@ -91,21 +83,14 @@ namespace LatestMediaHandler
     {
       get 
       {
-          if (Utils.Used4TRTV && !Utils.UsedArgus)
-          {
-              if (L4trrh != null)
-              {
-                  return L4trrh.LastFocusedId;
-              }
-          }
-          else if (Utils.Used4TRTV && Utils.UsedArgus)
+          if (Utils.UsedArgus)
           {
               if (Largusrh != null)
               {
                   return Largusrh.LastFocusedId;
               }
           }
-          else if (!Utils.Used4TRTV)
+          else
           {
               if (Ltvrh != null)
               {
@@ -116,21 +101,14 @@ namespace LatestMediaHandler
       }
       set 
       {
-        if (Utils.Used4TRTV && !Utils.UsedArgus)
-        {
-          if (L4trrh != null)
-          {
-            L4trrh.LastFocusedId = value;
-          }
-        }
-        else if (Utils.Used4TRTV && Utils.UsedArgus)
+        if (Utils.UsedArgus)
         {
           if (Largusrh != null)
           {
             Largusrh.LastFocusedId = value;
           }
         }
-        else if (!Utils.Used4TRTV)
+        else
         {
           if (Ltvrh != null)
           {
@@ -192,11 +170,7 @@ namespace LatestMediaHandler
     {
       try
       {
-        if (Utils.Used4TRTV && !Utils.UsedArgus)
-        {
-          L4trrh.MyContextMenu();
-        }
-        else if (Utils.Used4TRTV && Utils.UsedArgus)
+        if (Utils.UsedArgus)
         {
           Largusrh.MyContextMenu();
         }
@@ -254,11 +228,7 @@ namespace LatestMediaHandler
       {
         try
         {
-          if (Utils.Used4TRTV && !Utils.UsedArgus)
-          {
-            L4trrh.UpdateActiveRecordings();
-          }
-          else if (Utils.Used4TRTV && Utils.UsedArgus)
+          if (Utils.UsedArgus)
           {
             Largusrh.UpdateActiveRecordings();
           }
@@ -316,63 +286,12 @@ namespace LatestMediaHandler
         {
           MediaPortal.Profile.Settings xmlreader =  new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
 
-          string use4TR = xmlreader.GetValue("plugins", "For The Record TV");
-          string dllFile = Config.GetFile(Config.Dir.Plugins, @"Windows\ForTheRecord.UI.MediaPortal.dll");
-          string dllFileArgus = Config.GetFile(Config.Dir.Plugins, @"Windows\ArgusTV.UI.MediaPortal.dll");
+          string useArgus = xmlreader.GetValue("plugins", "ARGUS TV");
+          string dllFile = Config.GetFile(Config.Dir.Plugins, @"Windows\ArgusTV.UI.MediaPortal.dll");
 
-          if (use4TR != null && use4TR.Equals("yes", StringComparison.CurrentCulture) && File.Exists(dllFile))
+          if (useArgus != null && useArgus.Equals("yes", StringComparison.CurrentCulture) && File.Exists(dllFile))
           {
             FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(dllFile);
-            logger.Debug("ForTheRecord version = {0}", myFileVersionInfo.FileVersion);
-
-            if (L4trrh == null)
-            {
-              L4trrh = new Latest4TRRecordingsHandler();
-              try
-              {
-                //this can be removed when 1.6.0.2/1.6.1.0 is out for a while
-                if (myFileVersionInfo.FileVersion == "1.6.0.1" || myFileVersionInfo.FileVersion == "1.6.0.0" || myFileVersionInfo.FileVersion == "1.5.0.3")
-                {
-                  l4trrh.Is4TRversion1602orAbove = false;
-                } else {
-                  l4trrh.Is4TRversion1602orAbove = true;
-                }
-              }
-              catch
-              {
-                l4trrh.Is4TRversion1602orAbove = false;
-              }
-            }
-
-            ResolveEventHandler assemblyResolve = L4trrh.OnAssemblyResolve;
-            try
-            {
-              AppDomain currentDomain = AppDomain.CurrentDomain;
-              currentDomain.AssemblyResolve += new ResolveEventHandler(L4trrh.OnAssemblyResolve);
-              L4trrh.IsGetTypeRunningOnThisThread = true;
-              latestTVRecordings = L4trrh.Get4TRRecordings();
-              L4trrh.UpdateActiveRecordings();
-              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
-              Utils.Used4TRTV = true;
-              Utils.UsedArgus = false;
-            }
-            catch (FileNotFoundException)
-            {
-              //do nothing    
-            }
-            catch (MissingMethodException)
-            {
-              //do nothing    
-            }
-            catch (Exception ex)
-            {
-              logger.Error("GetLatestMediaInfo (TV 4TR Recordings): " + ex.ToString());
-              AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
-            }
-          }
-          else if (use4TR != null && use4TR.Equals("yes", StringComparison.CurrentCulture) && File.Exists(dllFileArgus))
-          {
-            FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(dllFileArgus);
             logger.Debug("Argus version = {0}", myFileVersionInfo.FileVersion);
 
             if (Largusrh == null)
@@ -389,7 +308,6 @@ namespace LatestMediaHandler
               latestTVRecordings = Largusrh.GetArgusRecordings();
               Largusrh.UpdateActiveRecordings();
               AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolve;
-              Utils.Used4TRTV = true;
               Utils.UsedArgus = true;
             }
             catch (FileNotFoundException)
@@ -414,7 +332,6 @@ namespace LatestMediaHandler
             }
             latestTVRecordings = Ltvrh.GetTVRecordings();
             Ltvrh.UpdateActiveRecordings();
-            Utils.Used4TRTV = false;
             Utils.UsedArgus = false;
           }
         }
@@ -431,14 +348,14 @@ namespace LatestMediaHandler
           logger.Error("GetLatestMediaInfo (TV Recordings): " + ex.ToString());
         }
         bool noNewRecordings = false;
-        if ((latestTVRecordings != null && latestTVRecordings.Count > 1) && 
+        if ((latestTVRecordings != null && latestTVRecordings.Count > 0) && 
             Utils.GetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title").Equals(latestTVRecordings[0].Title, StringComparison.CurrentCulture))
         {
           noNewRecordings = true;
           logger.Info("Updating Latest Media Info: TV Recording: No new recordings since last check!");
         }
 
-        if (latestTVRecordings != null && latestTVRecordings.Count > 1)
+        if (latestTVRecordings != null && latestTVRecordings.Count > 0)
         {
           if (!noNewRecordings)
           {
@@ -490,12 +407,7 @@ namespace LatestMediaHandler
         {
           if (fWindow.GetFocusControlId() == LatestTVAllRecordingsHandler.ControlID)
           {
-            if (Utils.Used4TRTV && !Utils.UsedArgus)
-            {
-              L4trrh.UpdateSelectedImageProperties();
-              L4trrh.NeedCleanup = true;
-            }
-            else if (Utils.Used4TRTV && Utils.UsedArgus)
+            if (Utils.UsedArgus)
             {
               Largusrh.UpdateSelectedImageProperties();
               Largusrh.NeedCleanup = true;
@@ -508,31 +420,7 @@ namespace LatestMediaHandler
           }
           else
           {
-            if (Utils.Used4TRTV && !Utils.UsedArgus)
-            {
-              if (L4trrh.NeedCleanup && L4trrh.NeedCleanupCount >= 5)
-              {
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
-                Utils.UnLoadImage(ref L4trrh.images);
-                L4trrh.ShowFanart = 1;
-                L4trrh.SelectedFacadeItem2 = -1;
-                L4trrh.SelectedFacadeItem2 = -1;
-                L4trrh.NeedCleanup = false;
-                L4trrh.NeedCleanupCount = 0;
-              }
-              else if (L4trrh.NeedCleanup && L4trrh.NeedCleanupCount == 0)
-              {
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
-                L4trrh.NeedCleanupCount++;
-              }
-              else if (L4trrh.NeedCleanup)
-              {
-                L4trrh.NeedCleanupCount++;
-              }
-            }
-            else if (Utils.Used4TRTV && Utils.UsedArgus)
+            if (Utils.UsedArgus)
             {
               if (Largusrh.NeedCleanup && Largusrh.NeedCleanupCount >= 5)
               {
@@ -591,21 +479,9 @@ namespace LatestMediaHandler
 
     internal void InitFacade(ref GUIFacadeControl facade)
     {
-      if (Utils.Used4TRTV && !Utils.UsedArgus)
+      if (Utils.UsedArgus)
       {
-        if (L4trrh != null && L4trrh.Al != null)
-        {
-          for (int i = 0; i < L4trrh.Al.Count; i++)
-          {
-            GUIListItem _gc = L4trrh.Al[i] as GUIListItem;
-            Utils.LoadImage(_gc.IconImage, ref L4trrh.imagesThumbs);
-            facade.Add(_gc);
-          }
-        }
-      }
-      else if (Utils.Used4TRTV && Utils.UsedArgus)
-      {
-        if (L4trrh != null && Largusrh.Al != null)
+        if (Largusrh != null && Largusrh.Al != null)
         {
           for (int i = 0; i < Largusrh.Al.Count; i++)
           {
@@ -615,7 +491,7 @@ namespace LatestMediaHandler
           }
         }
       }
-      else if (!Utils.Used4TRTV)
+      else
       {
         if (Ltvrh != null && Ltvrh.Al != null)
         {
@@ -632,12 +508,7 @@ namespace LatestMediaHandler
     internal void ClearFacade(ref GUIFacadeControl facade)
     {
       facade.Clear();
-      if (Utils.Used4TRTV && !Utils.UsedArgus)
-      {
-        Utils.UnLoadImage(ref L4trrh.images);
-        Utils.UnLoadImage(ref L4trrh.imagesThumbs);
-      }
-      else if (Utils.Used4TRTV && Utils.UsedArgus)
+      if (Utils.UsedArgus)
       {
         Utils.UnLoadImage(ref Largusrh.images);
         Utils.UnLoadImage(ref Largusrh.imagesThumbs);
@@ -739,12 +610,7 @@ namespace LatestMediaHandler
         //
         if (idx >= 0)
         {
-          if (Utils.Used4TRTV && !Utils.UsedArgus)
-          {
-            action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
-            L4trrh.PlayRecording(idx);
-          }
-          else if (Utils.Used4TRTV && Utils.UsedArgus)
+          if (Utils.UsedArgus)
           {
             action.wID = MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED;
             Largusrh.PlayRecording(idx);
