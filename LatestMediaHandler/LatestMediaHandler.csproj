@@ -253,8 +253,8 @@
   <PropertyGroup>
     <PostBuildEvent>cd $(TargetDir)
 copy $(ProjectDir)..\scripts\merge.bat .
-copy $(ProjectDir)..\scripts\Tools\ILMerge.exe .
+copy $(ProjectDir)..\scripts\Tools\libz.exe .
 merge.bat
-del /q merge.bat ILMerge.exe</PostBuildEvent>
+del /q merge.bat libz.exe</PostBuildEvent>
   </PropertyGroup>
 </Project>

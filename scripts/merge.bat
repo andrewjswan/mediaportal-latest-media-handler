@@ -8,6 +8,4 @@ if "%programfiles(x86)%XXX"=="XXX" goto 32BIT
     set PROGS=%ProgramFiles%
 :CONT
 
-if exist LatestMediaHandler_UNMERGED.dll del LatestMediaHandler_UNMERGED.dll
-ren LatestMediaHandler.dll LatestMediaHandler_UNMERGED.dll 
-ilmerge.exe /out:LatestMediaHandler.dll LatestMediaHandler_UNMERGED.dll Nlog.dll /target:dll /targetplatform:"v4,%PROGS%\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /wildcards
+libz.exe inject-dll --assembly LatestMediaHandler.dll --include Nlog.dll --move
