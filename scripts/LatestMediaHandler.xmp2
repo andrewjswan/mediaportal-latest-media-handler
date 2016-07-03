@@ -275,16 +275,10 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>Fix for mvCentral (thx mrbonsen)
-Removed 4TR, updated argus to 2.3.
+    <VersionDescription>Fix for Music (thx Sebastiii)
+Fix for mvCentral (thx Sebastiii)
 
-Add:
-#latestMediaHandler.mvcentral.latest.thumbtype - track | album | artist
-Add to setting XML file:
-&lt;entry name="latestMvCentralThumbType"&gt;1&lt;/entry&gt;
-1. Artist thumb
-2. Album thumb
-3. Track thumb</VersionDescription>
+</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
     <ReleaseDate>2016-07-03T09:06:46</ReleaseDate>

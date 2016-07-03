@@ -457,18 +457,21 @@ namespace LatestMediaHandler
                   }
                 }
               }
-              IDictionaryEnumerator _enumerator = ht2.GetEnumerator();
 
-              int i = 0;
-              while (_enumerator.MoveNext())
+              if (ht2 != null)
               {
-                if (i == 0)
-                  sFilename1 = _enumerator.Value.ToString();
-                if (i == 1)
-                  sFilename2 = _enumerator.Value.ToString();
-                i++;
-                if (i > 1)
-                  break;
+                IDictionaryEnumerator _enumerator = ht2.GetEnumerator();
+                int i = 0;
+                while (_enumerator.MoveNext())
+                {
+                  if (i == 0)
+                    sFilename1 = _enumerator.Value.ToString();
+                  if (i == 1)
+                    sFilename2 = _enumerator.Value.ToString();
+                  i++;
+                  if (i > 1)
+                    break;
+                }
               }
             }
             catch { }
