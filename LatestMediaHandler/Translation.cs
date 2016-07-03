@@ -1,17 +1,18 @@
 ﻿extern alias RealNLog;
+
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+
+using RealNLog.NLog;
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml;
 using System.Text.RegularExpressions;
-
-using MediaPortal.Configuration;
-using MediaPortal.GUI.Library;
-
-using RealNLog.NLog;
+using System.Xml;
 
 namespace LatestMediaHandler
 {
@@ -307,6 +308,9 @@ namespace LatestMediaHandler
     public static string PrefsLatestEpisodes = "Latest Episodes";
     public static string PrefsLatestSeasons = "Latest Seasons";
     public static string PrefsLatestSeries = "Latest Series";
+    public static string PrefsMvCThumbArtist = "Artist thumb";
+    public static string PrefsMvCThumbAlbum = "Album thumb";
+    public static string PrefsMvCThumbTrack = "Track thumb";
     #endregion
   }
 }

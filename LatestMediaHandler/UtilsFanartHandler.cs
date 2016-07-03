@@ -12,12 +12,12 @@
 
 extern alias RealNLog;
 
-using System;
-using System.IO;
-using System.Collections;
-using System.Threading;
-
 using RealNLog.NLog;
+
+using System;
+using System.Collections;
+using System.IO;
+using System.Threading;
 
 namespace LatestMediaHandler
 {

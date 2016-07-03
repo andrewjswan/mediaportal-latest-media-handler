@@ -82,6 +82,7 @@ namespace LatestMediaHandler
             this.label9 = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.comboBoxMvCThumbType = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.tabPage20.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -229,6 +230,7 @@ namespace LatestMediaHandler
             // 
             // groupBox11
             // 
+            this.groupBox11.Controls.Add(this.comboBoxMvCThumbType);
             this.groupBox11.Controls.Add(this.checkBox15);
             this.groupBox11.Controls.Add(this.checkBox8);
             this.groupBox11.Controls.Add(this.checkBox9);
@@ -535,7 +537,7 @@ namespace LatestMediaHandler
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(383, 24);
             this.label10.TabIndex = 2;
-            this.label10.Text = "ajs, maintained by yoavain\r\nOriginal Version created by cul8er, Thanks BPoH_Voodoo.";
+            this.label10.Text = "ajs, maintained by yoavain\r\nOriginal Version created by cul8er.";
             // 
             // label9
             // 
@@ -566,6 +568,14 @@ namespace LatestMediaHandler
             this.toolTip1.AutoPopDelay = 30000;
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
+            // 
+            // comboBoxMvCThumbType
+            // 
+            this.comboBoxMvCThumbType.FormattingEnabled = true;
+            this.comboBoxMvCThumbType.Location = new System.Drawing.Point(226, 396);
+            this.comboBoxMvCThumbType.Name = "comboBoxMvCThumbType";
+            this.comboBoxMvCThumbType.Size = new System.Drawing.Size(213, 26);
+            this.comboBoxMvCThumbType.TabIndex = 22;
             // 
             // LatestMediaHandlerConfig
             // 
@@ -638,5 +648,6 @@ namespace LatestMediaHandler
         private System.Windows.Forms.CheckBox checkBox8;
         private System.Windows.Forms.CheckBox checkBox9;
         private System.Windows.Forms.CheckBox checkBox15;
+        private System.Windows.Forms.ComboBox comboBoxMvCThumbType;
     }
 }

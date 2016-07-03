@@ -11,22 +11,21 @@
 //***********************************************************************
 extern alias RealNLog;
 
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Video;
+using MediaPortal.Util;
+using MediaPortal.Video.Database;
+
+using RealNLog.NLog;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Globalization;
+using System.IO;
 using System.Threading;
-using System.Timers;
-using System.Windows.Forms;
-
-using MediaPortal.GUI.Video;
-using MediaPortal.Util;
-using MediaPortal.GUI.Library;
-using MediaPortal.Dialogs;
-using MediaPortal.Video.Database;
-
-using RealNLog.NLog; 
+using System.Timers; 
 
 namespace LatestMediaHandler
 {

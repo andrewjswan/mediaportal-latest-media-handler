@@ -275,7 +275,8 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>Removed 4TR, updated argus to 2.3.
+    <VersionDescription>Fix for mvCentral (thx mrbonsen)
+Removed 4TR, updated argus to 2.3.
 
 Add:
 #latestMediaHandler.mvcentral.latest.thumbtype - track | album | artist
@@ -286,7 +287,7 @@ Add to setting XML file:
 3. Track thumb</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2016-04-05T09:06:46</ReleaseDate>
+    <ReleaseDate>2016-07-03T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>

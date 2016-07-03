@@ -15,6 +15,8 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
 
+using Microsoft.Win32;
+
 using RealNLog.NLog;
 using RealNLog.NLog.Config;
 using RealNLog.NLog.Targets;
@@ -22,6 +24,7 @@ using RealNLog.NLog.Targets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -29,9 +32,6 @@ using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
-using System.Diagnostics;
-
-using Microsoft.Win32;
 
 namespace LatestMediaHandler
 {
@@ -326,12 +326,14 @@ namespace LatestMediaHandler
       string sNodeValue = String.Empty;
 
       var path = string.Empty ;
+      var theme = string.Empty; 
 
       if (string.IsNullOrEmpty(SkinDir))
       {
         WindowsUsingFanartLatest = new Hashtable();
 
         path = GUIGraphicsContext.Skin + @"\";
+        theme = Utils.GetThemeFolder(path);
         logger.Debug("Scan Skin folder for XML: "+path) ;
       }
       else
@@ -369,15 +371,29 @@ namespace LatestMediaHandler
               {
                 var XMLFullName = Path.Combine(XMLFolder, myXPathNodeIterator.Current.Value);
                 if (File.Exists(XMLFullName))
+                {
                   HandleXmlImports(XMLFullName, windowId, ref _flagLatest);
-                else if ((!string.IsNullOrEmpty(SkinDir)) && (!string.IsNullOrEmpty(ThemeDir)))
+
+                  if (!string.IsNullOrEmpty(theme))
                   {
-                    XMLFullName = Path.Combine(SkinDir, myXPathNodeIterator.Current.Value);
+                    XMLFullName = Path.Combine(theme, myXPathNodeIterator.Current.Value);
                     if (File.Exists(XMLFullName))
+                    {
                       HandleXmlImports(XMLFullName, windowId, ref _flagLatest);
+                    }
                   }
+                }
+                else if ((!string.IsNullOrEmpty(SkinDir)) && (!string.IsNullOrEmpty(ThemeDir)))
+                {
+                  XMLFullName = Path.Combine(SkinDir, myXPathNodeIterator.Current.Value);
+                  if (File.Exists(XMLFullName))
+                  {
+                    HandleXmlImports(XMLFullName, windowId, ref _flagLatest);
+                  }
+                }
               }
             }
+
             myXPathNodeIterator = myXPathNavigator.Select("/window/controls/include");
             if (myXPathNodeIterator.Count > 0)
             {
@@ -385,20 +401,35 @@ namespace LatestMediaHandler
               {
                 var XMLFullName = Path.Combine(XMLFolder, myXPathNodeIterator.Current.Value);
                 if (File.Exists(XMLFullName))
+                {
                   HandleXmlImports(XMLFullName, windowId, ref _flagLatest);
-                else if ((!string.IsNullOrEmpty(SkinDir)) && (!string.IsNullOrEmpty(ThemeDir)))
+
+                  if (!string.IsNullOrEmpty(theme))
                   {
-                    XMLFullName = Path.Combine(SkinDir, myXPathNodeIterator.Current.Value);
+                    XMLFullName = Path.Combine(theme, myXPathNodeIterator.Current.Value);
                     if (File.Exists(XMLFullName))
+                    {
                       HandleXmlImports(XMLFullName, windowId, ref _flagLatest);
+                    }
                   }
+                }
+                else if ((!string.IsNullOrEmpty(SkinDir)) && (!string.IsNullOrEmpty(ThemeDir)))
+                {
+                  XMLFullName = Path.Combine(SkinDir, myXPathNodeIterator.Current.Value);
+                  if (File.Exists(XMLFullName))
+                  {
+                    HandleXmlImports(XMLFullName, windowId, ref _flagLatest);
+                  }
+                }
               }
             }
 
             if (_flagLatest)
             {
               if (!WindowsUsingFanartLatest.Contains(windowId))
+              {
                 WindowsUsingFanartLatest.Add(windowId, windowId);
+              }
             }
           }
         }
@@ -409,18 +440,13 @@ namespace LatestMediaHandler
         }
       }
 
-      if (string.IsNullOrEmpty(ThemeDir) && !string.IsNullOrEmpty(GUIGraphicsContext.ThemeName)) 
+      if (string.IsNullOrEmpty(ThemeDir)) 
       {
         // Include Themes
-        var tThemeDir = path+@"Themes\"+GUIGraphicsContext.ThemeName.Trim()+@"\";
-        if (Directory.Exists(tThemeDir))
-          {
-            SetupWindowsUsingLatestMediaHandlerVisibility(path, tThemeDir);
-            return;
-          }
-        tThemeDir = path+GUIGraphicsContext.ThemeName.Trim()+@"\";
-        if (Directory.Exists(tThemeDir))
-          SetupWindowsUsingLatestMediaHandlerVisibility(path, tThemeDir);
+        if (!string.IsNullOrEmpty(theme))
+        {
+          SetupWindowsUsingLatestMediaHandlerVisibility(path, theme);
+        }
       }
     }
 
@@ -726,7 +752,7 @@ namespace LatestMediaHandler
                           "[${logger:fixedLength=true:padding=20:shortName=true}]: ${message} " +
                           "${exception:format=tostring}";
 
-      config.AddTarget("file", fileTarget);
+      config.AddTarget("latestmedia-handler", fileTarget);
 
       // Get current Log Level from MediaPortal 
       LogLevel logLevel;

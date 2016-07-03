@@ -11,11 +11,11 @@
 //***********************************************************************
 extern alias RealNLog;
 
+using RealNLog.NLog;
+
 using System;
 using System.ComponentModel;
 using System.Threading;
-
-using RealNLog.NLog;
 
 namespace LatestMediaHandler
 {

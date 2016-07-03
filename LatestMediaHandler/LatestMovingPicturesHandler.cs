@@ -1,4 +1,5 @@
-﻿//***********************************************************************
+﻿extern alias RealCornerstone;
+//***********************************************************************
 // Assembly         : LatestMediaHandler
 // Author           : cul8er
 // Created          : 05-09-2010
@@ -10,26 +11,23 @@
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
 extern alias RealNLog;
-extern alias RealCornerstone;
 
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-
-using RealNLog.NLog; 
-
-using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
-using MediaPortal.Video.Database;
+using MediaPortal.GUI.Library;
 using MediaPortal.Plugins.MovingPictures;
 using MediaPortal.Plugins.MovingPictures.Database;
 using MediaPortal.Plugins.MovingPictures.MainUI;
+using MediaPortal.Video.Database;
 
+using RealNLog.NLog;
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Threading;
 using System.Timers;
-using System.Windows.Forms;
 
 namespace LatestMediaHandler
 {

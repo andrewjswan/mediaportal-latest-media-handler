@@ -114,6 +114,12 @@ namespace LatestMediaHandler
       set { Utils.latestMvCentral = value; }
     }
 
+    private int LatestMvCentralThumbType
+    {
+      get { return Utils.latestMvCentralThumbType; }
+      set { Utils.latestMvCentralThumbType = value; }
+    }
+
     private string LatestMovingPictures
     {
       get { return Utils.latestMovingPictures; }
@@ -234,6 +240,7 @@ namespace LatestMediaHandler
         RefreshDbPicture = checkBox12.Checked ? "True" : "False";
         RefreshDbMusic = checkBox13.Checked ? "True" : "False";
         LatestMvCentral = checkBox15.Checked ? "True" : "False";
+        LatestMvCentralThumbType = comboBoxMvCThumbType.SelectedIndex + 1;
       }
       catch (Exception ex)
       {
@@ -317,6 +324,9 @@ namespace LatestMediaHandler
       comboBoxTVSeriesType.Items.Add(Translation.PrefsLatestSeasons);
       comboBoxTVSeriesType.Items.Add(Translation.PrefsLatestSeries);
 
+      comboBoxMvCThumbType.Items.Add(Translation.PrefsMvCThumbArtist);
+      comboBoxMvCThumbType.Items.Add(Translation.PrefsMvCThumbAlbum);
+      comboBoxMvCThumbType.Items.Add(Translation.PrefsMvCThumbTrack);
       /*
       checkedListBox1.Items.Add("TV-Y: This program is designed to be appropriate for all children");
       checkedListBox1.Items.Add("TV-Y7: This program is designed for children age 7 and above.");
@@ -509,6 +519,15 @@ namespace LatestMediaHandler
         checkBox15.Checked = false;
       }
 
+      if (LatestMvCentralThumbType > 0 && LatestMvCentralThumbType <= 3)
+      {
+        comboBoxMvCThumbType.SelectedIndex = LatestMvCentralThumbType - 1;
+      }
+      else
+      {
+        comboBoxMvCThumbType.SelectedIndex = 0;
+      }
+
       if (LatestMyVideos.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestMyVideosWatched))
       {
         if (LatestMyVideosWatched.Equals("True", StringComparison.CurrentCulture))
@@ -684,7 +703,6 @@ namespace LatestMediaHandler
       {
       }
 
-
       FileTarget fileTarget = new FileTarget();
       fileTarget.FileName = Config.GetFile(Config.Dir.Log, LogFileName);
       fileTarget.Encoding = "utf-8";
@@ -693,7 +711,7 @@ namespace LatestMediaHandler
                           "[${logger:fixedLength=true:padding=20:shortName=true}]: ${message} " +
                           "${exception:format=tostring}";
 
-      config.AddTarget("file", fileTarget);
+      config.AddTarget("latestmedia-handler", fileTarget);
 
       // Get current Log Level from MediaPortal 
       LogLevel logLevel;

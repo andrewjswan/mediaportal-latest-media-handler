@@ -11,26 +11,25 @@
 //***********************************************************************
 extern alias RealNLog;
 
+using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Pictures;
+using MediaPortal.Picture.Database;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.Util;
+
 using RealNLog.NLog;
 
 using SQLite.NET;
 
 using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Timers;
-using System.Windows.Forms;
-
-using MediaPortal.Picture.Database;
-using MediaPortal.Util;
-using MediaPortal.Profile;
-using MediaPortal.GUI.Library;
-using MediaPortal.GUI.Pictures;
-using MediaPortal.Configuration;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
 
 namespace LatestMediaHandler
 {

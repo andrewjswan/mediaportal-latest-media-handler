@@ -12,13 +12,14 @@
 
 extern alias RealNLog;
 
+using MediaPortal.Util;
+
+using RealNLog.NLog;
+
 using System;
 using System.Globalization;
 using System.IO;
 
-using RealNLog.NLog;
-
-using MediaPortal.Util;
 using TvControl;
 
 namespace LatestMediaHandler

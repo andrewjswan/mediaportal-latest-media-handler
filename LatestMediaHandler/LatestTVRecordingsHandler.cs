@@ -11,25 +11,22 @@
 //***********************************************************************
 extern alias RealNLog;
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Globalization;
-using System.Threading;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 using RealNLog.NLog;
 
-//using MediaPortal.Configuration;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-//using MediaPortal.Player;
-//using MediaPortal.Playlists;
-//using TvDatabase;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Threading;
+
+using TvControl;
 using TvDatabase;
 using TvPlugin;
-using TvControl;
 
 namespace LatestMediaHandler
 {

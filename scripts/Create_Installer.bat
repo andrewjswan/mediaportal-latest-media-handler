@@ -3,14 +3,14 @@ cls
 Title Creating MediaPortal Latest Media Handler Installer
 
 :: Check for modification
-svn status ..\source | findstr "^M"
-if ERRORLEVEL 1 (
-	echo No modifications in source folder.
-) else (
-	echo There are modifications in source folder. Aborting.
-	pause
-	exit 1
-)
+REM svn status ..\source | findstr "^M"
+REM if ERRORLEVEL 1 (
+REM 	echo No modifications in source folder.
+REM ) else (
+REM 	echo There are modifications in source folder. Aborting.
+REM 	pause
+REM 	exit 1
+REM )
 
 if "%programfiles(x86)%XXX"=="XXX" goto 32BIT
 	:: 64-bit
@@ -19,6 +19,8 @@ if "%programfiles(x86)%XXX"=="XXX" goto 32BIT
 :32BIT
 	set PROGS=%ProgramFiles%
 :CONT
+
+IF NOT EXIST "%PROGS%\Team MediaPortal\MediaPortal\" SET PROGS=C:
 
 :: Get version from DLL
 FOR /F "tokens=1-3" %%i IN ('Tools\sigcheck.exe "..\LatestMediaHandler\bin\Release\LatestMediaHandler.dll"') DO ( IF "%%i %%j"=="File version:" SET version=%%k )

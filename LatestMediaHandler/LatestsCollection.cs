@@ -9,8 +9,6 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-extern alias RealNLog;
-
 using System.Collections.Generic;
 
 namespace LatestMediaHandler

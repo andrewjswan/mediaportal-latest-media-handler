@@ -11,8 +11,8 @@
 //***********************************************************************
 extern alias RealNLog;
 
-using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 using RealNLog.NLog;
 
@@ -20,11 +20,9 @@ using System;
 using System.Collections;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
-using System.Xml;
-using System.Xml.XPath;
 
 namespace LatestMediaHandler
 {
@@ -276,6 +274,24 @@ namespace LatestMediaHandler
       return result ;
     }
 
+    public static string GetThemeFolder(string path)
+    {
+      if (string.IsNullOrWhiteSpace(GUIGraphicsContext.ThemeName))
+        return string.Empty;
+
+      var tThemeDir = path+@"Themes\"+GUIGraphicsContext.ThemeName.Trim()+@"\";
+      if (Directory.Exists(tThemeDir))
+      {
+        return tThemeDir;
+      }
+      tThemeDir = path+GUIGraphicsContext.ThemeName.Trim()+@"\";
+      if (Directory.Exists(tThemeDir))
+      {
+        return tThemeDir;
+      }
+      return string.Empty;
+    }
+
     /// <summary>
     /// Return value.
     /// </summary>
@@ -426,7 +442,9 @@ namespace LatestMediaHandler
       try
       {
         if (name == null)
-          name = "";
+        {
+          name = string.Empty;
+        }
 
         //load images as MP resource
         if (!string.IsNullOrEmpty(name))
@@ -437,10 +455,7 @@ namespace LatestMediaHandler
             {
               Images.Add(name);
             }
-            catch (Exception ex)
-            {
-              logger.Error("LoadImage: " + ex.ToString());
-            }
+            catch { }
             Utils.LoadImage(name);
           }
         }
@@ -456,23 +471,24 @@ namespace LatestMediaHandler
       try
       {
         if (name == null)
-          name = "";
+        {
+          name = string.Empty;
+        }
 
-        //load images as MP resource
+        //unload images from MP resource
         if (!string.IsNullOrEmpty(name))
         {
           if (Images != null)
           {
-            foreach (Object image in Images)
+            for (int i = 0; i < Images.Count; i++)
             {
-              //unload old image to free MP resource
-              if (image != null && !image.ToString().Equals(name))
+              string image = Images[i] as string;
+              if (!string.IsNullOrEmpty(image) && image.Equals(name))
               {
-                UNLoadImage(image.ToString());
+                UNLoadImage(name);
+                Images.RemoveAt(i);
               }
             }
-            Images.Clear();
-            Images.Add(name);
           }
         }
       }
@@ -901,7 +917,7 @@ namespace LatestMediaHandler
                                         Check(PluginIsEnabled("MP-TV Series")) + " TVSeries, " +
                                         Check(PluginIsEnabled("Moving Pictures")) + " MovingPictures, " +
                                         Check(PluginIsEnabled("MyFilms")) + " MyFilms, " +
-                                        Check(PluginIsEnabled(GetProperty("#mvCentral.Settings.HomeScreenName"))) + " MvCentral" + 
+                                        Check(PluginIsEnabled(GetProperty("#mvCentral.Settings.HomeScreenName"))) + " MvCentral, " + 
                                         Check(PluginIsEnabled("FanartHandler")) + " FanartHandler");
       #endregion
 
@@ -951,7 +967,7 @@ namespace LatestMediaHandler
           xmlwriter.SetValue("LatestMediaHandler", "latestMyFilms", latestMyFilms);
           xmlwriter.SetValue("LatestMediaHandler", "latestMyFilmsWatched", latestMyFilmsWatched);
           xmlwriter.SetValue("LatestMediaHandler", "latestMvCentral", latestMvCentral);
-          // xmlwriter.SetValue("LatestMediaHandler", "latestMvCentralThumbType", latestMvCentralThumbType);
+          xmlwriter.SetValue("LatestMediaHandler", "latestMvCentralThumbType", latestMvCentralThumbType);
           xmlwriter.SetValue("LatestMediaHandler", "refreshDbPicture", refreshDbPicture);
           xmlwriter.SetValue("LatestMediaHandler", "refreshDbMusic", refreshDbMusic);
           xmlwriter.SetValue("LatestMediaHandler", "reorgInterval", reorgInterval);

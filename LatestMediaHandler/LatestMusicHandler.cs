@@ -11,6 +11,18 @@
 //***********************************************************************
 extern alias RealNLog;
 
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Music.Database;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.Services;
+using MediaPortal.TagReader;
+using MediaPortal.Threading;
+using MediaPortal.Util;
+
+using RealNLog.NLog;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,19 +30,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Timers;
-using System.Windows.Forms;
-
-using RealNLog.NLog;
-
-using MediaPortal.GUI.Library;
-using MediaPortal.Music.Database;
-using MediaPortal.Player;
-using MediaPortal.TagReader;
-using MediaPortal.Util;
-using MediaPortal.Profile;
-using MediaPortal.Services;
-using MediaPortal.Threading;
-using MediaPortal.Dialogs;
 
 namespace LatestMediaHandler
 {
@@ -1139,6 +1138,7 @@ namespace LatestMediaHandler
         mt.AlbumArtist = latests.Artist;
         mt.FileName = latests.Title;
         mt.FileType = latests.Classification;
+        mt.Genre = latests.Genre;
         try
         {
           mt.Duration = Int32.Parse(latests.Runtime);

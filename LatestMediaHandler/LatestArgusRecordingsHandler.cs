@@ -14,23 +14,23 @@
 //***********************************************************************
 extern alias RealNLog;
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Globalization;
-using System.Threading;
+using ArgusTV.DataContracts;
+using ArgusTV.ServiceProxy;
+
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 
 using RealNLog.NLog;
 
-using MediaPortal.GUI.Library;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
-
-using ArgusTV.DataContracts;
-using ArgusTV.ServiceProxy;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 
 namespace LatestMediaHandler
 {

@@ -11,27 +11,19 @@
 //***********************************************************************
 extern alias RealNLog;
 
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Globalization;
-using System.Threading;
-using System.Timers;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Video.Database;
 
 using RealNLog.NLog;
 
-//using MediaPortal.Configuration;
-using MediaPortal.GUI.Library;
-using MediaPortal.Dialogs;
-using MediaPortal.Video.Database;
-//using MediaPortal.Util;
-//using MediaPortal.Player;
-//using MediaPortal.Playlists;
-
-//using Cornerstone.Database;
-//using Cornerstone.Database.Tables;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Threading;
+using System.Timers;
 
 using WindowPlugins.GUITVSeries;
 
