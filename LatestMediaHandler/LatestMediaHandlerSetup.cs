@@ -804,8 +804,10 @@ namespace LatestMediaHandler
 
         MpVersion = FileVersionInfo.GetVersionInfo(Application.ExecutablePath).ProductVersion;
         logger.Info("MediaPortal version is " + MpVersion);
-        MpVersion = FileVersionInfo.GetVersionInfo(Application.ExecutablePath).ProductMajorPart.ToString()+"."+
-                    FileVersionInfo.GetVersionInfo(Application.ExecutablePath).ProductMinorPart.ToString().PadLeft(2, '0');
+        // TODO need to see if it didn't break on older MP version (< 1.03)
+        //MpVersion = FileVersionInfo.GetVersionInfo(Application.ExecutablePath).ProductMajorPart.ToString()+"."+
+        //            FileVersionInfo.GetVersionInfo(Application.ExecutablePath).ProductMinorPart.ToString().PadLeft(2, '0');
+        MpVersion = FileVersionInfo.GetVersionInfo(Application.ExecutablePath).FileVersion;
 
         SetupConfigFile();
         Utils.LoadSettings();

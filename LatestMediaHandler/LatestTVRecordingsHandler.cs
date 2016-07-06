@@ -413,13 +413,13 @@ namespace LatestMediaHandler
             if (LatestMediaHandlerSetup.MpVersion.CompareTo("1.03") > 0)
             {
               //MP 1.4
-              logger.Debug("GetTVRecordings [" + LatestMediaHandlerSetup.MpVersion + "] Thumbs metod: 1.4 and above ...");
+              logger.Debug("GetTVRecordings [" + LatestMediaHandlerSetup.MpVersion + "] Thumbs method: 1.4 and above ...");
               thumbNail = TVRecordingsThumbnailHandler.GetThumb(_filename);
             }
             else
             {
               //MP 1.3 or older
-              logger.Debug("GetTVRecordings [" + LatestMediaHandlerSetup.MpVersion + "] Thumbs metod: 1.3 or older ...");
+              logger.Debug("GetTVRecordings [" + LatestMediaHandlerSetup.MpVersion + "] Thumbs method: 1.3 or older ...");
               thumbNail = string.Format(CultureInfo.CurrentCulture, "{0}\\{1}{2}", Thumbs.TVRecorded,
                 Path.ChangeExtension(MediaPortal.Util.Utils.SplitFilename(_filename),
                   null),
