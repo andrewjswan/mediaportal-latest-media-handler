@@ -275,13 +275,10 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>Fix for Music (thx Sebastiii)
-Fix for mvCentral (thx Sebastiii)
-
-</VersionDescription>
+    <VersionDescription>Fix for Mediaportal version (thx Sebastiii) TV Latests</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2016-07-03T09:06:46</ReleaseDate>
+    <ReleaseDate>2016-07-06T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>
