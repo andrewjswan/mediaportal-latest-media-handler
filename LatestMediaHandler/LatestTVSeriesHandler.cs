@@ -9,13 +9,13 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-extern alias RealNLog;
+extern alias LMHNLog;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Video.Database;
 
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
 using System.Collections;
@@ -569,6 +569,23 @@ namespace LatestMediaHandler
       return latestTVSeries;
     }
 
+    public Hashtable GetLatestsList()
+    {
+      Hashtable ht = new Hashtable();
+      if (latestTVSeries != null)
+      {
+        for (int i = 0; i < latestTVSeries.Count; i++)
+        {
+          if (!ht.Contains(latestTVSeries[i].SeriesIndex))
+          {
+            // logger.Debug("Make Latest List: TVSeries: " + ((Utils.latestTVSeriesType == 0) ? "Episode" : (Utils.latestTVSeriesType == 1) ? "Season" : "Series") + " " + latestTVSeries[i].SeriesIndex + " - " + latestTVSeries[i].Title);
+            ht.Add(latestTVSeries[i].SeriesIndex, latestTVSeries[i].Title) ;
+          }
+        }
+      }
+      return ht;
+    }
+
     internal void EmptyLatestMediaPropsTVSeries()
     {
       Utils.SetProperty("#latestMediaHandler.tvseries.label", Translation.LabelLatestAdded);
@@ -637,7 +654,7 @@ namespace LatestMediaHandler
           int z = 1;
           for (int i = 0; i < hTable.Count && i < Utils.LatestsMaxNum; i++)
           {
-            logger.Info("Updating Latest Media Info: TVSeries: Episode " + z + ": " + hTable[i].Title + " - " + hTable[i].Subtitle);
+            logger.Info("Updating Latest Media Info: TVSeries: " + ((Utils.latestTVSeriesType == 0) ? "Episode" : (Utils.latestTVSeriesType == 1) ? "Season" : "Series") + " " + z + ": " + hTable[i].Title + " - " + hTable[i].Subtitle);
 
             string plot = (string.IsNullOrEmpty(hTable[i].Summary) ? Translation.NoDescription : hTable[i].Summary);
             string plotoutline = Utils.GetSentences(plot, Utils.latestPlotOutlineSentencesNum);
@@ -693,6 +710,7 @@ namespace LatestMediaHandler
       }
       else
         EmptyLatestMediaPropsTVSeries();
+      Utils.UpdateLatestsUpdate(Utils.LatestsCategory.TVSeries, DateTime.Now);
       Utils.SyncPointTVSeriesUpdate=0;
     }
 

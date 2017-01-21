@@ -9,10 +9,9 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
+extern alias LMHNLog;
 
-extern alias RealNLog;
-
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
 using System.Collections;

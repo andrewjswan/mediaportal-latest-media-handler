@@ -1,9 +1,9 @@
-﻿extern alias RealNLog;
+﻿extern alias LMHNLog;
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
 using System.Collections.Generic;

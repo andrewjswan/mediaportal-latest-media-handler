@@ -9,7 +9,7 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-extern alias RealNLog;
+extern alias LMHNLog;
 
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
@@ -20,7 +20,7 @@ using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using SQLite.NET;
 
@@ -910,6 +910,7 @@ namespace LatestMediaHandler
       }
       else
         EmptyLatestMediaPropsPictures();
+      Utils.UpdateLatestsUpdate(Utils.LatestsCategory.Pictures, DateTime.Now);
       Utils.SyncPointPicturesUpdate=0;
     }
   }

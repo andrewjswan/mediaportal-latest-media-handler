@@ -12,7 +12,7 @@
 // and its initiation in the constructor are slightly modified copies of the
 // methods of the same name in ChannelLogosCache.cs in ArgusTV.Client.Common
 //***********************************************************************
-extern alias RealNLog;
+extern alias LMHNLog;
 
 using ArgusTV.DataContracts;
 using ArgusTV.ServiceProxy;
@@ -21,7 +21,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
 using System.Collections;

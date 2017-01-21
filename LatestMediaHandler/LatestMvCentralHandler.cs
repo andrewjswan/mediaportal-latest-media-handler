@@ -9,7 +9,7 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement. Thanks to MediaPortal that created many of the functions used here.
 //***********************************************************************
-extern alias RealNLog;
+extern alias LMHNLog;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -18,7 +18,7 @@ using MediaPortal.TagReader;
 
 using mvCentral.Database;
 
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
 using System.Collections;
@@ -279,6 +279,7 @@ namespace LatestMediaHandler
       }
       else
         EmptyLatestMediaPropsMvCentral();
+      Utils.UpdateLatestsUpdate(Utils.LatestsCategory.MvCentral, DateTime.Now);
       Utils.SyncPointMvCMusicUpdate = 0;
     }
 
@@ -518,6 +519,24 @@ namespace LatestMediaHandler
         logger.Error("GetLatestMusic: " + ex.ToString());
       }
       return latestMusicAlbums;
+    }
+
+    public Hashtable GetLatestsList()
+    {
+      Hashtable ht = new Hashtable();
+      if (latestMusicAlbums != null)
+      {
+        for (int i = 0; i < latestMusicAlbums.Count; i++)
+        {
+          var key = latestMusicAlbums[i].Artist + "#" + latestMusicAlbums[i].Album;
+          if (!ht.Contains(key))
+          {
+            // logger.Debug("Make Latest List: MvCentral: " + latestMusicAlbums[i].Artist + " - " + latestMusicAlbums[i].Album);
+            ht.Add(key, new string[2] { latestMusicAlbums[i].Artist, latestMusicAlbums[i].Album } ) ;
+          }
+        }
+      }
+      return ht;
     }
 
     private void AddToFilmstrip(Latest latests, int x)

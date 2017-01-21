@@ -9,13 +9,13 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-extern alias RealNLog;
+extern alias LMHNLog;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
 using System.Collections;

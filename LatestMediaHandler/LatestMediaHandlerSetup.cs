@@ -9,7 +9,7 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-extern alias RealNLog;
+extern alias LMHNLog;
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
@@ -17,9 +17,9 @@ using MediaPortal.Services;
 
 using Microsoft.Win32;
 
-using RealNLog.NLog;
-using RealNLog.NLog.Config;
-using RealNLog.NLog.Targets;
+using LMHNLog.NLog;
+using LMHNLog.NLog.Config;
+using LMHNLog.NLog.Targets;
 
 using System;
 using System.Collections;

@@ -9,12 +9,12 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
+extern alias LMHNLog;
 
-extern alias RealNLog;
-
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
+using System.Collections;
 
 namespace LatestMediaHandler
 {
@@ -167,5 +167,65 @@ namespace LatestMediaHandler
       }
       return _return;
     }
+
+    #region From FanartHandler
+
+    public static DateTime GetLatestsUpdate(string category)
+    {
+      Utils.LatestsCategory latestsCategory;
+      if (Enum.TryParse(category, out latestsCategory))
+      {
+        if (Enum.IsDefined(typeof(Utils.LatestsCategory), latestsCategory))  
+        {
+          return Utils.GetLatestsUpdate(latestsCategory);
+        } 
+      }
+      return new DateTime();
+    }
+
+    public static Hashtable GetLatests(string category)
+    {
+      Hashtable ht = new Hashtable();
+      if (string.IsNullOrEmpty(category))
+        return ht ;
+
+      Utils.LatestsCategory latestsCategory;
+      if (!Enum.TryParse(category, out latestsCategory))
+        return ht ;
+      if (!Enum.IsDefined(typeof(Utils.LatestsCategory), latestsCategory))  
+        return ht ;
+
+      if (latestsCategory == Utils.LatestsCategory.Music && LatestMediaHandlerSetup.Lmh != null)
+      {
+        return LatestMediaHandlerSetup.Lmh.GetLatestsList();
+      }
+      
+      if (latestsCategory == Utils.LatestsCategory.MvCentral && LatestMediaHandlerSetup.Lmch != null)
+      {
+        return LatestMediaHandlerSetup.Lmch.GetLatestsList();
+      }
+
+      if (latestsCategory == Utils.LatestsCategory.Movies && LatestMediaHandlerSetup.Lmvh != null)
+      {
+        return LatestMediaHandlerSetup.Lmvh.GetLatestsList();
+      }
+
+      if (latestsCategory == Utils.LatestsCategory.MovingPictures && LatestMediaHandlerSetup.Lmph != null)
+      {
+        return LatestMediaHandlerSetup.Lmph.GetLatestsList();
+      }
+
+      if (latestsCategory == Utils.LatestsCategory.MyFilms && LatestMediaHandlerSetup.Lmfh != null)
+      {
+        return LatestMediaHandlerSetup.Lmfh.GetLatestsList();
+      }
+
+      if (latestsCategory == Utils.LatestsCategory.TVSeries && LatestMediaHandlerSetup.Ltvsh != null)
+      {
+        return LatestMediaHandlerSetup.Ltvsh.GetLatestsList();
+      }
+      return ht;
+    }
+    #endregion
   }
 }

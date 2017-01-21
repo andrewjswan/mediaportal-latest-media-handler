@@ -10,7 +10,7 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-extern alias RealNLog;
+extern alias LMHNLog;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -19,7 +19,7 @@ using MediaPortal.Plugins.MovingPictures.Database;
 using MediaPortal.Plugins.MovingPictures.MainUI;
 using MediaPortal.Video.Database;
 
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
 using System.Collections;
@@ -381,6 +381,23 @@ namespace LatestMediaHandler
       return latestMovies;
     }
 
+    public Hashtable GetLatestsList()
+    {
+      Hashtable ht = new Hashtable();
+      if (latestMovies != null)
+      {
+        for (int i = 0; i < latestMovies.Count; i++)
+        {
+          if (!ht.Contains(latestMovies[i].Id))
+          {
+            // logger.Debug("Make Latest List: MovingPictures: " + latestMovies[i].Id + " - " + latestMovies[i].Title);
+            ht.Add(latestMovies[i].Id, latestMovies[i].Title) ;
+          }
+        }
+      }
+      return ht;
+    }
+
     internal void EmptyLatestMediaPropsMovingPictures()
     {
       Utils.SetProperty("#latestMediaHandler.movingpicture.label", Translation.LabelLatestAdded);
@@ -481,6 +498,7 @@ namespace LatestMediaHandler
       }
       else
         EmptyLatestMediaPropsMovingPictures();
+      Utils.UpdateLatestsUpdate(Utils.LatestsCategory.MovingPictures, DateTime.Now);
       Utils.SyncPointMovingPicturesUpdate=0;
     }
 

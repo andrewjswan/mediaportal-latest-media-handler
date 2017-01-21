@@ -9,7 +9,7 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-extern alias RealNLog;
+extern alias LMHNLog;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -17,7 +17,7 @@ using MediaPortal.GUI.Video;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
 using System.Collections;
@@ -411,6 +411,23 @@ namespace LatestMediaHandler
       return latestMyVideos;
     }
 
+    public Hashtable GetLatestsList()
+    {
+      Hashtable ht = new Hashtable();
+      if (latestMyVideos != null)
+      {
+        for (int i = 0; i < latestMyVideos.Count; i++)
+        {
+          if (!ht.Contains(latestMyVideos[i].Id))
+          {
+            // logger.Debug("Make Latest List: MyVideo: " + latestMyVideos[i].Id + " - " + latestMyVideos[i].Title);
+            ht.Add(latestMyVideos[i].Id, latestMyVideos[i].Title) ;
+          }
+        }
+      }
+      return ht;
+    }
+
     private string GetFanart(string title, int id)
     {
       string fanart = string.Empty;
@@ -555,6 +572,7 @@ namespace LatestMediaHandler
       }
       else
         EmptyLatestMediaPropsMyVideos();
+      Utils.UpdateLatestsUpdate(Utils.LatestsCategory.Movies, DateTime.Now);
       Utils.SyncPointMyVideosUpdate=0;
     }
 

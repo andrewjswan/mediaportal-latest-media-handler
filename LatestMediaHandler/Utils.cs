@@ -9,12 +9,12 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-extern alias RealNLog;
+extern alias LMHNLog;
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
 using System.Collections;
@@ -43,6 +43,7 @@ namespace LatestMediaHandler
 
     private static bool usedArgus = false;
     private static DateTime lastRefreshRecording;
+    private static Hashtable htLatestsUpdate = null;
 
     private const string ConfigFilename = "LatestMediaHandler.xml";
     public  const string DefTVSeriesRatings = "TV-Y;TV-Y7;TV-G;TV-PG;TV-14;TV-MA";
@@ -109,14 +110,69 @@ namespace LatestMediaHandler
     //
     internal static DateTime LastRefreshRecording
     {
-      get { return Utils.lastRefreshRecording; }
-      set { Utils.lastRefreshRecording = value; }
+      get { return lastRefreshRecording; }
+      set { lastRefreshRecording = value; }
     }
 
     internal static bool UsedArgus
     {
-      get { return Utils.usedArgus; }
-      set { Utils.usedArgus = value; }
+      get { return usedArgus; }
+      set { usedArgus = value; }
+    }
+    #endregion
+
+    #region Latests update
+    public static DateTime GetLatestsUpdate(LatestsCategory category)
+    {
+      if (htLatestsUpdate == null)
+      {
+        htLatestsUpdate = new Hashtable();
+      }
+
+      lock (htLatestsUpdate)
+      {
+        if (htLatestsUpdate.ContainsKey(category))
+        {
+          return (DateTime) htLatestsUpdate[category];
+        }
+        else
+        {
+          return new DateTime();
+        }
+      }
+    }
+
+    public static void UpdateLatestsUpdate(LatestsCategory category, DateTime dt)
+    {
+      if (htLatestsUpdate == null)
+      {
+        htLatestsUpdate = new Hashtable();
+      }
+
+      lock (htLatestsUpdate)
+      {
+        if (htLatestsUpdate.ContainsKey(category))
+        {
+          htLatestsUpdate.Remove(category);
+        }
+        htLatestsUpdate.Add(category, dt);
+      }
+    }
+
+    public static void RemoveLatestsUpdate(LatestsCategory category)
+    {
+      if (htLatestsUpdate == null)
+      {
+        htLatestsUpdate = new Hashtable();
+      }
+
+      lock (htLatestsUpdate)
+      {
+        if (htLatestsUpdate.ContainsKey(category))
+        {
+          htLatestsUpdate.Remove(category);
+        }
+      }
     }
     #endregion
 
@@ -125,13 +181,13 @@ namespace LatestMediaHandler
     /// </summary>
     internal static Hashtable DelayStop
     {
-      get { return Utils.delayStop; }
-      set { Utils.delayStop = value; }
+      get { return delayStop; }
+      set { delayStop = value; }
     }
 
     internal static int DelayStopCount
     {
-      get { return Utils.delayStop.Count; }
+      get { return delayStop.Count; }
     }
 
     public static bool PluginIsEnabled(string name)
@@ -209,7 +265,7 @@ namespace LatestMediaHandler
       try
       {
         string key = string.Empty;
-        string[] sInputs = Input.Split(Utils.PipesArray, StringSplitOptions.RemoveEmptyEntries);
+        string[] sInputs = Input.Split(PipesArray, StringSplitOptions.RemoveEmptyEntries);
         foreach (string sInput in sInputs)
         {
           key = sInput.ToLower().Trim();
@@ -247,7 +303,7 @@ namespace LatestMediaHandler
       Input = Input.Replace(",", "|");
       try
       {
-        string[] sInputs = Input.Split(Utils.PipesArray, StringSplitOptions.RemoveEmptyEntries);
+        string[] sInputs = Input.Split(PipesArray, StringSplitOptions.RemoveEmptyEntries);
         foreach (string sInput in sInputs)
         {
           if (string.IsNullOrEmpty(result))
@@ -255,7 +311,7 @@ namespace LatestMediaHandler
             try
             {
               DateTime dTmp = DateTime.Parse(Input);
-              IsNew = (dTmp > Utils.NewDateTime);
+              IsNew = (dTmp > NewDateTime);
               result = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", dTmp);
               return result;
             }
@@ -310,7 +366,7 @@ namespace LatestMediaHandler
 
     internal static void ThreadToSleep()
     {
-      Thread.Sleep(Utils.ThreadSleep); 
+      Thread.Sleep(ThreadSleep); 
       // Application.DoEvents();
     }
 
@@ -456,7 +512,7 @@ namespace LatestMediaHandler
               Images.Add(name);
             }
             catch { }
-            Utils.LoadImage(name);
+            LoadImage(name);
           }
         }
       }
@@ -734,7 +790,7 @@ namespace LatestMediaHandler
       Image checkImage = null;
       try
       {
-        checkImage = Utils.LoadImageFastFromFile(filename);
+        checkImage = LoadImageFastFromFile(filename);
         if (checkImage != null && checkImage.Width > 0)
         {
           checkImage.Dispose();
@@ -918,13 +974,13 @@ namespace LatestMediaHandler
                                         Check(PluginIsEnabled("Moving Pictures")) + " MovingPictures, " +
                                         Check(PluginIsEnabled("MyFilms")) + " MyFilms, " +
                                         Check(PluginIsEnabled(GetProperty("#mvCentral.Settings.HomeScreenName"))) + " MvCentral, " + 
-                                        Check(PluginIsEnabled("FanartHandler")) + " FanartHandler");
+                                        Check(PluginIsEnabled("FanartHandler") || PluginIsEnabled("Fanart Handler")) + " FanartHandler");
       #endregion
 
       #region Post setting 
       if (!Conf)
       {
-        FanartHandler = PluginIsEnabled("FanartHandler");
+        FanartHandler = PluginIsEnabled("FanartHandler") || PluginIsEnabled("Fanart Handler");
 
         latestMusic = PluginIsEnabled("Music") ? latestMusic : "False" ;
         latestPictures = PluginIsEnabled("Pictures") ? latestPictures : "False" ;
@@ -988,6 +1044,18 @@ namespace LatestMediaHandler
       {
         logger.Error("SaveSettings: "+ex);
       }
+    }
+
+    public enum LatestsCategory
+    {
+      Music, 
+      MvCentral, 
+      Movies, 
+      MovingPictures, 
+      TVSeries, 
+      MyFilms,
+      Pictures,
+      TV,   
     }
 
   }

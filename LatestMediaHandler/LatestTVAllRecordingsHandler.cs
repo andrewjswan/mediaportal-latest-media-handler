@@ -9,12 +9,12 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-extern alias RealNLog;
+extern alias LMHNLog;
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
 using System.Collections.Generic;
@@ -390,6 +390,7 @@ namespace LatestMediaHandler
       {
         EmptyLatestMediaPropsTVRecordings();
       }
+      Utils.UpdateLatestsUpdate(Utils.LatestsCategory.TV, DateTime.Now);
     }
 
     internal void UpdateImageTimer(GUIWindow fWindow, Object stateInfo, ElapsedEventArgs e)

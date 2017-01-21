@@ -9,7 +9,7 @@
 //
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
-extern alias RealNLog;
+extern alias LMHNLog;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -18,7 +18,7 @@ using MediaPortal.Video.Database;
 using MyFilmsPlugin.MyFilms;
 using MyFilmsPlugin.MyFilms.MyFilmsGUI;
 
-using RealNLog.NLog;
+using LMHNLog.NLog;
 
 using System;
 using System.Collections;
@@ -276,6 +276,23 @@ namespace LatestMediaHandler
         logger.Error("GetLatestMovies: " + ex.ToString());
       }
       return latestMyFilms;
+    }
+
+    public Hashtable GetLatestsList()
+    {
+      Hashtable ht = new Hashtable();
+      if (latestMyFilms != null)
+      {
+        for (int i = 0; i < latestMyFilms.Count; i++)
+        {
+          if (!ht.Contains(latestMyFilms[i].Id))
+          {
+            // logger.Debug("Make Latest List: MyFilms: " + latestMyFilms[i].Id + " - " + latestMyFilms[i].Title);
+            ht.Add(latestMyFilms[i].Id, latestMyFilms[i].Title) ;
+          }
+        }
+      }
+      return ht;
     }
 
     private void AddToFilmstrip(Latest latests, int x)
@@ -706,6 +723,7 @@ namespace LatestMediaHandler
       }
       else
         EmptyLatestMediaPropsMyFilms();
+      Utils.UpdateLatestsUpdate(Utils.LatestsCategory.MyFilms, DateTime.Now);
       Utils.SyncPointMyFilmsUpdate=0;
     }
 
