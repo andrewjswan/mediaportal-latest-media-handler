@@ -275,10 +275,10 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>Add External Access interface for Fanart Handler</VersionDescription>
+    <VersionDescription>Add Fanart.TV Images support</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2017-01-21T09:06:46</ReleaseDate>
+    <ReleaseDate>2017-11-15T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>
