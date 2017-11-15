@@ -37,6 +37,10 @@ namespace LatestMediaHandler
     private string id;
     private string summary;
     private bool isnew;
+    private string banner;
+    private string clearart;
+    private string clearlogo;
+    private string cd;
 
     internal string Summary
     {
@@ -158,6 +162,30 @@ namespace LatestMediaHandler
       set { episodeIndex = value; }
     }
 
+    internal string Banner
+    {
+      get { return banner; }
+      set { banner = value; }
+    }
+
+    internal string ClearArt
+    {
+      get { return clearart; }
+      set { clearart = value; }
+    }
+
+    internal string ClearLogo
+    {
+      get { return clearlogo; }
+      set { clearlogo = value; }
+    }
+
+    internal string CD
+    {
+      get { return cd; }
+      set { cd = value; }
+    }
+
     internal string New
     {
       get { return (isnew ? "true" : "false"); }
@@ -226,5 +254,29 @@ namespace LatestMediaHandler
       this.isnew = isnew;
     }
 
+    internal Latest(string dateAdded, 
+                    string thumb, string fanart, 
+                    string title, string subtitle, 
+                    string artist, string album, string genre, 
+                    string rating, string roundedRating, string classification, string runtime, string year, 
+                    string seasonIndex, string episodeIndex, 
+                    string thumbSeries, object playable, string id, string summary, 
+                    string seriesIndex, 
+                    string banner, string clearart, string clearlogo, string cd,
+                    bool isnew = false)
+             : this(dateAdded, 
+                    thumb, fanart, 
+                    title, subtitle, 
+                    artist, album, genre, 
+                    rating, roundedRating, classification, runtime, year, 
+                    seasonIndex, episodeIndex, 
+                    thumbSeries, playable, id, summary, 
+                    seriesIndex, isnew)
+    {
+      this.banner = banner;
+      this.clearart = clearart;
+      this.clearlogo = clearlogo;
+      this.cd = cd;
+    }
   }
 }

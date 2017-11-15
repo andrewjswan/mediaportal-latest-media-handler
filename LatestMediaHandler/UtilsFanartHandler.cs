@@ -16,6 +16,7 @@ using LMHNLog.NLog;
 using System;
 using System.Collections;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace LatestMediaHandler
@@ -24,6 +25,7 @@ namespace LatestMediaHandler
   {
     private static Logger logger = LogManager.GetCurrentClassLogger();
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     internal static void SetupFanartHandlerSubcribeScaperFinishedEvent()
     {
       try
@@ -46,6 +48,7 @@ namespace LatestMediaHandler
       }
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     internal static void DisposeFanartHandlerSubcribeScaperFinishedEvent()
     {
       try
@@ -68,6 +71,7 @@ namespace LatestMediaHandler
       }
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     internal static string GetFanartForLatest(string tvshow)
     {
       if (!Utils.FanartHandler)
@@ -92,6 +96,7 @@ namespace LatestMediaHandler
       return string.Empty;
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     internal static string GetMyVideoFanartForLatest(string title)
     {
       if (!Utils.FanartHandler)
@@ -112,6 +117,7 @@ namespace LatestMediaHandler
       return string.Empty;
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     internal static Hashtable GetMusicFanartForLatest(string artist, string albumartist, string album)
     {
       if (!Utils.FanartHandler)
@@ -136,6 +142,7 @@ namespace LatestMediaHandler
       return GetMusicFanartForLatest(albumartist, album);
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     internal static Hashtable GetMusicFanartForLatest(string artist, string album = (string) null)
     {
       if (!Utils.FanartHandler)
@@ -156,6 +163,7 @@ namespace LatestMediaHandler
       return null;
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     internal static string GetFHArtistName(string artist)
     {
       if (!Utils.FanartHandler)
@@ -176,6 +184,7 @@ namespace LatestMediaHandler
       return string.Empty;
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     internal static void ScrapeFanartAndThumb(string artist, string album)
     {
       if (!Utils.FanartHandler)
@@ -203,5 +212,31 @@ namespace LatestMediaHandler
         logger.Error("ScrapeFanartAndThumb: " + ex.ToString());
       }
     }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static string GetFanartTVForLatestMedia(string key1, string key2, string key3, Utils.FanartTV category)
+    {
+      if (!Utils.FanartHandler)
+      {
+        return string.Empty;
+      }  
+
+      try
+      {
+        return FanartHandler.ExternalAccess.GetFanartTVForLatestMedia(key1, key2, key3, category.ToString());
+      }
+      catch (FileNotFoundException) { }
+      catch (MissingMethodException)
+      { 
+        logger.Error("GetFanartTVForLatestMedia: Update Fanart Handler plugin.");
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetFanartTVForLatestMedia: Possible: Update Fanart Handler plugin.");
+        logger.Debug("GetFanartTVForLatestMedia: " + ex.ToString());
+      }
+      return string.Empty;
+    }
+
   }
 }

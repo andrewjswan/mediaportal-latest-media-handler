@@ -182,6 +182,10 @@ namespace LatestMediaHandler
         Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded", string.Empty);
         Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart", string.Empty);
         Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".banner", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".clearart", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".clearlogo", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".cd", string.Empty);
         Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".new", "false");
       }
       Utils.SetProperty("#latestMediaHandler.mvcentral.latest.thumbtype", "track");
@@ -242,6 +246,10 @@ namespace LatestMediaHandler
             Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".dateAdded", hTable[i].DateAdded);
             Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".fanart", hTable[i].Fanart);
             Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".genre", hTable[i].Genre);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".banner", hTable[i].Banner);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".clearart", hTable[i].ClearArt);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".clearlogo", hTable[i].ClearLogo);
+            Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".cd", hTable[i].CD);
             Utils.SetProperty("#latestMediaHandler.mvcentral.latest" + z + ".new", hTable[i].New);
             z++;
           }
@@ -492,6 +500,11 @@ namespace LatestMediaHandler
             }
             catch { }
 
+            string fbanner = UtilsFanartHandler.GetFanartTVForLatestMedia(sArtist, string.Empty, string.Empty, Utils.FanartTV.MusicBanner);
+            string fclearart = UtilsFanartHandler.GetFanartTVForLatestMedia(sArtist, string.Empty, string.Empty, Utils.FanartTV.MusicClearArt);
+            // string fclearlogo = UtilsFanartHandler.GetFanartTVForLatestMedia(sArtist, string.Empty, string.Empty, Utils.FanartTV.MusicClearLogo);
+            string fclearlogo = fclearart;
+            string fcd = UtilsFanartHandler.GetFanartTVForLatestMedia(sArtist, sAlbum, string.Empty, Utils.FanartTV.MusicCDArt);
             // Add to latest
             latestMusicAlbums.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, allTrack.Track,
                                                                 sFileName,
@@ -503,6 +516,7 @@ namespace LatestMediaHandler
                                                                 null, null,
                                                                 sArtistBio, 
                                                                 null,
+                                                                fbanner, fclearart, fclearlogo, fcd,
                                                                 isnew)); 
             latestMusicAlbumsVideos.Add(i0, sFileName);
             Utils.ThreadToSleep();
@@ -685,6 +699,10 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.mvcentral.selected.genre", latestMusicAlbums[i].Genre);
           Utils.SetProperty("#latestMediaHandler.mvcentral.selected.artistbio", artistbio);
           Utils.SetProperty("#latestMediaHandler.mvcentral.selected.artistbiooutline", artistbiooutline);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.banner", latestMusicAlbums[i].Banner);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.clearart", latestMusicAlbums[i].ClearArt);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.clearlogo", latestMusicAlbums[i].ClearLogo);
+          Utils.SetProperty("#latestMediaHandler.mvcentral.selected.cd", latestMusicAlbums[i].CD);
           Utils.SetProperty("#latestMediaHandler.mvcentral.selected.new", latestMusicAlbums[i].New);
           selectedFacadeItem1 = item.ItemId;
 

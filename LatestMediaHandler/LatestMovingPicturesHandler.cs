@@ -28,6 +28,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Timers;
+using System.Runtime.CompilerServices;
 
 namespace LatestMediaHandler
 {
@@ -266,6 +267,7 @@ namespace LatestMediaHandler
     /// </summary>
     /// <param name="type">Type of data to fetch</param>
     /// <returns>Resultset of matching data</returns>
+    [MethodImpl(MethodImplOptions.NoInlining)]
     private LatestsCollection GetLatestMovingPictures()
     {
       latestMovies = new LatestsCollection();
@@ -290,6 +292,11 @@ namespace LatestMediaHandler
             if (string.IsNullOrEmpty(fanart))
               fanart = "DefaultFolderBig.png";
             
+            string fbanner = UtilsFanartHandler.GetFanartTVForLatestMedia(item.ImdbID, string.Empty, item.ImdbID, Utils.FanartTV.MoviesBanner);
+            string fclearart = UtilsFanartHandler.GetFanartTVForLatestMedia(item.ImdbID, string.Empty, item.ImdbID, Utils.FanartTV.MoviesClearArt);
+            string fclearlogo = UtilsFanartHandler.GetFanartTVForLatestMedia(item.ImdbID, string.Empty, item.ImdbID, Utils.FanartTV.MoviesClearLogo);
+            string fcd = UtilsFanartHandler.GetFanartTVForLatestMedia(item.ImdbID, string.Empty, item.ImdbID, Utils.FanartTV.MoviesCDArt);
+
             latests.Add(new Latest(sTimestamp, fanart, item.BackdropFullPath, item.Title, 
                                    null, null, null,
                                    item.Genres.ToPrettyString(2), item.Score.ToString(CultureInfo.CurrentCulture),
@@ -297,7 +304,8 @@ namespace LatestMediaHandler
                                    item.Certification, GetMovieRuntime(item), item.Year.ToString(CultureInfo.CurrentCulture), 
                                    null, null, null, 
                                    item, item.ID.ToString(), item.Summary, 
-                                   null));
+                                   null,
+                                   fbanner, fclearart, fclearlogo, fcd));
             Utils.ThreadToSleep();
           }
           if (vMovies != null)
@@ -317,6 +325,11 @@ namespace LatestMediaHandler
             if (string.IsNullOrEmpty(fanart))
               fanart = "DefaultFolderBig.png";
 
+            string fbanner = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, item.ImdbID, Utils.FanartTV.MoviesBanner);
+            string fclearart = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, item.ImdbID, Utils.FanartTV.MoviesClearArt);
+            string fclearlogo = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, item.ImdbID, Utils.FanartTV.MoviesClearLogo);
+            string fcd = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, item.ImdbID, Utils.FanartTV.MoviesCDArt);
+
             latests.Add(new Latest(sTimestamp, fanart, item.BackdropFullPath, item.Title, 
                                    null, null, null,
                                    item.Genres.ToPrettyString(2), item.Score.ToString(CultureInfo.CurrentCulture),
@@ -324,7 +337,8 @@ namespace LatestMediaHandler
                                    item.Certification, GetMovieRuntime(item), item.Year.ToString(CultureInfo.CurrentCulture), 
                                    null, null, null, 
                                    item, item.ID.ToString(), item.Summary, 
-                                   null));
+                                   null,
+                                   fbanner, fclearart, fclearlogo, fcd));
             Utils.ThreadToSleep();
           }
           if (vMovies != null)
@@ -418,6 +432,10 @@ namespace LatestMediaHandler
         Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".id", string.Empty);
         Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", string.Empty);
         Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plotoutline", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".banner", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".clearart", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".clearlogo", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".cd", string.Empty);
         Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".new", "false");
       }
     }
@@ -462,6 +480,10 @@ namespace LatestMediaHandler
             Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".id", hTable[i].Id);
             Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plot", plot);
             Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".plotoutline", plotoutline);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".banner", hTable[i].Banner);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".clearart", hTable[i].ClearArt);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".clearlogo", hTable[i].ClearLogo);
+            Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".cd", hTable[i].CD);
             Utils.SetProperty("#latestMediaHandler.movingpicture.latest" + z + ".new", hTable[i].New);
             z++;
           }
@@ -666,6 +688,10 @@ namespace LatestMediaHandler
           string plotoutline = Utils.GetSentences(plot, Utils.latestPlotOutlineSentencesNum);
           Utils.SetProperty("#latestMediaHandler.movingpicture.selected.plot", plot);
           Utils.SetProperty("#latestMediaHandler.movingpicture.selected.plotoutline", plotoutline);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.banner", latestMovies[i].Banner);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.clearart", latestMovies[i].ClearArt);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.clearlogo", latestMovies[i].ClearLogo);
+          Utils.SetProperty("#latestMediaHandler.movingpicture.selected.cd", latestMovies[i].CD);
           Utils.SetProperty("#latestMediaHandler.movingpicture.selected.new", latestMovies[i].New);
           selectedFacadeItem1 = item.ItemId;
 

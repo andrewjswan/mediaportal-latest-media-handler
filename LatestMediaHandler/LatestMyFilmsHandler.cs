@@ -15,8 +15,9 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Video.Database;
 
-using MyFilmsPlugin.MyFilms;
-using MyFilmsPlugin.MyFilms.MyFilmsGUI;
+using MyFilmsPlugin;
+using MyFilmsPlugin.DataBase;
+using MyFilmsPlugin.MyFilmsGUI;
 
 using LMHNLog.NLog;
 
@@ -241,6 +242,11 @@ namespace LatestMediaHandler
             catch
             {   }
 
+            string fbanner = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, movie.IMDBNumber, Utils.FanartTV.MoviesBanner);
+            string fclearart = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, movie.IMDBNumber, Utils.FanartTV.MoviesClearArt);
+            string fclearlogo = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, movie.IMDBNumber, Utils.FanartTV.MoviesClearLogo);
+            string fcd = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, movie.IMDBNumber, Utils.FanartTV.MoviesCDArt);
+
             latestMyFilms.Add(new Latest(tDate, thumb, movie.Fanart, movie.Title, 
                                      null, null, null, 
                                      movie.Category,
@@ -251,6 +257,7 @@ namespace LatestMediaHandler
                                      null, null, null, 
                                      movie, movie.ID.ToString(), 
                                      null, null,
+                                     fbanner, fclearart, fclearlogo, fcd,
                                      isnew));
 
             latestMovies.Add(i0, movie);
@@ -441,6 +448,10 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.myfilms.selected.rating", latestMyFilms[i].Rating);
           Utils.SetProperty("#latestMediaHandler.myfilms.selected.plot", plot);
           Utils.SetProperty("#latestMediaHandler.myfilms.selected.plotoutline", plotoutline);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.banner", latestMyFilms[i].Banner);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.clearart", latestMyFilms[i].ClearArt);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.clearlogo", latestMyFilms[i].ClearLogo);
+          Utils.SetProperty("#latestMediaHandler.myfilms.selected.cd", latestMyFilms[i].CD);
           Utils.SetProperty("#latestMediaHandler.myfilms.selected.new", latestMyFilms[i].New);
           selectedFacadeItem1 = item.ItemId;
 
@@ -559,7 +570,7 @@ namespace LatestMediaHandler
 
     internal void PlayMovie(int index)
     {
-      MyFilmsPlugin.MyFilms.MFMovie mov = (MyFilmsPlugin.MyFilms.MFMovie) latestMovies[index];
+      MFMovie mov = (MFMovie) latestMovies[index];
       string loadingParameter = string.Format("config:{0}|movieid:{1}|play:{2}", mov.Config, mov.ID, "true");
       GUIWindowManager.ActivateWindow(7986, loadingParameter);
     }
@@ -627,6 +638,10 @@ namespace LatestMediaHandler
         Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".id", string.Empty);
         Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plot", string.Empty);
         Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plotoutline", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".banner", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".clearart", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".clearlogo", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".cd", string.Empty);
         Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".new", "false");
       }
     }
@@ -687,6 +702,10 @@ namespace LatestMediaHandler
             Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".runtime", ht[i].Runtime);
             Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plot", plot);
             Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".plotoutline", plotoutline);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".banner", ht[i].Banner);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".clearart", ht[i].ClearArt);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".clearlogo", ht[i].ClearLogo);
+            Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".cd", ht[i].CD);
             Utils.SetProperty("#latestMediaHandler.myfilms.latest" + z + ".new", ht[i].New);
             z++;
           }

@@ -26,6 +26,7 @@ using System.Threading;
 using System.Timers;
 
 using WindowPlugins.GUITVSeries;
+using System.Runtime.CompilerServices;
 
 namespace LatestMediaHandler
 {
@@ -379,6 +380,7 @@ namespace LatestMediaHandler
     /// </summary>
     /// <param name="type">Type of data to fetch</param>
     /// <returns>Resultset of matching data</returns>
+    [MethodImpl(MethodImplOptions.NoInlining)]
     private LatestsCollection GetLatestTVSeriesSeries(Types type, bool onlyNew)
     {
       Hashtable ht = new Hashtable();
@@ -531,12 +533,35 @@ namespace LatestMediaHandler
                   string latestRuntime = (resultType == ResultTypes.Episodes ? episodeRuntime : (resultType == ResultTypes.Seasons ? "" : ""));
                   string latestSummary = (resultType == ResultTypes.Episodes ? episodeSummary : (resultType == ResultTypes.Seasons ? seasonSummary : seriesSummary));
                   // logger.Debug(i0+"|"+dateAdded+"|"+thumb+"|"+fanart+"|"+seriesTitle+"|"+latestTitle+"|"+seriesGenre+"|"+latestRating+"|"+mathRoundToString+"|"+contentRating+"|"+latestRuntime+"|"+firstAired+"|"+seasonIdx+"|"+episodeIdx+"|"+seriesThumb+"|"+latestSummary+"|"+seriesIdx+"|"+isnew);
+
+                  string fbanner = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, seriesIdx, Utils.FanartTV.SeriesBanner);
+                  string fclearart = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, seriesIdx, Utils.FanartTV.SeriesClearArt);
+                  string fclearlogo = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, seriesIdx, Utils.FanartTV.SeriesClearLogo);
+                  string fcd = UtilsFanartHandler.GetFanartTVForLatestMedia(string.Empty, string.Empty, seriesIdx, Utils.FanartTV.SeriesCDArt);
+
+                  if (resultType == ResultTypes.Episodes || resultType == ResultTypes.Seasons)
+                  {
+                    string fsbanner = UtilsFanartHandler.GetFanartTVForLatestMedia(seasonIdx, string.Empty, seriesIdx, Utils.FanartTV.SeriesSeasonBanner);
+                    if (!string.IsNullOrEmpty(fsbanner))
+                    {
+                      fbanner = fsbanner;
+                    }
+
+                    string fscd = UtilsFanartHandler.GetFanartTVForLatestMedia(seasonIdx, string.Empty, seriesIdx, Utils.FanartTV.SeriesSeasonCDArt);
+                    if (!string.IsNullOrEmpty(fscd))
+                    {
+                      fcd = fscd;
+                    }
+                  }
+
                   latestTVSeries.Add(new LatestMediaHandler.Latest(dateAdded, thumb, fanart, seriesTitle, latestTitle, 
                                                                    null,
                                                                    null, 
                                                                    seriesGenre, latestRating, mathRoundToString, contentRating, latestRuntime, firstAired, seasonIdx, episodeIdx, seriesThumb, 
                                                                    null, null, 
-                                                                   latestSummary, seriesIdx, isnew));
+                                                                   latestSummary, seriesIdx,
+                                                                   fbanner, fclearart, fclearlogo, fcd,
+                                                                   isnew));
                   latestTVSeriesForPlay.Add(i0, episode);
                   Utils.ThreadToSleep();
 
@@ -611,6 +636,10 @@ namespace LatestMediaHandler
         Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".firstAired", string.Empty);
         Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plot", string.Empty);
         Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plotoutline", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".banner", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".clearart", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".clearlogo", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".cd", string.Empty);
         Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".new", "false");
       }
       Utils.SetProperty("#latestMediaHandler.tvseries.latest.mode", "episodes");
@@ -632,6 +661,7 @@ namespace LatestMediaHandler
       }
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     internal void TVSeriesUpdateLatest(Types type, bool onlyNew)
     {
       int sync = Interlocked.CompareExchange(ref Utils.SyncPointTVSeriesUpdate, 1, 0);
@@ -674,6 +704,10 @@ namespace LatestMediaHandler
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".firstAired", hTable[i].Year);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plot", plot);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".plotoutline", plotoutline);
+            Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".banner", hTable[i].Banner);
+            Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".clearart", hTable[i].ClearArt);
+            Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".clearlogo", hTable[i].ClearLogo);
+            Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".cd", hTable[i].CD);
             Utils.SetProperty("#latestMediaHandler.tvseries.latest" + z + ".new", hTable[i].New);
             z++;
           }
@@ -864,6 +898,10 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.tvseries.selected.firstAired", latestTVSeries[i].Year);
           Utils.SetProperty("#latestMediaHandler.tvseries.selected.plot", plot);
           Utils.SetProperty("#latestMediaHandler.tvseries.selected.plotoutline", plotoutline);
+          Utils.SetProperty("#latestMediaHandler.tvseries.selected.banner", latestTVSeries[i].Banner);
+          Utils.SetProperty("#latestMediaHandler.tvseries.selected.clearart", latestTVSeries[i].ClearArt);
+          Utils.SetProperty("#latestMediaHandler.tvseries.selected.clearlogo", latestTVSeries[i].ClearLogo);
+          Utils.SetProperty("#latestMediaHandler.tvseries.selected.cd", latestTVSeries[i].CD);
           Utils.SetProperty("#latestMediaHandler.tvseries.selected.new", latestTVSeries[i].New);
           selectedFacadeItem1 = item.ItemId;
 
@@ -1007,7 +1045,8 @@ namespace LatestMediaHandler
       {
         GUIWindowManager.Receivers -= new SendMessageHandler(OnMessage);
         OnlineParsing.OnlineParsingCompleted -= new OnlineParsing.OnlineParsingCompletedHandler(TVSeriesOnObjectInserted);
-        TVSeriesPlugin.ToggleWatched -= new TVSeriesPlugin.ToggleWatchedEventDelegate(OnToggleWatched);      }
+        TVSeriesPlugin.ToggleWatched -= new TVSeriesPlugin.ToggleWatchedEventDelegate(OnToggleWatched);
+      }
       catch (Exception ex)
       {
         logger.Error("DisposeTVSeriesLatest: " + ex.ToString());

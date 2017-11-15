@@ -1058,5 +1058,23 @@ namespace LatestMediaHandler
       TV,   
     }
 
+    public enum FanartTV
+    {
+      MusicClearArt, 
+      MusicBanner, 
+      MusicCDArt, 
+      MoviesClearArt, 
+      MoviesBanner, 
+      MoviesClearLogo, 
+      MoviesCDArt,
+      SeriesBanner,
+      SeriesClearArt,
+      SeriesClearLogo, 
+      SeriesCDArt,
+      SeriesSeasonBanner,
+      SeriesSeasonCDArt,
+      None, 
+    }
+
   }
 }

@@ -35,6 +35,10 @@ List of latests properties:
  #latestMediaHandler.music.latest[1,2,3,4].fanart
  #latestMediaHandler.music.latest[1,2,3,4].genre
  #latestMediaHandler.music.latest[1,2,3,4].new
+ #latestMediaHandler.music.latest[1,2,3,4].banner
+ #latestMediaHandler.music.latest[1,2,3,4].clearart
+ #latestMediaHandler.music.latest[1,2,3,4].clearlogo
+ #latestMediaHandler.music.latest[1,2,3,4].cd
 
  #latestMediaHandler.music.selected.thumb
  #latestMediaHandler.music.selected.artist
@@ -48,6 +52,10 @@ List of latests properties:
  #latestMediaHandler.music.selected.fanart2
  #latestMediaHandler.music.selected.showfanart1
  #latestMediaHandler.music.selected.showfanart2
+ #latestMediaHandler.music.selected.banner
+ #latestMediaHandler.music.selected.clearart
+ #latestMediaHandler.music.selected.clearlogo
+ #latestMediaHandler.music.selected.cd
 
 * MyVideo
  #latestMediaHandler.myvideo.label
@@ -67,6 +75,10 @@ List of latests properties:
  #latestMediaHandler.myvideo.latest[1,2,3,4].plot
  #latestMediaHandler.myvideo.latest[1,2,3,4].plotoutline
  #latestMediaHandler.myvideo.latest[1,2,3,4].new
+ #latestMediaHandler.myvideo.latest[1,2,3,4].banner
+ #latestMediaHandler.myvideo.latest[1,2,3,4].clearart
+ #latestMediaHandler.myvideo.latest[1,2,3,4].clearlogo
+ #latestMediaHandler.myvideo.latest[1,2,3,4].cd
 
  #latestMediaHandler.myvideo.selected.thumb
  #latestMediaHandler.myvideo.selected.title
@@ -84,6 +96,10 @@ List of latests properties:
  #latestMediaHandler.myvideo.selected.fanart2
  #latestMediaHandler.myvideo.selected.showfanart1
  #latestMediaHandler.myvideo.selected.showfanart2
+ #latestMediaHandler.myvideo.selected.banner
+ #latestMediaHandler.myvideo.selected.clearart
+ #latestMediaHandler.myvideo.selected.clearlogo
+ #latestMediaHandler.myvideo.selected.cd
 
 * Pictures
  #latestMediaHandler.picture.label
@@ -129,6 +145,10 @@ List of latests properties:
  #latestMediaHandler.tvseries.latest[1,2,3,4].plot
  #latestMediaHandler.tvseries.latest[1,2,3,4].plotoutline
  #latestMediaHandler.tvseries.latest[1,2,3,4].new
+ #latestMediaHandler.tvseries.latest[1,2,3,4].banner
+ #latestMediaHandler.tvseries.latest[1,2,3,4].clearart
+ #latestMediaHandler.tvseries.latest[1,2,3,4].clearlogo
+ #latestMediaHandler.tvseries.latest[1,2,3,4].cd
 
  #latestMediaHandler.tvseries.selected.thumb
  #latestMediaHandler.tvseries.selected.serieThumb
@@ -150,6 +170,10 @@ List of latests properties:
  #latestMediaHandler.tvseries.selected.fanart2
  #latestMediaHandler.tvseries.selected.showfanart1
  #latestMediaHandler.tvseries.selected.showfanart2
+ #latestMediaHandler.tvseries.selected.banner
+ #latestMediaHandler.tvseries.selected.clearart
+ #latestMediaHandler.tvseries.selected.clearlogo
+ #latestMediaHandler.tvseries.selected.cd
 
 * Moving Pictures:
  #latestMediaHandler.movingpicture.label
@@ -169,6 +193,10 @@ List of latests properties:
  #latestMediaHandler.movingpicture.latest[1,2,3,4].plot
  #latestMediaHandler.movingpicture.latest[1,2,3,4].plotoutline
  #latestMediaHandler.movingpicture.latest[1,2,3,4].new
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].banner
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].clearart
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].clearlogo
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].cd
   
  #latestMediaHandler.movingpicture.selected.thumb
  #latestMediaHandler.movingpicture.selected.title
@@ -187,6 +215,10 @@ List of latests properties:
  #latestMediaHandler.movingpicture.selected.fanart2
  #latestMediaHandler.movingpicture.selected.showfanart1
  #latestMediaHandler.movingpicture.selected.showfanart2
+ #latestMediaHandler.movingpicture.selected.banner
+ #latestMediaHandler.movingpicture.selected.clearart
+ #latestMediaHandler.movingpicture.selected.clearlogo
+ #latestMediaHandler.movingpicture.selected.cd
 
 * MyFilms
  #latestMediaHandler.myfilms.label
@@ -203,6 +235,10 @@ List of latests properties:
  #latestMediaHandler.myfilms.latest[1,2,3,4].plot
  #latestMediaHandler.myfilms.latest[1,2,3,4].plotoutline
  #latestMediaHandler.myfilms.latest[1,2,3,4].new
+ #latestMediaHandler.myfilms.latest[1,2,3,4].banner
+ #latestMediaHandler.myfilms.latest[1,2,3,4].clearart
+ #latestMediaHandler.myfilms.latest[1,2,3,4].clearlogo
+ #latestMediaHandler.myfilms.latest[1,2,3,4].cd
 
  #latestMediaHandler.myfilms.selected.thumb
  #latestMediaHandler.myfilms.selected.title
@@ -220,6 +256,10 @@ List of latests properties:
  #latestMediaHandler.myfilms.selected.fanart2
  #latestMediaHandler.myfilms.selected.showfanart1
  #latestMediaHandler.myfilms.selected.showfanart2
+ #latestMediaHandler.myfilms.selected.banner
+ #latestMediaHandler.myfilms.selected.clearart
+ #latestMediaHandler.myfilms.selected.clearlogo
+ #latestMediaHandler.myfilms.selected.cd
 
 * MvCentral:
  #latestMediaHandler.mvcentral.label
@@ -235,6 +275,10 @@ List of latests properties:
  #latestMediaHandler.mvcentral.latest[1,2,3,4].fanart
  #latestMediaHandler.mvcentral.latest[1,2,3,4].genre
  #latestMediaHandler.mvcentral.latest[1,2,3,4].new
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].banner
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].clearart
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].clearlogo
+ #latestMediaHandler.mvcentral.latest[1,2,3,4].cd
 
  #latestMediaHandler.mvcentral.selected.thumb
  #latestMediaHandler.mvcentral.selected.artist
@@ -249,6 +293,10 @@ List of latests properties:
  #latestMediaHandler.mvcentral.selected.fanart2
  #latestMediaHandler.mvcentral.selected.showfanart1
  #latestMediaHandler.mvcentral.selected.showfanart2
+ #latestMediaHandler.mvcentral.selected.banner
+ #latestMediaHandler.mvcentral.selected.clearart
+ #latestMediaHandler.mvcentral.selected.clearlogo
+ #latestMediaHandler.mvcentral.selected.cd
 
 * TVRecording
  #latestMediaHandler.tvrecordings.label

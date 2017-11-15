@@ -300,6 +300,10 @@ namespace LatestMediaHandler
         Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".dateAdded", string.Empty);
         Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".fanart", string.Empty);
         Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".genre", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".banner", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".clearart", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".clearlogo", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".cd", string.Empty);
         Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".new", "false");
       }
     }
@@ -341,6 +345,10 @@ namespace LatestMediaHandler
             Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".dateAdded", hTable[i].DateAdded);
             Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".fanart", hTable[i].Fanart);
             Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".genre", hTable[i].Genre);
+            Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".banner", hTable[i].Banner);
+            Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".clearart", hTable[i].ClearArt);
+            Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".clearlogo", hTable[i].ClearLogo);
+            Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".cd", hTable[i].CD);
             Utils.SetProperty("#latestMediaHandler.music.latest" + z + ".new", hTable[i].New);
             z++;
           }
@@ -1077,15 +1085,31 @@ namespace LatestMediaHandler
               isnew = false;
             }
 
+            string fbanner = UtilsFanartHandler.GetFanartTVForLatestMedia(sArtist, string.Empty, string.Empty, Utils.FanartTV.MusicBanner);
+            string fclearart = UtilsFanartHandler.GetFanartTVForLatestMedia(sArtist, string.Empty, string.Empty, Utils.FanartTV.MusicClearArt);
+            // string fclearlogo = UtilsFanartHandler.GetFanartTVForLatestMedia(sArtist, string.Empty, string.Empty, Utils.FanartTV.MusicClearArt);
+            string fclearlogo = fclearart;
+            string fcd = UtilsFanartHandler.GetFanartTVForLatestMedia(sArtist, sAlbum, string.Empty, Utils.FanartTV.MusicCDArt);
+
+            if (mySong.DiscId > 0)
+            {
+              string fcdid = UtilsFanartHandler.GetFanartTVForLatestMedia(sArtist, sAlbum, mySong.DiscId.ToString(), Utils.FanartTV.MusicCDArt);
+              if (!string.IsNullOrEmpty(fcdid))
+              {
+                fcd = fcdid;
+              }
+            }
+
             latestMusicAlbums.Add(new LatestMediaHandler.Latest(dateAdded, thumb, sFilename1, 
                                                                 sPaths, sFileType, // FileType 
-                                                                sArtist, mySong.Album, sGenres, 
+                                                                sArtist, sAlbum, sGenres, 
                                                                 null, null, 
                                                                 sFileType, 
                                                                 null, null, null, null, null, null, 
                                                                 mySong.DateTimePlayed.ToString(), 
                                                                 mySong.Lyrics, // Artist.BIO
                                                                 sYear, // Year
+                                                                fbanner, fclearart, fclearlogo, fcd,
                                                                 isnew));
             latestMusicAlbumsFolders.Add(i0, sPaths);
             Utils.ThreadToSleep();
@@ -1297,6 +1321,10 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.music.selected.artistbio", artistbio);
           Utils.SetProperty("#latestMediaHandler.music.selected.artistbiooutline", artistbiooutline);
           Utils.SetProperty("#latestMediaHandler.music.selected.year", latestMusicAlbums[i].SeriesIndex);
+          Utils.SetProperty("#latestMediaHandler.music.selected.banner", latestMusicAlbums[i].Banner);
+          Utils.SetProperty("#latestMediaHandler.music.selected.clearart", latestMusicAlbums[i].ClearArt);
+          Utils.SetProperty("#latestMediaHandler.music.selected.clearlogo", latestMusicAlbums[i].ClearLogo);
+          Utils.SetProperty("#latestMediaHandler.music.selected.cd", latestMusicAlbums[i].CD);
           Utils.SetProperty("#latestMediaHandler.music.selected.new", latestMusicAlbums[i].New);
 
           selectedFacadeItem1 = item.ItemId;
