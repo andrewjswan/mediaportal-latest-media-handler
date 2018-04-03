@@ -299,7 +299,7 @@ Bug fixes ...
 
 WARNING: In skins using the facade control (DWHD, PVHD, Titanius), it may not work in MP versions below 1.19.</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
+    <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
     <ReleaseDate>2018-04-03T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
