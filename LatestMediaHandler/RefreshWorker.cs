@@ -28,70 +28,77 @@ namespace LatestMediaHandler
 
     private static Logger logger = LogManager.GetCurrentClassLogger();
     private Object Argument { get; set;}
+    private string WorkerName = "RefreshWorker";
 
     #endregion
 
     public RefreshWorker()
     {
-      WorkerReportsProgress = false; // true
+      WorkerReportsProgress = false;
       WorkerSupportsCancellation = true;
     }
 
     protected override void OnDoWork(DoWorkEventArgs e)
     {
-      if (Utils.GetIsStopping() == false)
+      if (!Utils.IsStopping)
       {
-        // if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_INVALID)
+        // if (Utils.ActiveWindow == (int)GUIWindow.Window.WINDOW_INVALID)
         //   return;
         
-        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_SECOND_HOME)
+        if (Utils.ActiveWindow != (int)GUIWindow.Window.WINDOW_SECOND_HOME)
         {
-          Thread.Sleep(Utils.scanDelay);
+          Thread.Sleep(Utils.ScanDelay);
         }
         
         try
         {
-          if (LatestMediaHandlerSetup.LMHThreadPriority.Equals("Lowest", StringComparison.CurrentCulture))
+          if (LatestMediaHandlerSetup.LMHThreadPriority == Utils.Priority.Lowest)
+          {
             Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+          }
           else
+          {
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+          }
 
           Argument = e.Argument;
-          Thread.CurrentThread.Name = "RefreshWorker-"+Argument.ToString().Trim();
-          Utils.AllocateDelayStop("RefreshWorker-OnDoWork-"+Argument.ToString().Trim());
-          logger.Debug("RefreshWorker: Start: "+Argument.ToString());
+          GetWorkerName();
+
+          Thread.CurrentThread.Name = WorkerName;
+          Utils.AllocateDelayStop(WorkerName);
+          logger.Debug("RefreshWorker: Start: " + WorkerName);
 
           Utils.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
           Utils.ThreadToSleep();
 
           if (Argument is LatestMusicHandler)
           {
-            LatestMediaHandlerSetup.Lmh.GetLatestMediaInfo(LatestMediaHandlerSetup.Starting);
+            ((LatestMusicHandler)Argument).GetLatestMediaInfo(LatestMediaHandlerSetup.Starting);
           }
           else if (Argument is LatestPictureHandler)
           {
-            LatestMediaHandlerSetup.Lph.GetLatestMediaInfo();
+            ((LatestPictureHandler)Argument).GetLatestMediaInfo();
           }
           else if (Argument is LatestMovingPicturesHandler)
           {
-            LatestMediaHandlerSetup.Lmph.MovingPictureUpdateLatest();
+            ((LatestMovingPicturesHandler)Argument).MovingPictureUpdateLatest();
           }
           else if (Argument is LatestTVSeriesHandler)
           {
-            LatestMediaHandlerSetup.Ltvsh.TVSeriesUpdateLatest(LatestMediaHandlerSetup.Ltvsh.CurrentType, LatestMediaHandlerSetup.LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture));
-            LatestMediaHandlerSetup.Ltvsh.ChangedEpisodeCount();
+            ((LatestTVSeriesHandler)Argument).TVSeriesUpdateLatest();
+            ((LatestTVSeriesHandler)Argument).ChangedEpisodeCount();
           }
           else if (Argument is LatestMyFilmsHandler)
           {
-            LatestMediaHandlerSetup.Lmfh.MyFilmsUpdateLatest();
+            ((LatestMyFilmsHandler)Argument).MyFilmsUpdateLatest();
           }
           else if (Argument is LatestMyVideosHandler)
           {
-            LatestMediaHandlerSetup.Lmvh.MyVideosUpdateLatest();
+            ((LatestMyVideosHandler)Argument).MyVideosUpdateLatest();
           }
           else if (Argument is LatestMvCentralHandler)
           {
-            LatestMediaHandlerSetup.Lmch.GetLatestMediaInfo(LatestMediaHandlerSetup.Starting);
+            ((LatestMvCentralHandler)Argument).GetLatestMediaInfo(LatestMediaHandlerSetup.Starting);
           }
         }
         catch (Exception ex)
@@ -101,19 +108,78 @@ namespace LatestMediaHandler
       }
     }
 
-    internal void OnRunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+    internal void OnRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
       try
       {
-        Utils.ReleaseDelayStop("RefreshWorker-OnDoWork-"+Argument.ToString().Trim());
-        logger.Debug("RefreshWorker: Complete: "+Argument.ToString());
+        Utils.ReleaseDelayStop(WorkerName);
+        logger.Debug("RefreshWorker: Complete: " + WorkerName);
         Utils.ThreadToSleep();
 
         Utils.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
       }
       catch (Exception ex)
       {
-        logger.Error("OnRunWorkerCompleted: ["+Argument.ToString()+"]" + ex.ToString());
+        logger.Error("OnRunWorkerCompleted: [" + Argument.ToString() + "][" + WorkerName + "]" + ex.ToString());
+      }
+    }
+
+    private void GetWorkerName()
+    {
+      if (Argument == null)
+      {
+        return;
+      }
+
+      WorkerName = WorkerName + "." + Argument.ToString().Trim();
+      if (Argument is LatestMusicHandler)
+      {
+        if (!((LatestMusicHandler)Argument).MainFacade)
+        {
+          WorkerName = WorkerName + "." + ((LatestMusicHandler)Argument).CurrentFacade.ControlID;
+        }
+      }
+      else if (Argument is LatestPictureHandler)
+      {
+        if (!((LatestPictureHandler)Argument).MainFacade)
+        {
+          WorkerName = WorkerName + "." + ((LatestPictureHandler)Argument).CurrentFacade.ControlID;
+        }
+      }
+      else if (Argument is LatestMovingPicturesHandler)
+      {
+        if (!((LatestMovingPicturesHandler)Argument).MainFacade)
+        {
+          WorkerName = WorkerName + "." + ((LatestMovingPicturesHandler)Argument).CurrentFacade.ControlID;
+        }
+      }
+      else if (Argument is LatestTVSeriesHandler)
+      {
+        if (!((LatestTVSeriesHandler)Argument).MainFacade)
+        {
+          WorkerName = WorkerName + "." + ((LatestTVSeriesHandler)Argument).CurrentFacade.ControlID;
+        }
+      }
+      else if (Argument is LatestMyFilmsHandler)
+      {
+        if (!((LatestMyFilmsHandler)Argument).MainFacade)
+        {
+          WorkerName = WorkerName + "." + ((LatestMyFilmsHandler)Argument).CurrentFacade.ControlID;
+        }
+      }
+      else if (Argument is LatestMyVideosHandler)
+      {
+        if (!((LatestMyVideosHandler)Argument).MainFacade)
+        {
+          WorkerName = WorkerName + "." + ((LatestMyVideosHandler)Argument).CurrentFacade.ControlID;
+        }
+      }
+      else if (Argument is LatestMvCentralHandler)
+      {
+        if (!((LatestMvCentralHandler)Argument).MainFacade)
+        {
+          WorkerName = WorkerName + "." + ((LatestMvCentralHandler)Argument).CurrentFacade.ControlID;
+        }
       }
     }
   }

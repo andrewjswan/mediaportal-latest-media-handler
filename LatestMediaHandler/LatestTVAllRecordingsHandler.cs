@@ -32,6 +32,11 @@ namespace LatestMediaHandler
 
     private LatestTVRecordingsHandler ltvrh = null;
     private LatestArgusRecordingsHandler largusrh = null;
+    private int currentFacade = 0;
+
+    private int showFanart = 1;
+    private bool needCleanup = false;
+    private int needCleanupCount = 0;
 
     private LatestTVRecordingsWorker MyLatestTVRecordingsWorker = null;
     #endregion
@@ -42,8 +47,36 @@ namespace LatestMediaHandler
     public const int Play3ControlID = 91919986;
     public const int Play4ControlID = 91919987;
 
-    public List<int> ControlIDFacades;
+    public List<LatestsFacade> ControlIDFacades;
     public List<int> ControlIDPlays;
+
+    public bool MainFacade
+    {
+      get { return CurrentFacade.ControlID == ControlID; }
+    }
+
+    public LatestsFacade CurrentFacade
+    {
+      get { return ControlIDFacades[currentFacade]; }
+    }
+
+    public int ShowFanart
+    {
+      get { return showFanart; }
+      set { showFanart = value; }
+    }
+
+    public int NeedCleanupCount
+    {
+      get { return needCleanupCount; }
+      set { needCleanupCount = value; }
+    }
+
+    public bool NeedCleanup
+    {
+      get { return needCleanup; }
+      set { needCleanup = value; }
+    }
 
     public LatestTVRecordingsHandler Ltvrh
     {
@@ -57,62 +90,35 @@ namespace LatestMediaHandler
         set { largusrh = value; }
     }
 
-    public LatestTVAllRecordingsHandler()
+    public LatestTVAllRecordingsHandler(int id = ControlID)
     {
-      Ltvrh = new LatestTVRecordingsHandler();
-      Largusrh = new LatestArgusRecordingsHandler();
-
-      ControlIDFacades = new List<int>();
+      ControlIDFacades = new List<LatestsFacade>();
       ControlIDPlays = new List<int>();
       //
-      ControlIDFacades.Add(ControlID);
-      ControlIDPlays.Add(Play1ControlID);
-      ControlIDPlays.Add(Play2ControlID);
-      ControlIDPlays.Add(Play3ControlID);
-      ControlIDPlays.Add(Play4ControlID);
-    }
-
-    public int LastFocusedId
-    {
-      get 
+      ControlIDFacades.Add(new LatestsFacade(id, "TVRecordings"));
+      if (id == ControlID)
       {
-          if (Utils.UsedArgus)
-          {
-              if (Largusrh != null)
-              {
-                  return Largusrh.LastFocusedId;
-              }
-          }
-          else
-          {
-              if (Ltvrh != null)
-              {
-                  return Ltvrh.LastFocusedId;
-              }
-          }
-          return 0;
+        ControlIDPlays.Add(Play1ControlID);
+        ControlIDPlays.Add(Play2ControlID);
+        ControlIDPlays.Add(Play3ControlID);
+        ControlIDPlays.Add(Play4ControlID);
       }
-      set 
-      {
-        if (Utils.UsedArgus)
-        {
-          if (Largusrh != null)
-          {
-            Largusrh.LastFocusedId = value;
-          }
-        }
-        else
-        {
-          if (Ltvrh != null)
-          {
-            Ltvrh.LastFocusedId = value;
-          }
-        }
-      }
+      ControlIDFacades[ControlIDFacades.Count - 1].UnWatched = Utils.LatestTVRecordingsWatched;
+      //
+      EmptyLatestMediaProperties();
+      EmptyRecordingProps();
+      //
+      Ltvrh = new LatestTVRecordingsHandler(this);
+      Largusrh = new LatestArgusRecordingsHandler(this);
     }
 
     internal void EmptyRecordingProps()
     {
+      if (!MainFacade && !CurrentFacade.AddProperties)
+      {
+        return;
+      }
+
       Utils.SetProperty("#latestMediaHandler.tvrecordings.label", Translation.LabelLatestAdded);
       //Active Recordings
       for (int z = 1; z <= Utils.LatestsMaxTVNum; z++)
@@ -140,8 +146,13 @@ namespace LatestMediaHandler
       }
     }
 
-    internal void EmptyLatestMediaPropsTVRecordings()
+    internal void EmptyLatestMediaProperties()
     {
+      if (!MainFacade && !CurrentFacade.AddProperties)
+      {
+        return;
+      }
+
       Utils.SetProperty("#latestMediaHandler.tvrecordings.label", Translation.LabelLatestAdded);
       Utils.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "false");
       Utils.SetProperty("#latestMediaHandler.tvrecordings.hasnew", "false");
@@ -155,6 +166,7 @@ namespace LatestMediaHandler
         Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".series", string.Empty);
         Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".episode", string.Empty);
         Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".episodename", string.Empty);
+        Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".directory", string.Empty);
         Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".new", "false");
       }
     }
@@ -180,31 +192,26 @@ namespace LatestMediaHandler
 
     internal void GetTVRecordings(int Mode = 0) // 0 - UpdateLatestMediaInfo(); 1 - UpdateActiveRecordings();
     {
-      if (!LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
+      if (!Utils.LatestTVRecordings)
         return ;
 
-      if (Utils.GetIsStopping() == false)
+      if (!Utils.IsStopping)
       {
         try
         {
-          int sync = Interlocked.CompareExchange(ref Utils.SyncPointTVRecordings, 1, 0);
-          if (sync == 0)
+          // No other event was executing.                                   
+          if (MyLatestTVRecordingsWorker == null)
           {
-            // No other event was executing.                                   
-            if (MyLatestTVRecordingsWorker == null)
-            {
-              MyLatestTVRecordingsWorker = new LatestTVRecordingsWorker();
-              MyLatestTVRecordingsWorker.RunWorkerCompleted += MyLatestTVRecordingsWorker.OnRunWorkerCompleted;
-            }
-            if (MyLatestTVRecordingsWorker.IsBusy)
-              return;
-
+            MyLatestTVRecordingsWorker = new LatestTVRecordingsWorker();
+            MyLatestTVRecordingsWorker.RunWorkerCompleted += MyLatestTVRecordingsWorker.OnRunWorkerCompleted;
+          }
+          if (!MyLatestTVRecordingsWorker.IsBusy)
+          {
             MyLatestTVRecordingsWorker.RunWorkerAsync(Mode);
           }
         }
         catch (Exception ex)
         {
-          Utils.SyncPointTVRecordings = 0;
           logger.Error("GetTVRecordings: [" + ((Mode == 0) ? "GET" : "UPDATE") + "] " + ex.ToString());
         }
       }
@@ -217,7 +224,10 @@ namespace LatestMediaHandler
 
     internal void UpdateActiveRecordings()
     {
-      if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
+      // if (Interlocked.CompareExchange(ref CurrentFacade.Update, 1, 0) != 0)
+      //   return;
+
+      if (Utils.LatestTVRecordings)
       {
         try
         {
@@ -243,11 +253,15 @@ namespace LatestMediaHandler
           logger.Error("UpdateActiveRecordings: " + ex.ToString());
         }
       }
+      // CurrentFacade.Update = 0;
     }
 
     internal void UpdateLatestMediaInfo()
     {
-      if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
+      if (Interlocked.CompareExchange(ref CurrentFacade.Update, 1, 0) != 0)
+        return;
+
+      if (Utils.LatestTVRecordings)
       {
         try
         {
@@ -266,15 +280,17 @@ namespace LatestMediaHandler
           logger.Error("UpdateLatestMediaInfo: " + ex.ToString());
         }
       }
+
+      CurrentFacade.Update = 0;
     }
 
     internal void GetLatestMediaInfo()
     {
       int z = 1;
-      if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
+      if (Utils.LatestTVRecordings)
       {
         //TV Recordings
-        LatestMediaHandler.LatestsCollection latestTVRecordings = null;
+        LatestsCollection latestTVRecordings = null;
         try
         {
           MediaPortal.Profile.Settings xmlreader =  new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
@@ -289,7 +305,7 @@ namespace LatestMediaHandler
 
             if (Largusrh == null)
             {
-              Largusrh = new LatestArgusRecordingsHandler();
+              Largusrh = new LatestArgusRecordingsHandler(this);
             }
 
             ResolveEventHandler assemblyResolve = Largusrh.OnAssemblyResolve;
@@ -321,7 +337,7 @@ namespace LatestMediaHandler
           {
             if (Ltvrh == null)
             {
-              Ltvrh = new LatestTVRecordingsHandler();
+              Ltvrh = new LatestTVRecordingsHandler(this);
             }
             latestTVRecordings = Ltvrh.GetTVRecordings();
             Ltvrh.UpdateActiveRecordings();
@@ -352,14 +368,14 @@ namespace LatestMediaHandler
         {
           if (!noNewRecordings)
           {
-            EmptyLatestMediaPropsTVRecordings();
+            EmptyLatestMediaProperties();
             z = 1;
             for (int i = 0; i < latestTVRecordings.Count && i < Utils.LatestsMaxTVNum; i++)
             {
               logger.Info("Updating Latest Media Info: TV Recording: Recording " + z + ": " + latestTVRecordings[i].Title);
 
               string recsummary = (string.IsNullOrEmpty(latestTVRecordings[i].Summary) ? Translation.NoDescription : latestTVRecordings[i].Summary);
-              string recsummaryoutline = Utils.GetSentences(recsummary, Utils.latestPlotOutlineSentencesNum);
+              string recsummaryoutline = Utils.GetSentences(recsummary, Utils.LatestPlotOutlineSentencesNum);
               Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".thumb", latestTVRecordings[i].Thumb);
               Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".title", latestTVRecordings[i].Title);
               Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".dateAdded", latestTVRecordings[i].DateAdded);
@@ -369,18 +385,19 @@ namespace LatestMediaHandler
               Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".series", latestTVRecordings[i].SeriesIndex);
               Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".episode", latestTVRecordings[i].EpisodeIndex);
               Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".episodename", latestTVRecordings[i].ThumbSeries);
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".directory", latestTVRecordings[i].Directory);
               Utils.SetProperty("#latestMediaHandler.tvrecordings.latest" + z + ".new", latestTVRecordings[i].New);
               z++;
             }
             //latestTVRecordings.Clear();
             Utils.SetProperty("#latestMediaHandler.tvrecordings.latest.enabled", "true");
-            Utils.SetProperty("#latestMediaHandler.tvrecordings.hasnew", Utils.HasNewTVRecordings ? "true" : "false");
-            logger.Debug("Updating Latest Media Info: TV Recording: Has new: " + (Utils.HasNewTVRecordings ? "true" : "false"));
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.hasnew", CurrentFacade.HasNew ? "true" : "false");
+            logger.Debug("Updating Latest Media Info: TV Recording: Has new: " + (CurrentFacade.HasNew ? "true" : "false"));
           }
         }
         else
         {
-          EmptyLatestMediaPropsTVRecordings();
+          EmptyLatestMediaProperties();
           logger.Info("Updating Latest Media Info: TV Recording: No recordings found!");
         }
         //latestTVRecordings = null;
@@ -388,79 +405,58 @@ namespace LatestMediaHandler
       }
       else
       {
-        EmptyLatestMediaPropsTVRecordings();
+        EmptyLatestMediaProperties();
       }
       Utils.UpdateLatestsUpdate(Utils.LatestsCategory.TV, DateTime.Now);
     }
 
     internal void UpdateImageTimer(GUIWindow fWindow, Object stateInfo, ElapsedEventArgs e)
     {
-      if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
+      if (Utils.LatestTVRecordings)
       {
         try
         {
-          if (fWindow.GetFocusControlId() == LatestTVAllRecordingsHandler.ControlID)
+          if (fWindow.GetFocusControlId() == CurrentFacade.ControlID)
           {
             if (Utils.UsedArgus)
             {
               Largusrh.UpdateSelectedImageProperties();
-              Largusrh.NeedCleanup = true;
             }
             else
             {
               Ltvrh.UpdateSelectedImageProperties();
-              Ltvrh.NeedCleanup = true;
             }
+            NeedCleanup = true;
           }
           else
           {
-            if (Utils.UsedArgus)
+            if (NeedCleanup && NeedCleanupCount >= 5)
             {
-              if (Largusrh.NeedCleanup && Largusrh.NeedCleanupCount >= 5)
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
+              if (Utils.UsedArgus)
               {
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
-                Utils.UnLoadImage(ref Largusrh.images);
-                Largusrh.ShowFanart = 1;
-                Largusrh.SelectedFacadeItem2 = -1;
-                Largusrh.SelectedFacadeItem2 = -1;
-                Largusrh.NeedCleanup = false;
-                Largusrh.NeedCleanupCount = 0;
+                Utils.UnLoadImages(ref Largusrh.images);
               }
-              else if (Largusrh.NeedCleanup && Largusrh.NeedCleanupCount == 0)
+              else
               {
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
-                Largusrh.NeedCleanupCount++;
+                Utils.UnLoadImages(ref Ltvrh.images);
               }
-              else if (Largusrh.NeedCleanup)
-              {
-                Largusrh.NeedCleanupCount++;
-              }
+              ShowFanart = 1;
+              CurrentFacade.SelectedItem = -1;
+              CurrentFacade.SelectedImage = -1;
+              NeedCleanup = false;
+              NeedCleanupCount = 0;
             }
-            else
+            else if (NeedCleanup && NeedCleanupCount == 0)
             {
-              if (Ltvrh.NeedCleanup && Ltvrh.NeedCleanupCount >= 5)
-              {
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", " ");
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
-                Utils.UnLoadImage(ref Ltvrh.images);
-                Ltvrh.ShowFanart = 1;
-                Ltvrh.SelectedFacadeItem2 = -1;
-                Ltvrh.SelectedFacadeItem2 = -1;
-                Ltvrh.NeedCleanup = false;
-                Ltvrh.NeedCleanupCount = 0;
-              }
-              else if (Ltvrh.NeedCleanup && Ltvrh.NeedCleanupCount == 0)
-              {
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
-                Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
-                Ltvrh.NeedCleanupCount++;
-              }
-              else if (Ltvrh.NeedCleanup)
-              {
-                Ltvrh.NeedCleanupCount++;
-              }
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
+              NeedCleanupCount++;
+            }
+            else if (NeedCleanup)
+            {
+              NeedCleanupCount++;
             }
           }
         }
@@ -471,28 +467,51 @@ namespace LatestMediaHandler
       }
     }
 
+    internal void InitFacade()
+    {
+      if (!Utils.LatestTVRecordings)
+      {
+        return;
+      }
+
+      try
+      {
+        CurrentFacade.Facade = Utils.GetLatestsFacade(CurrentFacade.ControlID);
+        if (CurrentFacade.Facade != null)
+        {
+          Utils.ClearFacade(ref CurrentFacade.Facade);
+          InitFacade(ref CurrentFacade.Facade);
+          Utils.UpdateFacade(ref CurrentFacade.Facade, CurrentFacade);
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("InitFacade: " + ex.ToString());
+      }
+    }
+
     internal void InitFacade(ref GUIFacadeControl facade)
     {
       if (Utils.UsedArgus)
       {
-        if (Largusrh != null && Largusrh.Al != null)
+        if (Largusrh != null && Largusrh.FacadeCollection != null)
         {
-          for (int i = 0; i < Largusrh.Al.Count; i++)
+          for (int i = 0; i < Largusrh.FacadeCollection.Count; i++)
           {
-            GUIListItem _gc = Largusrh.Al[i] as GUIListItem;
-            Utils.LoadImage(_gc.IconImage, ref Largusrh.imagesThumbs);
+            GUIListItem _gc = Largusrh.FacadeCollection[i] as GUIListItem;
+            // Utils.LoadImage(_gc.IconImage, ref Largusrh.imagesThumbs);
             facade.Add(_gc);
           }
         }
       }
       else
       {
-        if (Ltvrh != null && Ltvrh.Al != null)
+        if (Ltvrh != null && Ltvrh.FacadeCollection != null)
         {
-          for (int i = 0; i < Ltvrh.Al.Count; i++)
+          for (int i = 0; i < Ltvrh.FacadeCollection.Count; i++)
           {
-            GUIListItem _gc = Ltvrh.Al[i] as GUIListItem;
-            Utils.LoadImage(_gc.IconImage, ref Ltvrh.imagesThumbs);
+            GUIListItem _gc = Ltvrh.FacadeCollection[i] as GUIListItem;
+            // Utils.LoadImage(_gc.IconImage, ref Ltvrh.imagesThumbs);
             facade.Add(_gc);
           }
         }
@@ -501,20 +520,41 @@ namespace LatestMediaHandler
 
     internal void ClearFacade(ref GUIFacadeControl facade)
     {
-      facade.Clear();
+      Utils.ClearFacade(ref facade);
       if (Utils.UsedArgus)
       {
-        Utils.UnLoadImage(ref Largusrh.images);
-        Utils.UnLoadImage(ref Largusrh.imagesThumbs);
+        Utils.UnLoadImages(ref Largusrh.images);
+        Utils.UnLoadImages(ref Largusrh.imagesThumbs);
       }
       else
       {
-        Utils.UnLoadImage(ref Ltvrh.images);
-        Utils.UnLoadImage(ref Ltvrh.imagesThumbs);
+        Utils.UnLoadImages(ref Ltvrh.images);
+        Utils.UnLoadImages(ref Ltvrh.imagesThumbs);
       }
     }
 
-    internal void SetupTVRecordingsLatest()
+    internal void DeInitFacade()
+    {
+      if (!Utils.LatestTVRecordings)
+      {
+        return;
+      }
+
+      try
+      {
+        CurrentFacade.Facade = Utils.GetLatestsFacade(CurrentFacade.ControlID, true);
+        if (CurrentFacade.Facade != null)
+        {
+          ClearFacade(ref CurrentFacade.Facade);
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("DeInitFacade: " + ex.ToString());
+      }
+    }
+
+    internal void SetupReceivers()
     {
       try
       {
@@ -526,7 +566,7 @@ namespace LatestMediaHandler
       }
     }
 
-    internal void DisposeTVRecordingsLatest()
+    internal void DisposeReceivers()
     {
       try
       {
@@ -546,41 +586,41 @@ namespace LatestMediaHandler
 
     private void OnMessage(GUIMessage message)
     {
-      bool Update = false;
-      Utils.ThreadToSleep();
-      if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
+      if (Utils.LatestTVRecordings)
       {
         try
         {
-          switch (message.Message)
-          {
-            case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
-            case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
-            {
-              logger.Debug("Playback End/Stop detected: Refreshing latest.");
-              Update = true;
-              break;
-            }
-            case GUIMessage.MessageType.GUI_MSG_NOTIFY_REC:
-            {
-              logger.Debug("TV Recordings notify detected: Refreshing latest.");
-              Update = true;
-              break;
-            }
-          }
+          System.Threading.ThreadPool.QueueUserWorkItem(delegate { OnMessageTasks(message); }, null);
         }
         catch { }
-        if (Update)
+      }
+    }
+
+    private void OnMessageTasks(GUIMessage message)
+    {
+      bool Update = false;
+
+      Utils.ThreadToSleep();
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
+        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
         {
-          try
-          {
-            UpdateActiveRecordingsThread();
-          }
-          catch (Exception ex)
-          {
-            logger.Error("GUIWindowManager_OnNewMessage: " + ex.ToString());
-          }
+          logger.Debug("Playback End/Stop detected: Refreshing latest.");
+          Update = true;
+          break;
         }
+        case GUIMessage.MessageType.GUI_MSG_NOTIFY_REC:
+        {
+          logger.Debug("TV Recordings notify detected: Refreshing latest.");
+          Update = true;
+          break;
+        }
+      }
+
+      if (Update)
+      {
+        UpdateActiveRecordingsThread();
       }
     }
 
@@ -596,10 +636,10 @@ namespace LatestMediaHandler
           idx = ControlIDPlays.IndexOf(FocusControlID)+1;
         }
         //
-        GUIFacadeControl facade = Utils.GetLatestsFacade(ControlID);
-        if (facade != null && facade.Focus && facade.SelectedListItem != null)
+        // CurrentFacade.Facade = Utils.GetLatestsFacade(CurrentFacade.ControlID);
+        if (CurrentFacade.Facade != null && CurrentFacade.Facade.Focus && CurrentFacade.Facade.SelectedListItem != null)
         {
-          idx = facade.SelectedListItem.ItemId;
+          idx = CurrentFacade.Facade.SelectedListItem.ItemId;
         }
         //
         if (idx >= 0)

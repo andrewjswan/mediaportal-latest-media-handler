@@ -9,7 +9,7 @@ The plugin supports pushing latest added media to your skin.
 * latest added Series (TVSeries)<br/>
 * latest added Movies (Moving Pictures)<br/>
 * latest added Films  (My Films)<br/>
-* latest added Videos (mvCentral)<br/>
+* latest added Music Videos (mvCentral)<br/>
 * latest added TV Recordings<br/>
 
 SkinnersGuide: https://code.google.com/p/latestmediahandler/wiki/SkinnersGuide
@@ -17,7 +17,12 @@ SkinnersGuide: https://code.google.com/p/latestmediahandler/wiki/SkinnersGuide
 Automatically exported from code.google.com/p/mediaportal-latest-media-handler
 
 ------------------------------------------------------------------------------
-List of latests properties:
+## Defines
+<pre>
+#LatestMediaHandler:Yes
+</pre>
+
+## List of latests properties:
 <pre>
 * Global
  #latestMediaHandler.scanned
@@ -26,6 +31,8 @@ List of latests properties:
  #latestMediaHandler.music.label
  #latestMediaHandler.music.latest.enabled
  #latestMediaHandler.music.hasnew
+ #latestMediaHandler.music.latest.mode
+ #latestMediaHandler.music.latest.thumbtype
  #latestMediaHandler.music.latest[1,2,3,4].thumb
  #latestMediaHandler.music.latest[1,2,3,4].artist
  #latestMediaHandler.music.latest[1,2,3,4].artistbio
@@ -79,6 +86,8 @@ List of latests properties:
  #latestMediaHandler.myvideo.latest[1,2,3,4].clearart
  #latestMediaHandler.myvideo.latest[1,2,3,4].clearlogo
  #latestMediaHandler.myvideo.latest[1,2,3,4].cd
+ #latestMediaHandler.myvideo.latest[1,2,3,4].aniposter
+ #latestMediaHandler.myvideo.latest[1,2,3,4].anibackground
 
  #latestMediaHandler.myvideo.selected.thumb
  #latestMediaHandler.myvideo.selected.title
@@ -100,6 +109,8 @@ List of latests properties:
  #latestMediaHandler.myvideo.selected.clearart
  #latestMediaHandler.myvideo.selected.clearlogo
  #latestMediaHandler.myvideo.selected.cd
+ #latestMediaHandler.myvideo.selected.aniposter
+ #latestMediaHandler.myvideo.selected.anibackground
 
 * Pictures
  #latestMediaHandler.picture.label
@@ -128,6 +139,7 @@ List of latests properties:
  #latestMediaHandler.tvseries.hasnew
  #latestMediaHandler.tvseries.latest.mode - episodes, seasons, series
  #latestMediaHandler.tvseries.latest.type
+ #latestMediaHandler.tvseries.latest.thumbtype
  #latestMediaHandler.tvseries.latest[1,2,3,4].thumb
  #latestMediaHandler.tvseries.latest[1,2,3,4].serieThumb
  #latestMediaHandler.tvseries.latest[1,2,3,4].fanart
@@ -197,6 +209,8 @@ List of latests properties:
  #latestMediaHandler.movingpicture.latest[1,2,3,4].clearart
  #latestMediaHandler.movingpicture.latest[1,2,3,4].clearlogo
  #latestMediaHandler.movingpicture.latest[1,2,3,4].cd
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].aniposter
+ #latestMediaHandler.movingpicture.latest[1,2,3,4].anibackground
   
  #latestMediaHandler.movingpicture.selected.thumb
  #latestMediaHandler.movingpicture.selected.title
@@ -219,12 +233,14 @@ List of latests properties:
  #latestMediaHandler.movingpicture.selected.clearart
  #latestMediaHandler.movingpicture.selected.clearlogo
  #latestMediaHandler.movingpicture.selected.cd
+ #latestMediaHandler.movingpicture.selected.aniposter
+ #latestMediaHandler.movingpicture.selected.anibackground
 
 * MyFilms
  #latestMediaHandler.myfilms.label
  #latestMediaHandler.myfilms.latest.enabled
  #latestMediaHandler.myfilms.hasnew
- #latestMediaHandler.myfilms.latest[1,2,3,4].poster
+ #latestMediaHandler.myfilms.latest[1,2,3,4].thumb
  #latestMediaHandler.myfilms.latest[1,2,3,4].fanart
  #latestMediaHandler.myfilms.latest[1,2,3,4].title
  #latestMediaHandler.myfilms.latest[1,2,3,4].dateAdded
@@ -239,6 +255,8 @@ List of latests properties:
  #latestMediaHandler.myfilms.latest[1,2,3,4].clearart
  #latestMediaHandler.myfilms.latest[1,2,3,4].clearlogo
  #latestMediaHandler.myfilms.latest[1,2,3,4].cd
+ #latestMediaHandler.myfilms.latest[1,2,3,4].aniposter
+ #latestMediaHandler.myfilms.latest[1,2,3,4].anibackground
 
  #latestMediaHandler.myfilms.selected.thumb
  #latestMediaHandler.myfilms.selected.title
@@ -260,11 +278,15 @@ List of latests properties:
  #latestMediaHandler.myfilms.selected.clearart
  #latestMediaHandler.myfilms.selected.clearlogo
  #latestMediaHandler.myfilms.selected.cd
+ #latestMediaHandler.myfilms.selected.aniposter
+ #latestMediaHandler.myfilms.selected.anibackground
 
 * MvCentral:
  #latestMediaHandler.mvcentral.label
  #latestMediaHandler.mvcentral.latest.enabled
  #latestMediaHandler.mvcentral.hasnew
+ #latestMediaHandler.mvcentral.latest.mode
+ #latestMediaHandler.mvcentral.latest.thumbtype
  #latestMediaHandler.mvcentral.latest[1,2,3,4].thumb
  #latestMediaHandler.mvcentral.latest[1,2,3,4].artist
  #latestMediaHandler.mvcentral.latest[1,2,3,4].artistbio
@@ -311,6 +333,7 @@ List of latests properties:
  #latestMediaHandler.tvrecordings.active[1,2,3,4].endDate
  #latestMediaHandler.tvrecordings.active[1,2,3,4].channel
  #latestMediaHandler.tvrecordings.active[1,2,3,4].channelLogo
+ #latestMediaHandler.tvrecordings.active[1,2,3,4].directory
 
  #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].title
  #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].startTime
@@ -330,6 +353,7 @@ List of latests properties:
  #latestMediaHandler.tvrecordings.latest[1,2,3,4].series
  #latestMediaHandler.tvrecordings.latest[1,2,3,4].episode
  #latestMediaHandler.tvrecordings.latest[1,2,3,4].episodename
+ #latestMediaHandler.tvrecordings.latest[1,2,3,4].directory
   
  #latestMediaHandler.tvrecordings.selected.thumb
  #latestMediaHandler.tvrecordings.selected.title
@@ -339,6 +363,7 @@ List of latests properties:
  #latestMediaHandler.tvrecordings.selected.endTime
  #latestMediaHandler.tvrecordings.selected.summary
  #latestMediaHandler.tvrecordings.selected.summaryoutline
+ #latestMediaHandler.tvrecordings.selected.directory
  #latestMediaHandler.tvrecordings.selected.new
  #latestMediaHandler.tvrecordings.selected.fanart1
  #latestMediaHandler.tvrecordings.selected.fanart2

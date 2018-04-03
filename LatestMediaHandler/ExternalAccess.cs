@@ -28,144 +28,42 @@ namespace LatestMediaHandler
 
     public static bool UserHasEnabledMyFilmsSupport()
     {
-      bool _return = false;
-      try
-      {
-        if (LatestMediaHandlerSetup.LatestMyFilms.Equals("True", StringComparison.CurrentCulture))
-        {
-          _return = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("UserHasEnabledMyFilmsSupport: " + ex.ToString());
-      }
-      return _return;
-
+      return Utils.LatestMyFilms;
     }
 
     public static bool UserHasEnabledMvCentralSupport()
     {
-      bool _return = false;
-      try
-      {
-        if (LatestMediaHandlerSetup.LatestMvCentral.Equals("True", StringComparison.CurrentCulture))
-        {
-          _return = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("UserHasEnabledMvCentralSupport: " + ex.ToString());
-      }
-      return _return;
-
+      return Utils.LatestMvCentral;
     }
 
     public static bool UserHasEnabledMyVideosSupport()
     {
-      bool _return = false;
-      try
-      {
-        if (LatestMediaHandlerSetup.LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
-        {
-          _return = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("UserHasEnabledMyVideosSupport: " + ex.ToString());
-      }
-      return _return;
-
+      return Utils.LatestMyVideos;
     }
 
     public static bool UserHasEnabledMovingPictureSupport()
     {
-      bool _return = false;
-      try
-      {
-        if (LatestMediaHandlerSetup.LatestMovingPictures.Equals("True", StringComparison.CurrentCulture))
-        {
-          _return = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("UserHasEnabledMovingPictureSupport: " + ex.ToString());
-      }
-      return _return;
-
+      return Utils.LatestMovingPictures;
     }
 
     public static bool UserHasEnabledMusicSupport()
     {
-      bool _return = false;
-      try
-      {
-        if (LatestMediaHandlerSetup.LatestMusic.Equals("True", StringComparison.CurrentCulture))
-        {
-          _return = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("UserHasEnabledMusicSupport: " + ex.ToString());
-      }
-      return _return;
-
+      return Utils.LatestMusic;
     }
 
     public static bool UserHasEnabledPictureSupport()
     {
-      bool _return = false;
-      try
-      {
-        if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture))
-        {
-          _return = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("UserHasEnabledPictureSupport: " + ex.ToString());
-      }
-      return _return;
-
+      return Utils.LatestPictures;
     }
 
     public static bool UserHasEnabledTVSeriesSupport()
     {
-      bool _return = false;
-      try
-      {
-        if (LatestMediaHandlerSetup.LatestTVSeries.Equals("True", StringComparison.CurrentCulture))
-        {
-          _return = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("UserHasEnabledTVSeriesSupport: " + ex.ToString());
-      }
-      return _return;
+      return Utils.LatestTVSeries;
     }
 
     public static bool UserHasEnabledTVRecordingsSupport()
     {
-      bool _return = false;
-      try
-      {
-        if (LatestMediaHandlerSetup.LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
-        {
-          _return = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("UserHasEnabledTVRecordingsSupport: " + ex.ToString());
-      }
-      return _return;
+      return Utils.LatestTVRecordings;
     }
 
     #region From FanartHandler
@@ -195,36 +93,67 @@ namespace LatestMediaHandler
       if (!Enum.IsDefined(typeof(Utils.LatestsCategory), latestsCategory))  
         return ht ;
 
-      if (latestsCategory == Utils.LatestsCategory.Music && LatestMediaHandlerSetup.Lmh != null)
+      return GetLatestsList(latestsCategory);
+    }
+
+
+    private static Hashtable GetLatestsList(Utils.LatestsCategory type)
+    {
+      if (LatestMediaHandlerSetup.Handlers == null)
       {
-        return LatestMediaHandlerSetup.Lmh.GetLatestsList();
-      }
-      
-      if (latestsCategory == Utils.LatestsCategory.MvCentral && LatestMediaHandlerSetup.Lmch != null)
-      {
-        return LatestMediaHandlerSetup.Lmch.GetLatestsList();
+        return new Hashtable();
       }
 
-      if (latestsCategory == Utils.LatestsCategory.Movies && LatestMediaHandlerSetup.Lmvh != null)
+      try
       {
-        return LatestMediaHandlerSetup.Lmvh.GetLatestsList();
-      }
+        foreach (object obj in LatestMediaHandlerSetup.Handlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
 
-      if (latestsCategory == Utils.LatestsCategory.MovingPictures && LatestMediaHandlerSetup.Lmph != null)
-      {
-        return LatestMediaHandlerSetup.Lmph.GetLatestsList();
+          if (type == Utils.LatestsCategory.MovingPictures && obj is LatestMovingPicturesHandler)
+          {
+            return ((LatestMovingPicturesHandler)obj).GetLatestsList();
+          }
+          else if (type == Utils.LatestsCategory.Movies && obj is LatestMyVideosHandler)
+          {
+            return ((LatestMyVideosHandler)obj).GetLatestsList();
+          }
+          else if (type == Utils.LatestsCategory.MvCentral && obj is LatestMvCentralHandler)
+          {
+            return ((LatestMvCentralHandler)obj).GetLatestsList();
+          }
+          else if (type == Utils.LatestsCategory.TVSeries && obj is LatestTVSeriesHandler)
+          {
+            return ((LatestTVSeriesHandler)obj).GetLatestsList();
+          }
+          else if (type == Utils.LatestsCategory.Music && obj is LatestMusicHandler)
+          {
+            return ((LatestMusicHandler)obj).GetLatestsList();
+          }
+          /*
+          else if (type == Utils.LatestsCategory.TV && obj is LatestTVAllRecordingsHandler)
+          {
+            return ((LatestTVAllRecordingsHandler)obj).GetLatestsList();
+          }
+          else if (type == Utils.LatestsCategory.Pictures && obj is LatestPictureHandler)
+          {
+            return ((LatestPictureHandler)obj).GetLatestsList();
+          }
+          */
+          else if (type == Utils.LatestsCategory.MyFilms && obj is LatestMyFilmsHandler)
+          {
+            return ((LatestMyFilmsHandler)obj).GetLatestsList();
+          }
+        }
       }
-
-      if (latestsCategory == Utils.LatestsCategory.MyFilms && LatestMediaHandlerSetup.Lmfh != null)
+      catch (Exception ex)
       {
-        return LatestMediaHandlerSetup.Lmfh.GetLatestsList();
+        logger.Error("GetLatestsList: " + ex.ToString());
       }
-
-      if (latestsCategory == Utils.LatestsCategory.TVSeries && LatestMediaHandlerSetup.Ltvsh != null)
-      {
-        return LatestMediaHandlerSetup.Ltvsh.GetLatestsList();
-      }
-      return ht;
+      return new Hashtable();
     }
     #endregion
   }

@@ -78,6 +78,23 @@
           </Items>
         </Files>
       </GroupItem>
+      <GroupItem Name="Skin">
+        <ParentGroup />
+        <DisplayName>Skin</DisplayName>
+        <DefaulChecked>true</DefaulChecked>
+        <Description>Skin</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Installer\config\LatestMediaHandler.SkinSettings.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b62f410f-6966-48be-957f-d0f047117d63}-LatestMediaHandler.SkinSettings.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Generic\LatestMediaHandler.SkinSettings.xml</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
     </Items>
   </Groups>
   <Sections>
@@ -260,7 +277,7 @@ cul8er</Value>
     <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
     <Version>
       <Major>2</Major>
-      <Minor>3</Minor>
+      <Minor>4</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
@@ -275,10 +292,15 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>Add Fanart.TV Images support</VersionDescription>
+    <VersionDescription>Add Fanart.TV Images support
+Add Animated Images support
+Internal rework
+Bug fixes ...
+
+WARNING: In skins using the facade control (DWHD, PVHD, Titanius), it may not work in MP versions below 1.19.</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/yoavain/mediaportal-latest-media-handler/raw/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2017-11-15T09:06:46</ReleaseDate>
+    <ReleaseDate>2018-04-03T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>
@@ -370,6 +392,13 @@ cul8er</Value>
         <LocalFileName>..\Installer\language\es.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{9ddb4c07-6510-4e0a-a732-210d92d2a152}-es.xml</ZipFileName>
         <DestinationFilename>%Language%\LatestMediaHandler\es.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Installer\config\LatestMediaHandler.SkinSettings.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b62f410f-6966-48be-957f-d0f047117d63}-LatestMediaHandler.SkinSettings.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Generic\LatestMediaHandler.SkinSettings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />

@@ -12,6 +12,7 @@
 // and its initiation in the constructor are slightly modified copies of the
 // methods of the same name in ChannelLogosCache.cs in ArgusTV.Client.Common
 //***********************************************************************
+
 extern alias LMHNLog;
 
 using ArgusTV.DataContracts;
@@ -43,56 +44,14 @@ namespace LatestMediaHandler
     private ArgusTV.DataContracts.Recording _playingRecording;
     private string _playingRecordingFileName;
     private Hashtable latestArgusRecordings;
-    private GUIFacadeControl facade = null;
-    private ArrayList al = new ArrayList();
+    private ArrayList facadeCollection = new ArrayList();
     internal ArrayList images = new ArrayList();
     internal ArrayList imagesThumbs = new ArrayList();
-    private int selectedFacadeItem1 = -1;
-    private int selectedFacadeItem2 = -1;
-    private int showFanart = 1;
-    private bool needCleanup = false;
-    private int needCleanupCount = 0;
-    private int lastFocusedId = 0;
-    private LatestMediaHandler.LatestsCollection result = null;
+    private LatestsCollection result = null;
+    private LatestTVAllRecordingsHandler parent = null;
     private static string _cacheBasePath;
-
+    
     #endregion
-
-    public int LastFocusedId
-    {
-      get { return lastFocusedId; }
-      set { lastFocusedId = value; }
-    }
-
-    public int NeedCleanupCount
-    {
-      get { return needCleanupCount; }
-      set { needCleanupCount = value; }
-    }
-
-    public bool NeedCleanup
-    {
-      get { return needCleanup; }
-      set { needCleanup = value; }
-    }
-
-    public int ShowFanart
-    {
-      get { return showFanart; }
-      set { showFanart = value; }
-    }
-
-    public int SelectedFacadeItem2
-    {
-      get { return selectedFacadeItem2; }
-      set { selectedFacadeItem2 = value; }
-    }
-
-    public int SelectedFacadeItem1
-    {
-      get { return selectedFacadeItem1; }
-      set { selectedFacadeItem1 = value; }
-    }
 
     public ArrayList Images
     {
@@ -100,22 +59,16 @@ namespace LatestMediaHandler
       set { images = value; }
     }
 
-    public ArrayList Al
+    public ArrayList FacadeCollection
     {
-      get { return al; }
-      set { al = value; }
+      get { return facadeCollection; }
+      set { facadeCollection = value; }
     }
 
-    public GUIFacadeControl Facade
+    internal LatestArgusRecordingsHandler(LatestTVAllRecordingsHandler P)
     {
-      get { return facade; }
-      set { facade = value; }
-    }
-
-    internal LatestArgusRecordingsHandler()
-    {
-      _cacheBasePath = Path.Combine(
-      Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ARGUS TV\LogosCache");
+      parent = P;
+      _cacheBasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ARGUS TV\LogosCache");
     }
 
     private Hashtable LatestArgusRecordings
@@ -161,7 +114,7 @@ namespace LatestMediaHandler
         pItem.ItemId = 1;
 
         //Add Watched/Unwatched Filter Menu Item
-        if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False", StringComparison.CurrentCulture))
+        if (!Utils.LatestTVRecordingsWatched)
         {
           pItem = new GUIListItem(Translation.ShowUnwatchedRecordings);
           dlg.Add(pItem);
@@ -175,7 +128,7 @@ namespace LatestMediaHandler
         }
 
         //Show Dialog
-        dlg.DoModal(GUIWindowManager.ActiveWindow);
+        dlg.DoModal(Utils.ActiveWindow);
 
         if (dlg.SelectedLabel == -1)
           return;
@@ -184,25 +137,16 @@ namespace LatestMediaHandler
         {
           case 1:
           {
-            GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            GUIControl gc = gw.GetControl(LatestTVAllRecordingsHandler.ControlID);
-            facade = gc as GUIFacadeControl;
-            if (facade != null)
+            // parent.CurrentFacade.Facade = Utils.GetLatestsFacade(parent.CurrentFacade.ControlID);
+            if (parent.CurrentFacade.Facade != null)
             {
-              PlayRecording(facade.SelectedListItem.ItemId);
+              PlayRecording(parent.CurrentFacade.Facade.SelectedListItem.ItemId);
             }
             break;
           }
           case 2:
           {
-            if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False", StringComparison.CurrentCulture))
-            {
-              LatestMediaHandlerSetup.LatestTVRecordingsWatched = "True";
-            }
-            else
-            {
-              LatestMediaHandlerSetup.LatestTVRecordingsWatched = "False";
-            }
+            Utils.LatestTVRecordingsWatched = !Utils.LatestTVRecordingsWatched;
             GetArgusRecordings();
             break;
           }
@@ -248,9 +192,9 @@ namespace LatestMediaHandler
               }
               latestRecordings.Add(new LatestRecording(rec.Program.Title, rec.Program.Category,
                                                        rec.Program.ActualStartTime,
-                                                       String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStartTime),
+                                                       String.Format("{0:" + Utils.DateFormat + "}", rec.Program.ActualStartTime),
                                                        rec.Program.ActualStartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                                       String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.StopTime),
+                                                       String.Format("{0:" + Utils.DateFormat + "}", rec.Program.StopTime),
                                                        rec.Program.StopTime.ToString("HH:mm", CultureInfo.CurrentCulture),
                                                        rec.Program.Channel.DisplayName, logoImagePath));
               Utils.ThreadToSleep();
@@ -313,9 +257,9 @@ namespace LatestMediaHandler
                 logoImagePath = "defaultVideoBig.png";
 
               latestRecordings.Add(new LatestRecording(rec.Program.Title, null, rec.Program.ActualStartTime,
-                                                       String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStartTime),
+                                                       String.Format("{0:" + Utils.DateFormat + "}", rec.Program.ActualStartTime),
                                                        rec.Program.ActualStartTime.ToString("HH:mm", CultureInfo.CurrentCulture),
-                                                       String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", rec.Program.ActualStopTime),
+                                                       String.Format("{0:" + Utils.DateFormat + "}", rec.Program.ActualStopTime),
                                                        rec.Program.ActualStopTime.ToString("HH:mm", CultureInfo.CurrentCulture),
                                                        rec.Program.Channel.DisplayName, logoImagePath));
               Utils.ThreadToSleep();
@@ -346,19 +290,17 @@ namespace LatestMediaHandler
       }
 
       LatestsCollection latests = new LatestsCollection();
-      LatestMediaHandler.LatestsCollection resultTmp = new LatestMediaHandler.LatestsCollection();
+      LatestsCollection resultTmp = new LatestsCollection();
       try
       {
-        GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        GUIControl gc = gw.GetControl(LatestTVAllRecordingsHandler.ControlID);
-        facade = gc as GUIFacadeControl;
-        if (facade != null)
+        // parent.CurrentFacade.Facade = Utils.GetLatestsFacade(parent.CurrentFacade.ControlID);
+        if (parent.CurrentFacade.Facade != null)
         {
-          facade.Clear();
+          Utils.ClearFacade(ref parent.CurrentFacade.Facade);
         }
-        if (al != null)
+        if (facadeCollection != null)
         {
-          al.Clear();
+          facadeCollection.Clear();
         }
         if (Proxies.IsInitialized)
         {
@@ -398,11 +340,12 @@ namespace LatestMediaHandler
                 {
                   thumbNail = "defaultTVBig.png";
                 }
-                if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("True", StringComparison.CurrentCulture))
+
+                if (Utils.LatestTVRecordingsWatched)
                 {
                   if (!rec.LastWatchedTime.HasValue)
                   {
-                    latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail, 
+                    latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail,
                                 null,
                                 rec.Title, rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), 
                                 null, null, 
@@ -414,9 +357,9 @@ namespace LatestMediaHandler
                                 null));
                   }
                 }
-                else if (LatestMediaHandlerSetup.LatestTVRecordingsWatched.Equals("False", StringComparison.CurrentCulture))
+                else
                 {
-                  latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail, 
+                  latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail,
                               null, 
                               rec.Title, rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), 
                               null, null,
@@ -436,7 +379,8 @@ namespace LatestMediaHandler
           int i0 = 1;
           if (latests != null && latests.Count > 0)
           {
-            latests.Sort(new LatestAddedComparer());
+            // latests.Sort(new LatestAddedComparerDesc());
+            Utils.SortLatests(ref latests, parent.CurrentFacade.Type, parent.CurrentFacade.LeftToRight);
             latestArgusRecordings = new Hashtable();
             for (int x0 = 0; x0 < latests.Count; x0++)
             {
@@ -444,11 +388,12 @@ namespace LatestMediaHandler
               try
               {
                 DateTime dTmp = DateTime.Parse(latests[x0].DateAdded);
-                latests[x0].DateAdded = String.Format("{0:" + LatestMediaHandlerSetup.DateFormat + "}", dTmp);
+                latests[x0].DateAdded = String.Format("{0:" + Utils.DateFormat + "}", dTmp);
               }
               catch
               {
               }
+              latests[x0].Directory = Utils.GetGetDirectoryName(((RecordingSummary) latests[x0].Playable).RecordingFileName);
               latests[x0].Fanart = (Utils.FanartHandler ? UtilsFanartHandler.GetFanartForLatest(latests[x0].Title) : string.Empty);
 
               resultTmp.Add(latests[x0]);
@@ -459,7 +404,7 @@ namespace LatestMediaHandler
               latestArgusRecordings.Add(i0, latests[x].Playable);
               //if (facade != null)
               //{
-              AddToFilmstrip(latests[x], i0);
+              AddToFilmstrip(parent.CurrentFacade.Facade, latests[x], i0);
               //}
               x++;
               i0++;
@@ -470,7 +415,7 @@ namespace LatestMediaHandler
             }
           }
         }
-        Utils.UpdateFacade(ref facade, LastFocusedId);
+        Utils.UpdateFacade(ref parent.CurrentFacade.Facade, parent.CurrentFacade);
 
         if (latests != null)
           latests.Clear();
@@ -528,14 +473,15 @@ namespace LatestMediaHandler
       return fileName.TrimEnd('.', ' ');
     }
 
-    private void AddToFilmstrip(Latest latests, int x)
+    private void AddToFilmstrip(GUIFacadeControl facade, Latest latests, int x)
     {
       try
       {
+        Utils.LoadImage(latests.Thumb, ref imagesThumbs);
+
         //Add to filmstrip
         GUIListItem item = new GUIListItem();
         item.ItemId = x;
-        Utils.LoadImage(latests.Thumb, ref imagesThumbs);
         item.IconImage = latests.Thumb;
         item.IconImageBig = latests.Thumb;
         item.ThumbnailImage = latests.Thumb;
@@ -549,7 +495,7 @@ namespace LatestMediaHandler
         {
           facade.Add(item);
         }
-        al.Add(item);
+        facadeCollection.Add(item);
         if (x == 1)
         {
           UpdateSelectedProperties(item);
@@ -565,10 +511,10 @@ namespace LatestMediaHandler
     {
       try
       {
-        if (item != null && selectedFacadeItem1 != item.ItemId)
+        if (item != null && parent.CurrentFacade.SelectedItem != item.ItemId)
         {
           string summary = (string.IsNullOrEmpty(result[(item.ItemId - 1)].Summary) ? Translation.NoDescription : result[(item.ItemId - 1)].Summary);
-          string summaryoutline = Utils.GetSentences(summary, Utils.latestPlotOutlineSentencesNum);
+          string summaryoutline = Utils.GetSentences(summary, Utils.LatestPlotOutlineSentencesNum);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.thumb", item.IconImageBig);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.title", item.Label);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.dateAdded", item.Label3);
@@ -577,15 +523,14 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.endTime", result[(item.ItemId - 1)].Subtitle);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.summary", summary);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.summaryoutline", summaryoutline);
+          Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.directory", result[(item.ItemId - 1)].Directory);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.new", result[(item.ItemId - 1)].New);
-          selectedFacadeItem1 = item.ItemId;
+          parent.CurrentFacade.SelectedItem = item.ItemId;
 
-          GUIWindow gw = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          GUIControl gc = gw.GetControl(LatestTVAllRecordingsHandler.ControlID);
-          facade = gc as GUIFacadeControl;
-          if (facade != null)
+          // parent.CurrentFacade.Facade = Utils.GetLatestsFacade(parent.CurrentFacade.ControlID);
+          if (parent.CurrentFacade.Facade != null)
           {
-            lastFocusedId = facade.SelectedListItemIndex;
+            parent.CurrentFacade.FocusedID = parent.CurrentFacade.Facade.SelectedListItemIndex;
           }
         }
       }
@@ -599,22 +544,22 @@ namespace LatestMediaHandler
     {
       try
       {
-        facade = Utils.GetLatestsFacade(LatestTVAllRecordingsHandler.ControlID);
-        if (facade != null && facade.Focus && facade.SelectedListItem != null)
+        // parent.CurrentFacade.Facade = Utils.GetLatestsFacade(parent.CurrentFacade.ControlID);
+        if (parent.CurrentFacade.Facade != null && parent.CurrentFacade.Facade.Focus && parent.CurrentFacade.Facade.SelectedListItem != null)
         {
-          int _id = facade.SelectedListItem.ItemId;
-          String _image = facade.SelectedListItem.DVDLabel;
-          if (selectedFacadeItem2 != _id)
+          int _id = parent.CurrentFacade.Facade.SelectedListItem.ItemId;
+          String _image = parent.CurrentFacade.Facade.SelectedListItem.DVDLabel;
+          if (parent.CurrentFacade.SelectedImage != _id)
           {
             Utils.LoadImage(_image, ref images);
-            if (showFanart == 1)
+            if (parent.ShowFanart == 1)
             {
               Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", _image);
               Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "true");
               Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
               Thread.Sleep(1000);
-              Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", "");
-              showFanart = 2;
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", string.Empty);
+              parent.ShowFanart = 2;
             }
             else
             {
@@ -622,11 +567,11 @@ namespace LatestMediaHandler
               Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "true");
               Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
               Thread.Sleep(1000);
-              Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", "");
-              showFanart = 1;
+              Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart1", string.Empty);
+              parent.ShowFanart = 1;
             }
-            Utils.UnLoadImage(_image, ref images);
-            selectedFacadeItem2 = _id;
+            // Utils.UnLoadImage(_image, ref images);
+            parent.CurrentFacade.SelectedImage = _id;
           }
         }
         else
@@ -635,10 +580,9 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.fanart2", " ");
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart1", "false");
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.showfanart2", "false");
-          Utils.UnLoadImage(ref images);
-          showFanart = 1;
-          selectedFacadeItem2 = -1;
-          selectedFacadeItem2 = -1;
+          Utils.UnLoadImages(ref images);
+          parent.ShowFanart = 1;
+          parent.CurrentFacade.SelectedImage = -1;
         }
       }
       catch (Exception ex)
@@ -733,42 +677,7 @@ namespace LatestMediaHandler
         }
       }
     }
-
-
-    private class LatestAddedComparer : IComparer<Latest>
-    {
-      public int Compare(Latest latest1, Latest latest2)
-      {
-        int returnValue = 1;
-        if (latest1 is Latest && latest2 is Latest)
-        {
-          if (latest1.DateAdded.CompareTo(latest2.DateAdded) > 0) return -1;
-          if (latest1.DateAdded.CompareTo(latest2.DateAdded) < 0) return 1;
-          return 0;
-        }
-        return returnValue;
-      }
-    }
-
-    private class LatestRecordingsComparer : IComparer<LatestRecording>
-    {
-      public int Compare(LatestRecording latest1, LatestRecording latest2)
-      {
-        int returnValue = 1;
-        if (latest1 is LatestRecording && latest2 is LatestRecording)
-        {
-          string s1 = latest1.StartDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture);
-          string s2 = latest2.StartDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture);
-          if (s1.CompareTo(s2) > 0) return 1;
-          else if (s1.CompareTo(s2) < 0) return -1;
-          else return 0;
-          //returnValue = latest2.StartTime.CompareTo(latest1.StartTime);
-        }
-
-        return returnValue;
-      }
-    }
-
+  
     private class RecordingsComparer : IComparer<RecordingSummary>
     {
       public int Compare(RecordingSummary rec1, RecordingSummary rec2)
@@ -782,100 +691,6 @@ namespace LatestMediaHandler
         }
         return returnValue;
       }
-    }
-
-    private class LatestRecording
-    {
-      private string title;
-      private string genre;
-      private DateTime startDateTime;
-      private string startTime;
-      private string startDate;
-      private string endTime;
-      private string endDate;
-      private string channel;
-      private string channelLogo;
-
-      internal string Title
-      {
-        get { return title; }
-        set { title = value; }
-      }
-
-      internal string Genre
-      {
-        get { return genre; }
-        set { genre = value; }
-      }
-
-      internal DateTime StartDateTime
-      {
-        get { return startDateTime; }
-        set { startDateTime = value; }
-      }
-
-      internal string StartTime
-      {
-        get { return startTime; }
-        set { startTime = value; }
-      }
-
-      internal string StartDate
-      {
-        get { return startDate; }
-        set { startDate = value; }
-      }
-
-      internal string EndTime
-      {
-        get { return endTime; }
-        set { endTime = value; }
-      }
-
-      internal string EndDate
-      {
-        get { return endDate; }
-        set { endDate = value; }
-      }
-
-      internal string Channel
-      {
-        get { return channel; }
-        set { channel = value; }
-      }
-
-      internal string ChannelLogo
-      {
-        get { return channelLogo; }
-        set { channelLogo = value; }
-      }
-
-      internal LatestRecording(string title, string genre, DateTime startDateTime, string startDate, string startTime,
-        string endDate, string endTime, string channel, string channelLogo)
-      {
-        this.title = title;
-        if (!string.IsNullOrEmpty(genre))
-        {
-          this.genre = genre.Replace("|", ",");
-        }
-        else
-        {
-          this.genre = genre;
-        }
-        this.startDateTime = startDateTime;
-        this.startTime = startTime;
-        this.startDate = startDate;
-        this.endTime = endTime;
-        this.endDate = endDate;
-        this.channel = channel;
-        this.channelLogo = channelLogo;
-      }
-
-    }
-
-
-    private class RecordingsCollection : List<LatestRecording>
-    {
     }
   }
 }

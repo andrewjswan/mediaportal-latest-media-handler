@@ -238,5 +238,30 @@ namespace LatestMediaHandler
       return string.Empty;
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static string GetAnimatedForLatestMedia(string key1, string key2, string key3, Utils.Animated category)
+    {
+      if (!Utils.FanartHandler)
+      {
+        return string.Empty;
+      }
+
+      try
+      {
+        return FanartHandler.ExternalAccess.GetAnimatedForLatestMedia(key1, key2, key3, category.ToString());
+      }
+      catch (FileNotFoundException) { }
+      catch (MissingMethodException)
+      {
+        logger.Error("GetAnimatedForLatestMedia: Update Fanart Handler plugin.");
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetAnimatedForLatestMedia: Possible: Update Fanart Handler plugin.");
+        logger.Debug("GetAnimatedForLatestMedia: " + ex.ToString());
+      }
+      return string.Empty;
+    }
+
   }
 }

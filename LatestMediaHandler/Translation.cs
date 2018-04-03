@@ -107,7 +107,7 @@ namespace LatestMediaHandler
     {
       XmlDocument doc = new XmlDocument();
       Dictionary<string, string> TranslatedStrings = new Dictionary<string, string>();
-      string langPath = "";
+      string langPath = string.Empty;
 
       try
       {
@@ -229,10 +229,15 @@ namespace LatestMediaHandler
     public static string DisplayNextEpisodes = "Display Next Episodes For Last Watched Episode";
     public static string DisplayLatestEpisodes = "Display Latest Added Episodes";
     public static string ShowUnwatchedEpisodes = "Show Only Unwatched Episodes";
+
     public static string ShowAllEpisodes = "Show All Episodes";
     public static string ShowLatestsEpisodes = "Show Episodes";
     public static string ShowLatestsSeasons = "Show Seasons";
     public static string ShowLatestsSeries = "Show Series";
+
+    public static string SeriesThumbSeries = "Series thumb";
+    public static string SeriesThumbSeasons = "Season thumb";
+    public static string SeriesThumbEpisodes = "Episode thumb";
 
     //Movies
     public static string MovieDetails = "Movie Details";
@@ -244,23 +249,32 @@ namespace LatestMediaHandler
     public static string ShowAllRecordings = "Show All Recordings";
 
     //Music
+    public static string LabelLatestPlayed = "Latest played";
+    public static string LabelMostPlayed = "Most played";
+
     public static string ArtistDetails = "Artist Details";
     public static string AlbumDetails = "Album Details";
     public static string MostPlayedMusic = "Most Played Music";
     public static string LatestPlayedMusic = "Latest Played Music";
     public static string LatestAddedMusic = "Latest Added Music";
 
+    // MvCentral
+    public static string MvCThumbArtist = "Artist thumb";
+    public static string MvCThumbAlbum = "Album thumb";
+    public static string MvCThumbTrack = "Track thumb";
+
     //All
     public static string Play = "Play";
     public static string View = "View";
     public static string Update = "Update";
+    public static string Show = "Show";
 
     public static string NoDescription = "No Description available...";
 
     //Label
     public static string LabelLatestAdded  = "Latest added";
-    public static string LabelLatestPlayed = "Latest played";
-    public static string LabelMostPlayed   = "Most played";
+    public static string LabelHighestRated = "Highest rated";
+    public static string LabelLatestWatched = "Latest watched";
 
     //Settings
     public static string PrefsDateFormat = "Date format";

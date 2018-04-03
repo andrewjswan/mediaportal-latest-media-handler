@@ -32,6 +32,8 @@ using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LatestMediaHandler
 {
@@ -39,76 +41,49 @@ namespace LatestMediaHandler
 
   public class LatestMediaHandlerSetup : IPlugin, ISetupForm
   {
-    #region declarations
+    #region Declarations
+
+    private static readonly object Locker = new object();
 
     /*
          * Log declarations
     */
-    private static Logger logger = LogManager.GetCurrentClassLogger(); //log
-    private const string LogFileName = "LatestMediaHandler.log"; //log's filename
-    private const string OldLogFileName = "LatestMediaHandler.bak"; //log's old filename        
+    private static Logger logger = LogManager.GetCurrentClassLogger(); // log
+    private const string LogFileName = "LatestMediaHandler.log";       // log's filename
+    private const string OldLogFileName = "LatestMediaHandler.bak";    // log's old filename        
 
     /*
          * All Threads and Timers
     */
-    private static string lmhThreadPriority = "Lowest";
-    internal static System.Timers.Timer ReorgTimer = null;
-    private System.Timers.Timer refreshTimer = null;
-
+    private static Utils.Priority lmhThreadPriority = Utils.Priority.Lowest;
     private LatestMediaHandlerConfig xconfig = null;
     private LatestReorgWorker MyLatestReorgWorker = null;
+    private static List<object> LatestsHandlers = null;
+    private static int reorgTimerTick;
+    private static string mpVersion = null;
 
     private Hashtable windowsUsingFanartLatest; //used to know what skin files that supports latest media fanart     
 
-    private List<int> ControlIDFacades;
+    private List<LatestsFacade> ControlIDFacades;
     private List<int> ControlIDPlays;
 
+    internal static System.Timers.Timer ReorgTimer = null;
+    internal System.Timers.Timer RefreshTimer = null;
     internal static bool Starting = true;
-
-    private static LatestMyVideosHandler lmvh = null;
-    private static LatestMovingPicturesHandler lmph = null;
-    private static LatestTVSeriesHandler ltvsh = null;
-    private static LatestMusicHandler lmh = null;
-    private static LatestPictureHandler lph = null;
-    private static LatestMyFilmsHandler lmfh = null;
-    private static LatestMvCentralHandler lmch = null;
-    private static LatestTVAllRecordingsHandler ltvrh = null;
-
-    private static int reorgTimerTick;
-
-    private static string mpVersion = null;
 
     #endregion
 
     /*
-     * 919198710 Lmvh  - LatestMyVideosHandler.ControlID
-     * 919199970 Lmh   - LatestMusicHandler.ControlID
-     * 919199710 Lph   - LatestPictureHandler.ControlID
-     * 919199940 Ltvsh - LatestTVSeriesHandler.ControlID
-     * 919199910 Lmph  - LatestMovingPicturesHandler.ControlID
-     * 919199880 Lmfh  - LatestMyFilmsHandler.ControlID
-     * 919299280 lmch  - LatestMvCentralHandler.ControlID
-     * 919199840       - LatestTVAllRecordingsHandler.ControlID 
-                       - if (Utils.usedArgus) largusrh else Ltvrh
+     * 919198710 - LatestMyVideosHandler.ControlID
+     * 919199970 - LatestMusicHandler.ControlID
+     * 919199710 - LatestPictureHandler.ControlID
+     * 919199940 - LatestTVSeriesHandler.ControlID
+     * 919199910 - LatestMovingPicturesHandler.ControlID
+     * 919199880 - LatestMyFilmsHandler.ControlID
+     * 919299280 - LatestMvCentralHandler.ControlID
+     * 919199840 - LatestTVAllRecordingsHandler.ControlID 
+                 - if (Utils.usedArgus) largusrh else Ltvrh
     */
-
-    internal static string DateFormat
-    {
-      get { return Utils.dateFormat; }
-      set { Utils.dateFormat = value; }
-    }
-
-    internal static string ReorgInterval
-    {
-      get { return Utils.reorgInterval; }
-      set { Utils.reorgInterval = value; }
-    }
-
-    internal static string LatestMusicType
-    {
-      get { return Utils.latestMusicType; }
-      set { Utils.latestMusicType = value; }
-    }
 
     internal static int ReorgTimerTick
     {
@@ -116,60 +91,66 @@ namespace LatestMediaHandler
       set { LatestMediaHandlerSetup.reorgTimerTick = value; }
     }
 
-    /*
-    internal static string UseLatestMediaCache
+    internal static List<object> Handlers
+    {
+      get { return LatestsHandlers; }
+    }
+
+    internal static object GetMainHandler(Utils.LatestsCategory type)
+    {
+      if (LatestsHandlers == null)
+      {
+        return null;
+      }
+
+      try
+      {
+        foreach (object obj in LatestsHandlers)
         {
-            get { return useLatestMediaCache; }
-            set { useLatestMediaCache = value; }
+          if (obj == null)
+          {
+            continue;
+          }
+
+          if (type == Utils.LatestsCategory.MovingPictures && obj is LatestMovingPicturesHandler)
+          {
+            return obj;
+          }
+          else if (type == Utils.LatestsCategory.Movies && obj is LatestMyVideosHandler)
+          {
+            return obj;
+          }
+          else if (type == Utils.LatestsCategory.MvCentral && obj is LatestMvCentralHandler)
+          {
+            return obj;
+          }
+          else if (type == Utils.LatestsCategory.TVSeries && obj is LatestTVSeriesHandler)
+          {
+            return obj;
+          }
+          else if (type == Utils.LatestsCategory.Music && obj is LatestMusicHandler)
+          {
+            return obj;
+          }
+          else if (type == Utils.LatestsCategory.TV && obj is LatestTVAllRecordingsHandler)
+          {
+            return obj;
+          }
+          else if (type == Utils.LatestsCategory.Pictures && obj is LatestPictureHandler)
+          {
+            return obj;
+          }
+          else if (type == Utils.LatestsCategory.MyFilms && obj is LatestMyFilmsHandler)
+          {
+            return obj;
+          }
         }
-    */
-
-    internal static LatestPictureHandler Lph
-    {
-      get { return lph; }
-      set { lph = value; }
-    }
-
-    internal static LatestTVAllRecordingsHandler Ltvrh
-    {
-      get { return ltvrh; }
-      set { ltvrh = value; }
-    }
-
-    internal static LatestMusicHandler Lmh
-    {
-      get { return lmh; }
-      set { lmh = value; }
-    }
-
-    internal static LatestMyVideosHandler Lmvh
-    {
-      get { return lmvh; }
-      set { lmvh = value; }
-    }
-
-    internal static LatestMvCentralHandler Lmch
-    {
-      get { return lmch; }
-      set { lmch = value; }
-    }
-
-    internal static LatestMovingPicturesHandler Lmph
-    {
-      get { return lmph; }
-      set { lmph = value; }
-    }
-
-    internal static LatestMyFilmsHandler Lmfh
-    {
-      get { return lmfh; }
-      set { lmfh = value; }
-    }
-
-    internal static LatestTVSeriesHandler Ltvsh
-    {
-      get { return ltvsh; }
-      set { ltvsh = value; }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetMainHandler: " + ex.ToString());
+      }
+      return null;
     }
 
     internal Hashtable WindowsUsingFanartLatest
@@ -178,112 +159,10 @@ namespace LatestMediaHandler
       set { windowsUsingFanartLatest = value; }
     }
 
-    internal static string RefreshDbPicture
+    internal static Utils.Priority LMHThreadPriority
     {
-      get { return Utils.refreshDbPicture; }
-      set { Utils.refreshDbPicture = value; }
-    }
-
-    internal static string RefreshDbMusic
-    {
-      get { return Utils.refreshDbMusic; }
-      set { Utils.refreshDbMusic = value; }
-    }
-
-    internal static string LatestTVRecordings
-    {
-      get { return Utils.latestTVRecordings; }
-      set { Utils.latestTVRecordings = value; }
-    }
-
-    internal static string LatestTVRecordingsWatched
-    {
-      get { return Utils.latestTVRecordingsWatched; }
-      set { Utils.latestTVRecordingsWatched = value; }
-    }
-
-    internal static string LatestTVRecordingsUnfinished
-    {
-      get { return Utils.latestTVRecordingsUnfinished; }
-      set { Utils.latestTVRecordingsUnfinished = value; }
-    }
-
-    internal static string LatestMyFilmsWatched
-    {
-      get { return Utils.latestMyFilmsWatched; }
-      set { Utils.latestMyFilmsWatched = value; }
-    }
-
-    internal static string LatestTVSeries
-    {
-      get { return Utils.latestTVSeries; }
-      set { Utils.latestTVSeries = value; }
-    }
-
-    internal static string LatestTVSeriesWatched
-    {
-      get { return Utils.latestTVSeriesWatched; }
-      set { Utils.latestTVSeriesWatched = value; }
-    }
-
-    internal static string LatestTVSeriesRatings
-    {
-      get { return Utils.latestTVSeriesRatings; }
-      set { Utils.latestTVSeriesRatings = value; }
-    }
-
-    internal static string LatestMyVideos
-    {
-      get { return Utils.latestMyVideos; }
-      set { Utils.latestMyVideos = value; }
-    }
-
-    internal static string LatestMvCentral
-    {
-      get { return Utils.latestMvCentral; }
-      set { Utils.latestMvCentral = value; }
-    }
-
-    internal static string LatestMyVideosWatched
-    {
-      get { return Utils.latestMyVideosWatched; }
-      set { Utils.latestMyVideosWatched = value; }
-    }
-
-    internal static string LatestMovingPictures
-    {
-      get { return Utils.latestMovingPictures; }
-      set { Utils.latestMovingPictures = value; }
-    }
-
-    internal static string LatestMovingPicturesWatched
-    {
-      get { return Utils.latestMovingPicturesWatched; }
-      set { Utils.latestMovingPicturesWatched = value; }
-    }
-
-    internal static string LatestMusic
-    {
-      get { return Utils.latestMusic; }
-      set { Utils.latestMusic = value; }
-    }
-
-    internal static string LatestPictures
-    {
-      get { return Utils.latestPictures; }
-      set { Utils.latestPictures = value; }
-    }
-
-    internal static string LatestMyFilms
-    {
-      get { return Utils.latestMyFilms; }
-      set { Utils.latestMyFilms = value; }
-    }
-
-    internal static string LMHThreadPriority
-    {
-      get { return LatestMediaHandlerSetup.lmhThreadPriority; }
-      set { LatestMediaHandlerSetup.lmhThreadPriority = value; }
+      get { return lmhThreadPriority; }
+      set { lmhThreadPriority = value; }
     }
 
     public static string MpVersion
@@ -295,13 +174,1260 @@ namespace LatestMediaHandler
     internal static int GetReorgTimerInterval()
     {
       int newTick = Environment.TickCount - ReorgTimerTick;
-      newTick = (Int32.Parse(LatestMediaHandlerSetup.ReorgInterval)*60000) - newTick;
+      newTick = (Int32.Parse(Utils.ReorgInterval) * 60000) - newTick;
       if (newTick < 0)
       {
         newTick = 2000;
       }
       return newTick;
     }
+
+    private void UpdateReorgTimer(Object stateInfo, ElapsedEventArgs e)
+    {
+      if (!Utils.IsStopping)
+      {
+        try
+        {
+          if (Interlocked.CompareExchange(ref Utils.SyncPointReorg, 1, 0) == 0)
+          {
+            // No other event was executing.                                                      
+            if (MyLatestReorgWorker == null)
+            {
+              MyLatestReorgWorker = new LatestReorgWorker();
+              MyLatestReorgWorker.RunWorkerCompleted += MyLatestReorgWorker.OnRunWorkerCompleted;
+            }
+            MyLatestReorgWorker.RunWorkerAsync();
+          }
+        }
+        catch (Exception ex)
+        {
+          Utils.SyncPointReorg = 0;
+          logger.Error("UpdateReorgTimer: " + ex.ToString());
+        }
+      }
+    }
+
+    #region Init Handlers
+    private void InitHandlers()
+    {
+      try // Fanart Handler
+      {
+        UtilsFanartHandler.SetupFanartHandlerSubcribeScaperFinishedEvent();
+      }
+      catch { }
+
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+
+      foreach (object obj in LatestsHandlers)
+      {
+        if (obj == null)
+        {
+          continue;
+        }
+
+        if (obj is LatestMovingPicturesHandler && Utils.LatestMovingPictures)
+        {
+          ((LatestMovingPicturesHandler)obj).SetupReceivers();
+        }
+        else if (obj is LatestMyVideosHandler && Utils.LatestMyVideos)
+        {
+          ((LatestMyVideosHandler)obj).SetupReceivers();
+        }
+        else if (obj is LatestMvCentralHandler && Utils.LatestMvCentral)
+        {
+          ((LatestMvCentralHandler)obj).SetupReceivers();
+        }
+        else if (obj is LatestTVSeriesHandler && Utils.LatestTVSeries)
+        {
+          ((LatestTVSeriesHandler)obj).SetupReceivers();
+        }
+        else if (obj is LatestMusicHandler && Utils.LatestMusic)
+        {
+          ((LatestMusicHandler)obj).SetupReceivers();
+        }
+        else if (obj is LatestTVAllRecordingsHandler && Utils.LatestTVRecordings)
+        {
+          ((LatestTVAllRecordingsHandler)obj).SetupReceivers();
+        }
+        else if (obj is LatestPictureHandler && Utils.LatestPictures)
+        {
+          ((LatestPictureHandler)obj).SetupReceivers();
+        }
+        else if (obj is LatestMyFilmsHandler && Utils.LatestMyFilms)
+        {
+          ((LatestMyFilmsHandler)obj).SetupReceivers();
+        }
+      }
+    }
+    #endregion
+
+    #region Dispose Handlers
+    private void DisposeHandlers()
+    {
+      try // Fanart Handler
+      {
+        UtilsFanartHandler.DisposeFanartHandlerSubcribeScaperFinishedEvent();
+      }
+      catch { }
+
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+
+      foreach (object obj in LatestsHandlers)
+      {
+        if (obj == null)
+        {
+          continue;
+        }
+
+        if (obj is LatestMovingPicturesHandler && Utils.LatestMovingPictures)
+        {
+          ((LatestMovingPicturesHandler)obj).DisposeReceivers();
+        }
+        else if (obj is LatestMyVideosHandler && Utils.LatestMyVideos)
+        {
+          ((LatestMyVideosHandler)obj).DisposeReceivers();
+        }
+        else if (obj is LatestMvCentralHandler && Utils.LatestMvCentral)
+        {
+          ((LatestMvCentralHandler)obj).DisposeReceivers();
+        }
+        else if (obj is LatestTVSeriesHandler && Utils.LatestTVSeries)
+        {
+          ((LatestTVSeriesHandler)obj).DisposeReceivers();
+        }
+        else if (obj is LatestMusicHandler && Utils.LatestMusic)
+        {
+          ((LatestMusicHandler)obj).DisposeReceivers();
+        }
+        else if (obj is LatestTVAllRecordingsHandler && Utils.LatestTVRecordings)
+        {
+          ((LatestTVAllRecordingsHandler)obj).DisposeReceivers();
+        }
+        else if (obj is LatestPictureHandler && Utils.LatestPictures)
+        {
+          ((LatestPictureHandler)obj).DisposeReceivers();
+        }
+        else if (obj is LatestMyFilmsHandler && Utils.LatestMyFilms)
+        {
+          ((LatestMyFilmsHandler)obj).DisposeReceivers();
+        }
+      }
+    }
+    #endregion
+
+    /// <summary>
+    /// Set start values on variables
+    /// </summary>
+    private void SetupVariables()
+    {
+      Utils.IsStopping = false;
+
+      LatestsHandlers = new List<object>();
+      LatestsHandlers.Add(new LatestMusicHandler());
+      LatestsHandlers.Add(new LatestMyVideosHandler());
+      LatestsHandlers.Add(new LatestTVSeriesHandler());
+      LatestsHandlers.Add(new LatestPictureHandler());
+      LatestsHandlers.Add(new LatestMovingPicturesHandler());
+      LatestsHandlers.Add(new LatestMyFilmsHandler());
+      LatestsHandlers.Add(new LatestMvCentralHandler());
+      LatestsHandlers.Add(new LatestTVAllRecordingsHandler());
+
+      ReorgTimerTick = Environment.TickCount;
+
+      Utils.SetProperty("#latestMediaHandler.scanned", "false");
+
+      Utils.SyncPointInit();
+    }
+
+    internal void AddControlsIDs()
+    {
+      ControlIDFacades = new List<LatestsFacade>();
+      ControlIDPlays = new List<int>();
+
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+
+      foreach (object obj in LatestsHandlers)
+      {
+        if (obj == null)
+        {
+          continue;
+        }
+
+        if (obj is LatestMovingPicturesHandler)
+        {
+          ControlIDFacades.AddRange(((LatestMovingPicturesHandler)obj).ControlIDFacades);
+          ControlIDPlays.AddRange(((LatestMovingPicturesHandler)obj).ControlIDPlays);
+        }
+        else if (obj is LatestMyVideosHandler)
+        {
+          ControlIDFacades.AddRange(((LatestMyVideosHandler)obj).ControlIDFacades);
+          ControlIDPlays.AddRange(((LatestMyVideosHandler)obj).ControlIDPlays);
+        }
+        else if (obj is LatestMvCentralHandler)
+        {
+          ControlIDFacades.AddRange(((LatestMvCentralHandler)obj).ControlIDFacades);
+          ControlIDPlays.AddRange(((LatestMvCentralHandler)obj).ControlIDPlays);
+        }
+        else if (obj is LatestTVSeriesHandler)
+        {
+          ControlIDFacades.AddRange(((LatestTVSeriesHandler)obj).ControlIDFacades);
+          ControlIDPlays.AddRange(((LatestTVSeriesHandler)obj).ControlIDPlays);
+        }
+        else if (obj is LatestMusicHandler)
+        {
+          ControlIDFacades.AddRange(((LatestMusicHandler)obj).ControlIDFacades);
+          ControlIDPlays.AddRange(((LatestMusicHandler)obj).ControlIDPlays);
+        }
+        else if (obj is LatestTVAllRecordingsHandler)
+        {
+          ControlIDFacades.AddRange(((LatestTVAllRecordingsHandler)obj).ControlIDFacades);
+          ControlIDPlays.AddRange(((LatestTVAllRecordingsHandler)obj).ControlIDPlays);
+        }
+        else if (obj is LatestPictureHandler)
+        {
+          ControlIDFacades.AddRange(((LatestPictureHandler)obj).ControlIDFacades);
+          ControlIDPlays.AddRange(((LatestPictureHandler)obj).ControlIDPlays);
+        }
+        else if (obj is LatestMyFilmsHandler)
+        {
+          ControlIDFacades.AddRange(((LatestMyFilmsHandler)obj).ControlIDFacades);
+          ControlIDPlays.AddRange(((LatestMyFilmsHandler)obj).ControlIDPlays);
+        }
+      }
+      // logger.Debug("*** Init active facade controls: "+string.Join(" ", ControlIDFacades.Select(x => x.ControlID.ToString())));
+      // logger.Debug("*** Init active button controls: "+string.Join(" ", ControlIDPlays));
+    }
+
+    internal void EmptyLatestMediaProperties()
+    {
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+
+      foreach (object obj in LatestsHandlers)
+      {
+        if (obj == null)
+        {
+          continue;
+        }
+
+        if (obj is LatestMovingPicturesHandler)
+          ((LatestMovingPicturesHandler)obj).EmptyLatestMediaProperties();
+        else if (obj is LatestMyVideosHandler)
+          ((LatestMyVideosHandler)obj).EmptyLatestMediaProperties();
+        else if (obj is LatestMvCentralHandler)
+          ((LatestMvCentralHandler)obj).EmptyLatestMediaProperties();
+        else if (obj is LatestTVSeriesHandler)
+          ((LatestTVSeriesHandler)obj).EmptyLatestMediaProperties();
+        else if (obj is LatestMusicHandler)
+          ((LatestMusicHandler)obj).EmptyLatestMediaProperties();
+        else if (obj is LatestTVAllRecordingsHandler)
+        {
+          ((LatestTVAllRecordingsHandler)obj).EmptyLatestMediaProperties();
+          ((LatestTVAllRecordingsHandler)obj).EmptyRecordingProps();
+        }
+        else if (obj is LatestPictureHandler)
+          ((LatestPictureHandler)obj).EmptyLatestMediaProperties();
+        else if (obj is LatestMyFilmsHandler)
+          ((LatestMyFilmsHandler)obj).EmptyLatestMediaProperties();
+      }
+    }
+
+    /// <summary>
+    /// Setup logger. This funtion made by the team behind Moving Pictures 
+    /// (http://code.google.com/p/moving-pictures/)
+    /// </summary>
+    private void InitLogger()
+    {
+      LoggingConfiguration logLatestMediaHandlerConfiguration = LogManager.Configuration ?? new LoggingConfiguration();
+
+      try
+      {
+        FileInfo logFile = new FileInfo(Config.GetFile(Config.Dir.Log, LogFileName));
+        if (logFile.Exists)
+        {
+          if (File.Exists(Config.GetFile(Config.Dir.Log, OldLogFileName)))
+            File.Delete(Config.GetFile(Config.Dir.Log, OldLogFileName));
+
+          logFile.CopyTo(Config.GetFile(Config.Dir.Log, OldLogFileName));
+          logFile.Delete();
+        }
+      }
+      catch (Exception) { }
+
+      FileTarget fileTarget = new FileTarget()
+      {
+        FileName = Config.GetFile((Config.Dir)1, LogFileName),
+        Name = "latestmedia-handler",
+        Encoding = "utf-8",
+        Layout = "${date:format=dd-MMM-yyyy HH\\:mm\\:ss} ${level:fixedLength=true:padding=5} [${logger:fixedLength=true:padding=20:shortName=true}]: ${message} ${exception:format=tostring}"
+        // Layout = "${date:format=dd-MMM-yyyy HH\\:mm\\:ss.fff} ${level:fixedLength=true:padding=5} [${logger:fixedLength=true:padding=20:shortName=true}]: ${message} ${exception:format=tostring}"
+      };
+      logLatestMediaHandlerConfiguration.AddTarget("latestmedia-handler", fileTarget);
+
+      // Get current Log Level from MediaPortal 
+      MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+      string str = settings.GetValue("general", "ThreadPriority");
+      LMHThreadPriority = str == null || !str.Equals("Normal", StringComparison.CurrentCulture) ? (str == null || !str.Equals("BelowNormal", StringComparison.CurrentCulture) ? Utils.Priority.BelowNormal : Utils.Priority.Lowest) : Utils.Priority.Lowest;
+
+      LogLevel logLevel;
+      switch ((Level)settings.GetValueAsInt("general", "loglevel", 0))
+      {
+        case Level.Error:
+          logLevel = LogLevel.Error;
+          break;
+        case Level.Warning:
+          logLevel = LogLevel.Warn;
+          break;
+        case Level.Information:
+          logLevel = LogLevel.Info;
+          break;
+        case Level.Debug:
+        default:
+          logLevel = LogLevel.Debug;
+          break;
+      }
+      #if DEBUG
+      logLevel = LogLevel.Debug;
+      #endif
+
+      LoggingRule loggingRule = new LoggingRule("LatestMediaHandler.*", logLevel, fileTarget);
+      // LoggingRule loggingRule = new LoggingRule("*", logLevel, fileTarget);
+      logLatestMediaHandlerConfiguration.LoggingRules.Add(loggingRule);
+
+      LogManager.Configuration = logLatestMediaHandlerConfiguration;
+    }
+
+    /// <summary>
+    /// The plugin is started by Mediaportal
+    /// </summary>
+    public void Start()
+    {
+      try
+      {
+        Utils.DelayStop = new Hashtable();
+        Utils.IsStopping = false;
+
+        InitLogger();
+        logger.Info("Latest Media Handler is starting...");
+        logger.Info("Latest Media Handler version is " + Utils.GetAllVersionNumber());
+
+        MpVersion = FileVersionInfo.GetVersionInfo(Application.ExecutablePath).ProductVersion;
+        logger.Info("MediaPortal version is " + MpVersion);
+        MpVersion = FileVersionInfo.GetVersionInfo(Application.ExecutablePath).FileVersion;
+
+        Translation.Init();
+        SetupConfigFile();
+        Utils.LoadSettings();
+
+        SetupWindowsUsingLatestMediaHandlerVisibility();
+        SetupVariables();
+
+        Utils.LoadSkinSettings();
+        AddControlsIDs();
+
+        GUIWindowManager.OnActivateWindow += new GUIWindowManager.WindowActivationHandler(GuiWindowManagerOnActivateWindow);
+        GUIGraphicsContext.OnNewAction += new OnActionHandler(OnNewAction);
+        GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
+        SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnSystemPowerModeChanged);
+
+        InitHandlers();
+        GetLatestMediaInfo();
+
+        ReorgTimer = new System.Timers.Timer((Int32.Parse(Utils.ReorgInterval) * 60000));
+        ReorgTimer.Elapsed += new ElapsedEventHandler(UpdateReorgTimer);
+        ReorgTimer.Interval = (Int32.Parse(Utils.ReorgInterval) * 60000);
+        ReorgTimer.Start();
+
+        RefreshTimer = new System.Timers.Timer(250);
+        RefreshTimer.Elapsed += new ElapsedEventHandler(UpdateImageTimer);
+        RefreshTimer.Interval = 250;
+        RefreshTimer.Start();
+
+        Starting = false;
+
+        logger.Info("Latest Media Handler is started.");
+        OnActivateTask(GUIWindowManager.ActiveWindow);
+      }
+      catch (Exception ex)
+      {
+        logger.Error("Start: " + ex.ToString());
+      }
+    }
+
+    private void GetLatestMediaInfo(string Mode = "Start", Utils.Category Level = Utils.Category.All)
+    {
+      // Level 0 - All, 1 - Video, 2 - Music, 3 - Pictures, 4 - TV
+      if ((Level == Utils.Category.All) || (Level == Utils.Category.Video))
+      {
+        GetLatestMediaInfoVideo(Mode);
+      }
+      if ((Level == Utils.Category.All) || (Level == Utils.Category.Music))
+      {
+        GetLatestMediaInfoMusic(Mode);
+      }
+      if ((Level == Utils.Category.All) || (Level == Utils.Category.Pictures))
+      {
+        GetLatestMediaInfoPictures(Mode);
+      }
+      if ((Level == Utils.Category.All) || (Level == Utils.Category.TV))
+      {
+        GetLatestMediaInfoTV(Mode);
+      }
+    }
+
+    private static void GetLatestMediaInfoMusic(string Mode = "Update")
+    {
+      if (!Utils.LatestMusic)
+      {
+        return;
+      }
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+
+      // Music
+      try
+      {
+        foreach (object obj in LatestsHandlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
+
+          if (obj is LatestMusicHandler)
+          {
+            ((LatestMusicHandler)obj).GetLatestMediaInfoThread();
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetLatestMediaInfoMusic [" + Mode + "]: " + ex.ToString());
+      }
+    }
+
+    private static void GetLatestMediaInfoPictures(string Mode = "Update")
+    {
+      if (!Utils.LatestPictures)
+      {
+        return;
+      }
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+
+      // Pictures
+      try
+      {
+        foreach (object obj in LatestsHandlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
+
+          if (obj is LatestPictureHandler)
+          {
+            ((LatestPictureHandler)obj).GetLatestMediaInfoThread();
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetLatestMediaInfoPictures [" + Mode + "]: " + ex.ToString());
+      }
+    }
+
+    private static void GetLatestMediaInfoTV(string Mode = "Update")
+    {
+      if (!Utils.LatestTVRecordings)
+      {
+        return;
+      }
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+      // TV Record
+      try
+      {
+        foreach (object obj in LatestsHandlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
+
+          if (obj is LatestTVAllRecordingsHandler)
+          {
+            ((LatestTVAllRecordingsHandler)obj).GetTVRecordings();
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetLatestMediaInfoTV [" + Mode + "]: " + ex.ToString());
+      }
+    }
+
+    private static void GetLatestMediaInfoVideo(string Mode = "Update")
+    {
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+
+      try
+      {
+        foreach (object obj in LatestsHandlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
+
+          // MyVideo
+          if (Utils.LatestMyVideos && obj is LatestMyVideosHandler)
+          {
+            ((LatestMyVideosHandler)obj).GetLatestMediaInfoThread();
+          }
+          // TVSeries
+          if (Utils.LatestTVSeries && obj is LatestTVSeriesHandler)
+          {
+            ((LatestTVSeriesHandler)obj).GetLatestMediaInfoThread();
+          }
+          // Moving Pictures
+          if (Utils.LatestMovingPictures && obj is LatestMovingPicturesHandler)
+          {
+            ((LatestMovingPicturesHandler)obj).GetLatestMediaInfoThread();
+          }
+          // MyFilms
+          if (Utils.LatestMyFilms && obj is LatestMyFilmsHandler)
+          {
+            ((LatestMyFilmsHandler)obj).GetLatestMediaInfoThread();
+          }
+          // mvCentral
+          if (Utils.LatestMvCentral && obj is LatestMvCentralHandler)
+          {
+            ((LatestMvCentralHandler)obj).GetLatestMediaInfoThread();
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetLatestMediaInfoVideo [" + Mode + "]: " + ex.ToString());
+      }
+    }
+
+    private void OnSystemPowerModeChanged(object sender, PowerModeChangedEventArgs e)
+    {
+      try
+      {
+        if (e.Mode == PowerModes.Resume)
+        {
+          logger.Info("LatestMediaHandler is resuming from standby/hibernate.");
+
+          Utils.HasNewInit();
+          GetLatestMediaInfo();
+        }
+        else if (e.Mode == PowerModes.Suspend)
+        {
+          logger.Info("LatestMediaHandler is suspending/hibernating...");
+          // StopTasks(true);
+          logger.Info("LatestMediaHandler is suspended/hibernated.");
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("OnSystemPowerModeChanged: " + ex);
+      }
+    }
+
+    internal static void TriggerGetLatestMediaInfoOnEvent(string type, string artist)
+    {
+      try
+      {
+        if (LatestsHandlers != null && !string.IsNullOrEmpty(artist))
+        {
+          // Music
+          bool needUpdate = false;
+          foreach (object obj in LatestsHandlers)
+          {
+            if (obj == null)
+            {
+              continue;
+            }
+
+            if (obj is LatestMusicHandler)
+            {
+              needUpdate = needUpdate || ((LatestMusicHandler)obj).artistsWithImageMissing != null && ((LatestMusicHandler)obj).artistsWithImageMissing.Contains(artist);
+            }
+          }
+
+          if (needUpdate)
+          {
+            logger.Info("Received new scraper event from FanartHandler plugin for artist " + artist + ".");
+            GetLatestMediaInfoMusic("Fanart");
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("TriggerGetLatestMediaInfoOnEvent: " + ex.ToString());
+      }
+    }
+
+    private void DoContextMenu()
+    {
+      GUIWindow fWindow = GUIWindowManager.GetWindow(Utils.ActiveWindow);
+      if (fWindow == null)
+      {
+        return;
+      }
+
+      int FocusControlID = fWindow.GetFocusControlId();
+      if (!ControlIDFacades.Any(facade => facade.ControlID == FocusControlID) && !ControlIDPlays.Contains(FocusControlID))
+      {
+        return;
+      }
+
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+
+      try
+      {
+        foreach (object obj in LatestsHandlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
+
+          if (obj is LatestMovingPicturesHandler)
+          {
+            if (((LatestMovingPicturesHandler)obj).ControlIDFacades.Any(facade => facade.ControlID == FocusControlID) || ((LatestMovingPicturesHandler)obj).ControlIDPlays.Contains(FocusControlID))
+            {
+              ((LatestMovingPicturesHandler)obj).MyContextMenu();
+            }
+          }
+          else if (obj is LatestMyVideosHandler)
+          {
+            if (((LatestMyVideosHandler)obj).ControlIDFacades.Any(facade => facade.ControlID == FocusControlID) || ((LatestMyVideosHandler)obj).ControlIDPlays.Contains(FocusControlID))
+            {
+              ((LatestMyVideosHandler)obj).MyContextMenu();
+            }
+          }
+          else if (obj is LatestMvCentralHandler)
+          {
+            if (((LatestMvCentralHandler)obj).ControlIDFacades.Any(facade => facade.ControlID == FocusControlID) || ((LatestMvCentralHandler)obj).ControlIDPlays.Contains(FocusControlID))
+            {
+              ((LatestMvCentralHandler)obj).MyContextMenu();
+            }
+          }
+          else if (obj is LatestTVSeriesHandler)
+          {
+            if (((LatestTVSeriesHandler)obj).ControlIDFacades.Any(facade => facade.ControlID == FocusControlID) || ((LatestTVSeriesHandler)obj).ControlIDPlays.Contains(FocusControlID))
+            {
+              ((LatestTVSeriesHandler)obj).MyContextMenu();
+            }
+          }
+          else if (obj is LatestMusicHandler)
+          {
+            if (((LatestMusicHandler)obj).ControlIDFacades.Any(facade => facade.ControlID == FocusControlID) || ((LatestMusicHandler)obj).ControlIDPlays.Contains(FocusControlID))
+            {
+              ((LatestMusicHandler)obj).MyContextMenu();
+            }
+          }
+          else if (obj is LatestTVAllRecordingsHandler)
+          {
+            if (((LatestTVAllRecordingsHandler)obj).ControlIDFacades.Any(facade => facade.ControlID == FocusControlID) || ((LatestTVAllRecordingsHandler)obj).ControlIDPlays.Contains(FocusControlID))
+            {
+              ((LatestTVAllRecordingsHandler)obj).MyContextMenu();
+            }
+          }
+          else if (obj is LatestPictureHandler)
+          {
+            if (((LatestPictureHandler)obj).ControlIDFacades.Any(facade => facade.ControlID == FocusControlID) || ((LatestPictureHandler)obj).ControlIDPlays.Contains(FocusControlID))
+            {
+              ((LatestPictureHandler)obj).MyContextMenu();
+            }
+          }
+          else if (obj is LatestMyFilmsHandler)
+          {
+            if (((LatestMyFilmsHandler)obj).ControlIDFacades.Any(facade => facade.ControlID == FocusControlID) || ((LatestMyFilmsHandler)obj).ControlIDPlays.Contains(FocusControlID))
+            {
+              ((LatestMyFilmsHandler)obj).MyContextMenu();
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("DoContextMenu: " + ex.ToString());
+      }
+    }
+
+    private void OnMessage(GUIMessage message)
+    {
+      Utils.ThreadToSleep();
+      try
+      {
+        if (message.Object is ShowLMHDialog)
+        {
+          DoContextMenu();
+        }
+      }
+      catch (Exception ex)
+      { 
+        logger.Error("OnMessage: " + ex.ToString());
+      }
+
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT_DONE:
+        {
+          UpdateFacades();
+        }
+        break;
+      }
+    }
+
+    internal void OnAction(GUIWindow fWindow, ref MediaPortal.GUI.Library.Action action, bool ContextMenu)
+    {
+      if (fWindow != null)
+      {
+        //
+        int FocusControlID = fWindow.GetFocusControlId();
+        if (ControlIDFacades.Any(facade => facade.ControlID == FocusControlID) || ControlIDPlays.Contains(FocusControlID))
+        {
+          if (ContextMenu)
+          {
+            if (action.IsUserAction())
+            {
+              GUIGraphicsContext.ResetLastActivity();
+            }
+            action.wID = 0;
+
+            ShowLMHDialog slmhd = new ShowLMHDialog();
+            GUIWindowManager.SendThreadMessage(new GUIMessage()
+            {
+              TargetWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME,
+              SendToTargetWindow = true,
+              Object = slmhd
+            });
+            return;
+          }
+          else
+          {
+            LatestsPlay(fWindow, ref action);
+            return;
+          }
+        }
+      }
+    }
+
+    private void LatestsPlay(GUIWindow fWindow, ref MediaPortal.GUI.Library.Action action)
+    {
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+
+      try
+      {
+        foreach (object obj in LatestsHandlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
+
+          if (obj is LatestMovingPicturesHandler)
+          {
+            if (((LatestMovingPicturesHandler)obj).PlayMovingPicture(fWindow)) return;
+          }
+          else if (obj is LatestMyVideosHandler)
+          {
+            if (((LatestMyVideosHandler)obj).PlayMovie(fWindow)) return;
+          }
+          else if (obj is LatestMvCentralHandler)
+          {
+            if (((LatestMvCentralHandler)obj).PlayMusicAlbum(fWindow)) return;
+          }
+          else if (obj is LatestTVSeriesHandler)
+          {
+            if (((LatestTVSeriesHandler)obj).PlayTVSeries(fWindow)) return;
+          }
+          else if (obj is LatestMusicHandler)
+          {
+            if (((LatestMusicHandler)obj).PlayMusicAlbum(fWindow)) return;
+          }
+          else if (obj is LatestTVAllRecordingsHandler)
+          {
+            if (((LatestTVAllRecordingsHandler)obj).PlayRecording(fWindow, ref action)) return;
+          }
+          else if (obj is LatestPictureHandler)
+          {
+            if (((LatestPictureHandler)obj).PlayPictures(fWindow)) return;
+          }
+          else if (obj is LatestMyFilmsHandler)
+          {
+            if (((LatestMyFilmsHandler)obj).PlayMovie(fWindow)) return;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("LatestsPlay: " + ex.ToString());
+      }
+    }
+
+    private void OnNewAction(MediaPortal.GUI.Library.Action action)
+    {
+      bool Action = false;
+      bool Context = false;
+
+      if (action == null)
+        return;
+
+      try
+      {
+        if ((Utils.ActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME) && (GUIWindowManager.RoutedWindow == -1))
+        {
+          GUIWindow fWindow = GUIWindowManager.GetWindow(Utils.ActiveWindow);
+          if (fWindow == null)
+            return;
+
+          switch (action.wID)
+          {
+            case MediaPortal.GUI.Library.Action.ActionType.ACTION_CONTEXT_MENU:
+              {
+                Action = true;
+                Context = true;
+                logger.Debug("OnNewAction: ACTION_CONTEXT_MENU");
+                break;
+              }
+            case MediaPortal.GUI.Library.Action.ActionType.ACTION_MOUSE_CLICK:
+              {
+                Action = (action.MouseButton == MouseButtons.Left) || (action.MouseButton == MouseButtons.Right);
+                Context = (action.MouseButton == MouseButtons.Right);
+                logger.Debug("OnNewAction: ACTION_MOUSE_CLICK [" + ((action.MouseButton == MouseButtons.Left) ? "L" : (action.MouseButton == MouseButtons.Right) ? "R" : "U") + "]");
+                break;
+              }
+            case MediaPortal.GUI.Library.Action.ActionType.ACTION_SELECT_ITEM:
+              {
+                Action = true;
+                Context = false;
+                logger.Debug("OnNewAction: ACTION_SELECT_ITEM");
+                break;
+              }
+            default:
+              break;
+          }
+
+          if (Action)
+          {
+            OnAction(fWindow, ref action, Context);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("OnNewAction: " + ex.ToString());
+      }
+    }
+
+    private void InitFacade()
+    {
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+      if (Utils.ActiveWindow <= (int)GUIWindow.Window.WINDOW_INVALID)
+      {
+        return;
+      }
+
+      try
+      {
+        List<Task> TaskList = new List<Task>();
+        foreach (object obj in LatestsHandlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
+
+          Task task = null;
+          if (obj is LatestMovingPicturesHandler)
+          {
+            // logger.debug("*** InitFacade: LatestMovingPicturesHandler " + windowId);
+            task = new Task(((LatestMovingPicturesHandler)obj).InitFacade);
+          }
+          else if (obj is LatestMyVideosHandler)
+          {
+            // logger.debug("*** InitFacade: LatestMyVideosHandler " + windowId);
+            task = new Task(((LatestMyVideosHandler)obj).InitFacade);
+          }
+          else if (obj is LatestMvCentralHandler)
+          {
+            // logger.debug("*** InitFacade: LatestMvCentralHandler " + windowId);
+            task = new Task(((LatestMvCentralHandler)obj).InitFacade);
+          }
+          else if (obj is LatestTVSeriesHandler)
+          {
+            // logger.debug("*** InitFacade: LatestTVSeriesHandler " + windowId);
+            task = new Task(((LatestTVSeriesHandler)obj).InitFacade);
+          }
+          else if (obj is LatestMusicHandler)
+          {
+            // logger.debug("*** InitFacade: LatestMusicHandler " + windowId);
+            task = new Task(((LatestMusicHandler)obj).InitFacade);
+          }
+          else if (obj is LatestTVAllRecordingsHandler)
+          {
+            // logger.debug("*** InitFacade: LatestTVAllRecordingsHandler " + windowId);
+            task = new Task(((LatestTVAllRecordingsHandler)obj).InitFacade);
+          }
+          else if (obj is LatestPictureHandler)
+          {
+            // logger.debug("*** InitFacade: LatestPictureHandler " + windowId);
+            task = new Task(((LatestPictureHandler)obj).InitFacade);
+          }
+          else if (obj is LatestMyFilmsHandler)
+          {
+            // logger.debug("*** InitFacade: LatestMyFilmsHandler " + windowId);
+            task = new Task(((LatestMyFilmsHandler)obj).InitFacade);
+          }
+          if (task != null)
+          {
+            task.Start();
+            TaskList.Add(task);
+          }
+        }
+        Task.WaitAll(TaskList.ToArray());
+      }
+      catch (Exception ex)
+      {
+        logger.Error("InitFacade: " + ex.ToString());
+      }
+    }
+
+    internal void DeInitFacade()
+    {
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+      if (Utils.ActiveWindow <= (int)GUIWindow.Window.WINDOW_INVALID)
+      {
+        return;
+      }
+
+      try
+      {
+        List<Task> TaskList = new List<Task>();
+        foreach (object obj in LatestsHandlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
+
+          Task task = null;
+          if (obj is LatestMovingPicturesHandler)
+          {
+            task = new Task(((LatestMovingPicturesHandler)obj).DeInitFacade);
+          }
+          else if (obj is LatestMyVideosHandler)
+          {
+            task = new Task(((LatestMyVideosHandler)obj).DeInitFacade);
+          }
+          else if (obj is LatestMvCentralHandler)
+          {
+            task = new Task(((LatestMvCentralHandler)obj).DeInitFacade);
+          }
+          else if (obj is LatestTVSeriesHandler)
+          {
+            task = new Task(((LatestTVSeriesHandler)obj).DeInitFacade);
+          }
+          else if (obj is LatestMusicHandler)
+          {
+            task = new Task(((LatestMusicHandler)obj).DeInitFacade);
+          }
+          else if (obj is LatestTVAllRecordingsHandler)
+          {
+            task = new Task(((LatestTVAllRecordingsHandler)obj).DeInitFacade);
+          }
+          else if (obj is LatestPictureHandler)
+          {
+            task = new Task(((LatestPictureHandler)obj).DeInitFacade);
+          }
+          else if (obj is LatestMyFilmsHandler)
+          {
+            task = new Task(((LatestMyFilmsHandler)obj).DeInitFacade);
+          }
+          if (task != null)
+          {
+            task.Start();
+            TaskList.Add(task);
+          }
+        }
+        Task.WaitAll(TaskList.ToArray());
+      }
+      catch (Exception ex)
+      {
+        logger.Error("DeInitFacade: " + ex.ToString());
+      }
+    }
+
+    internal void GuiWindowManagerOnActivateWindow(int activeWindowId)
+    {
+      OnActivateTask(activeWindowId);
+    }
+
+    internal void GuiWindowManagerOnDeActivateWindow(int deActiveWindowId)
+    {
+      Utils.ActiveWindow = (int)GUIWindow.Window.WINDOW_INVALID;
+    }
+
+    private void OnActivateTask(int activeWindowId)
+    {
+      if (activeWindowId <= (int)GUIWindow.Window.WINDOW_INVALID)
+      {
+        return;
+      }
+
+      Utils.ActiveWindow = activeWindowId;
+      logger.Debug("Activate Window: " + Utils.ActiveWindowStr + " " + GUIWindowManager.IsSwitchingToNewWindow);
+
+      if (MpVersion.CompareTo("1.19") < 0)
+      {
+        UpdateFacades();
+      }
+    }
+
+    private void StartTimers()
+    {
+      if (ReorgTimer != null && !ReorgTimer.Enabled)
+      {
+        ReorgTimer.Interval = GetReorgTimerInterval();
+        ReorgTimer.Start();
+      }
+      if (RefreshTimer != null && !RefreshTimer.Enabled)
+      {
+        RefreshTimer.Start();
+      }
+    }
+
+    private void StopTimers()
+    {
+      if (RefreshTimer != null && RefreshTimer.Enabled)
+      {
+        RefreshTimer.Stop();
+      }
+      if (ReorgTimer != null && ReorgTimer.Enabled)
+      {
+        ReorgTimer.Stop();
+      }
+    }
+
+    private void UpdateFacades()
+    {
+      try
+      {
+        if (!Utils.IsStopping && WindowsUsingFanartLatest.ContainsKey(Utils.ActiveWindowStr))
+        {
+          // Start facade in thread
+          new Thread(() =>
+          {
+            // logger.Debug("Update facades begin: " + Utils.ActiveWindowStr);
+            InitFacade();
+            StartTimers();
+            GetLatestMediaInfoTV("WindowActivate");
+            // logger.Debug("Update facades end: " + Utils.ActiveWindowStr);
+          }).Start();
+        }
+        else
+        {
+          // Start facade in thread
+          new Thread(() =>
+          {
+            // logger.Debug("Clean facades begin: " + Utils.ActiveWindowStr);
+            StopTimers();
+            DeInitFacade();
+            // logger.Debug("Clean facades end: " + Utils.ActiveWindowStr);
+          }).Start();
+        }
+      }
+      catch (ThreadAbortException)
+      {
+      }
+    }
+
+    private void UpdateImageTimer(Object stateInfo, ElapsedEventArgs e)
+    {
+      if (LatestsHandlers == null)
+      {
+        return;
+      }
+      if (!Utils.IsIdle())
+      {
+        return;
+      }
+      if (Utils.ActiveWindow <= (int)GUIWindow.Window.WINDOW_INVALID)
+      {
+        return;
+      }
+      if (Interlocked.CompareExchange(ref Utils.SyncPointRefresh, 1, 0) != 0)
+      {
+        return;
+      }
+
+      try
+      {
+        GUIWindow fWindow = GUIWindowManager.GetWindow(Utils.ActiveWindow);
+        if (fWindow == null)
+        {
+          Utils.SyncPointRefresh = 0;
+          return;
+        }
+
+        foreach (object obj in LatestsHandlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
+
+          if (obj is LatestMovingPicturesHandler)
+          {
+            ((LatestMovingPicturesHandler)obj).UpdateImageTimer(fWindow, stateInfo, e);
+          }
+          else if (obj is LatestMyVideosHandler)
+          {
+            ((LatestMyVideosHandler)obj).UpdateImageTimer(fWindow, stateInfo, e);
+          }
+          else if (obj is LatestMvCentralHandler)
+          {
+            ((LatestMvCentralHandler)obj).UpdateImageTimer(fWindow, stateInfo, e);
+          }
+          else if (obj is LatestTVSeriesHandler)
+          {
+            ((LatestTVSeriesHandler)obj).UpdateImageTimer(fWindow, stateInfo, e);
+          }
+          else if (obj is LatestMusicHandler)
+          {
+            ((LatestMusicHandler)obj).UpdateImageTimer(fWindow, stateInfo, e);
+          }
+          else if (obj is LatestTVAllRecordingsHandler)
+          {
+            ((LatestTVAllRecordingsHandler)obj).UpdateImageTimer(fWindow, stateInfo, e);
+          }
+          else if (obj is LatestPictureHandler)
+          {
+            ((LatestPictureHandler)obj).UpdateImageTimer(fWindow, stateInfo, e);
+          }
+          else if (obj is LatestMyFilmsHandler)
+          {
+            ((LatestMyFilmsHandler)obj).UpdateImageTimer(fWindow, stateInfo, e);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("UpdateImageTimer: " + ex.ToString());
+      }
+      Utils.SyncPointRefresh = 0;
+    }
+
+    private void SetupConfigFile()
+    {
+    }
+
+    /// <summary>
+    /// The Plugin is stopped
+    /// </summary>
+    public void Stop()
+    {
+      try
+      {
+        StopTasks(false);
+        logger.Info("Latest Media Handler is stopped.");
+      }
+      catch (Exception ex)
+      {
+        logger.Error("Stop: " + ex.ToString());
+      }
+    }
+
+    private void StopTasks(bool suspending)
+    {
+      try
+      {
+        Utils.IsStopping = true;
+
+        GUIWindowManager.OnActivateWindow -= new GUIWindowManager.WindowActivationHandler(GuiWindowManagerOnActivateWindow);
+        GUIGraphicsContext.OnNewAction -= new OnActionHandler(OnNewAction);
+        GUIWindowManager.Receivers -= new SendMessageHandler(OnMessage);
+        try
+        {
+          if (!suspending)
+          {
+            SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(OnSystemPowerModeChanged);
+          }
+        }
+        catch { }
+
+        int ix = 0;
+        while (Utils.GetDelayStop() && ix < 20)
+        {
+          System.Threading.Thread.Sleep(500);
+          ix++;
+        }
+
+        if (ReorgTimer != null)
+        {
+          ReorgTimer.Stop();
+          ReorgTimer.Dispose();
+        }
+        if (MyLatestReorgWorker != null)
+        {
+          MyLatestReorgWorker.CancelAsync();
+          MyLatestReorgWorker.Dispose();
+        }
+        if (RefreshTimer != null)
+        {
+          RefreshTimer.Stop();
+          RefreshTimer.Dispose();
+        }
+        DisposeHandlers();
+
+        Utils.DelayStop = new Hashtable();
+      }
+      catch (Exception ex)
+      {
+        logger.Error("Stop: " + ex.ToString());
+      }
+    }
+
+    #region XMLs
 
     /// <summary>
     /// Get value from xml node
@@ -316,7 +1442,7 @@ namespace LatestMediaHandler
       return String.Empty;
     }
 
-    private void SetupWindowsUsingLatestMediaHandlerVisibility(string SkinDir = (string) null, string ThemeDir = (string) null)
+    private void SetupWindowsUsingLatestMediaHandlerVisibility(string SkinDir = null, string ThemeDir = null)
     {
       XPathDocument myXPathDocument;
       XPathNavigator myXPathNavigator;
@@ -325,8 +1451,8 @@ namespace LatestMediaHandler
       string windowId = String.Empty;
       string sNodeValue = String.Empty;
 
-      var path = string.Empty ;
-      var theme = string.Empty; 
+      var path = string.Empty;
+      var theme = string.Empty;
 
       if (string.IsNullOrEmpty(SkinDir))
       {
@@ -334,12 +1460,12 @@ namespace LatestMediaHandler
 
         path = GUIGraphicsContext.Skin + @"\";
         theme = Utils.GetThemeFolder(path);
-        logger.Debug("Scan Skin folder for XML: "+path) ;
+        logger.Debug("Scan Skin folder for XML: " + path);
       }
       else
       {
         path = ThemeDir;
-        logger.Debug("Scan Skin Theme folder for XML: "+path) ;
+        logger.Debug("Scan Skin Theme folder for XML: " + path);
       }
 
       DirectoryInfo di = new DirectoryInfo(path);
@@ -354,10 +1480,10 @@ namespace LatestMediaHandler
           XMLName = fi.Name;
           var XMLFolder = fi.FullName.Substring(0, fi.FullName.LastIndexOf("\\"));
 
-          myXPathDocument     = new XPathDocument(fi.FullName);
-          myXPathNavigator    = myXPathDocument.CreateNavigator();
+          myXPathDocument = new XPathDocument(fi.FullName);
+          myXPathNavigator = myXPathDocument.CreateNavigator();
           myXPathNodeIterator = myXPathNavigator.Select("/window/id");
-          windowId            = GetNodeValue(myXPathNodeIterator);
+          windowId = GetNodeValue(myXPathNodeIterator);
 
           bool _flagLatest = false;
           if (!string.IsNullOrEmpty(windowId))
@@ -435,12 +1561,12 @@ namespace LatestMediaHandler
         }
         catch (Exception ex)
         {
-          logger.Error("SetupWindowsUsingLatestMediaHandlerVisibility: "+(string.IsNullOrEmpty(ThemeDir) ? string.Empty : "Theme: "+ThemeDir+" ")+"Filename:"+ XMLName) ;
-          logger.Error(ex) ;
+          logger.Error("SetupWindowsUsingLatestMediaHandlerVisibility: " + (string.IsNullOrEmpty(ThemeDir) ? string.Empty : "Theme: " + ThemeDir + " ") + "Filename:" + XMLName);
+          logger.Error(ex);
         }
       }
 
-      if (string.IsNullOrEmpty(ThemeDir)) 
+      if (string.IsNullOrEmpty(ThemeDir))
       {
         // Include Themes
         if (!string.IsNullOrEmpty(theme))
@@ -459,1085 +1585,13 @@ namespace LatestMediaHandler
         myXPathDocument.CreateNavigator().WriteSubtree(xmlWriter);
       }
       string _xml = sb.ToString();
-      _flagLatest = (_xml.Contains(".latest.") && _xml.Contains("#latestMediaHandler.")) ? true : _flagLatest;
+      _flagLatest = _xml.Contains("#LatestMediaHandler:Yes") ? true : _flagLatest;
+      _flagLatest = _xml.Contains("#latestMediaHandler.") && (_xml.Contains(".latest.") || _xml.Contains(".selected.")) ? true : _flagLatest;
 
       sb = null;
     }
 
-    private void UpdateReorgTimer(Object stateInfo, ElapsedEventArgs e)
-    {
-      if (Utils.GetIsStopping() == false)
-      {
-        try
-        {
-          int sync = Interlocked.CompareExchange(ref Utils.SyncPointReorg, 1, 0);
-          if (sync == 0)
-          {
-            // No other event was executing.                                                      
-            if (MyLatestReorgWorker == null)
-            {
-              MyLatestReorgWorker = new LatestReorgWorker();
-              MyLatestReorgWorker.RunWorkerCompleted += MyLatestReorgWorker.OnRunWorkerCompleted;
-            }
-            MyLatestReorgWorker.RunWorkerAsync();
-          }
-        }
-        catch (Exception ex)
-        {
-          Utils.SyncPointReorg = 0;
-          logger.Error("UpdateReorgTimer: " + ex.ToString());
-        }
-      }
-    }
-
-    #region Init Handlers
-    private void InitHandlers()
-    {
-      try // Music
-      {
-        Lmh.SetupMusicLatest();
-      }
-      catch { }
-
-      try // MyVideo
-      {
-        Lmvh.SetupVideoLatest();
-      }
-      catch { }
-
-      try // TV Series
-      {
-        Ltvsh.SetupTVSeriesLatest();
-      }
-      catch { }
-
-      try // Pictures
-      {
-        Lph.SetupPicturesLatest();
-      }
-      catch { }
-
-      try // Moving Pictures
-      {
-        Lmph.SetupMovingPicturesLatest();
-      }
-      catch { }
-
-      try // My Films
-      {
-        Lmfh.SetupMovieLatest();
-      }
-      catch { }
-
-      try // mvCentral
-      {
-        Lmch.SetupMvCentralsLatest();
-      }
-      catch { }
-
-      try // TV Recordings
-      {
-        Ltvrh.SetupTVRecordingsLatest();
-      }
-      catch { }
-
-      try // Fanart Handler
-      {
-        UtilsFanartHandler.SetupFanartHandlerSubcribeScaperFinishedEvent();
-      }
-      catch { }        
-    }
     #endregion
-
-    #region Dispose Handlers
-    private void DisposeHandlers()
-    {
-      try // Music
-      {
-        Lmh.DisposeMusicLatest();
-      }
-      catch { }
-
-      try // MyVideo
-      {
-        Lmvh.DisposeVideoLatest();
-      }
-      catch { }
-
-      try // TV Series
-      {
-        Ltvsh.DisposeTVSeriesLatest();
-      }
-      catch { }
-
-      try // Pictures
-      {
-        Lph.DisposePicturesLatest();
-      }
-      catch { }
-
-      try // Moving Pictures
-      {
-        Lmph.DisposeMovingPicturesLatest();
-      }
-      catch { }
-
-      try // My Films
-      {
-        Lmfh.DisposeMovieLatest();
-      }
-      catch { }
-
-      try // mvCentral
-      {
-        Lmch.DisposeMvCentralsLatest();
-      }
-      catch { }
-
-      try // TV Recordings
-      {
-        Ltvrh.DisposeTVRecordingsLatest();
-      }
-      catch { }
-
-      try // Fanart Handler
-      {
-        UtilsFanartHandler.DisposeFanartHandlerSubcribeScaperFinishedEvent();
-      }
-      catch { }
-    }
-    #endregion
-
-    /// <summary>
-    /// Set start values on variables
-    /// </summary>
-    private void SetupVariables()
-    {
-      Utils.SetIsStopping(false);
-
-      Lmh   = new LatestMusicHandler();
-      Lmvh  = new LatestMyVideosHandler();
-      Ltvsh = new LatestTVSeriesHandler();
-      Lph   = new LatestPictureHandler();
-      Lmph  = new LatestMovingPicturesHandler();
-      Lmfh  = new LatestMyFilmsHandler();
-      Lmch  = new LatestMvCentralHandler();
-      ltvrh = new LatestTVAllRecordingsHandler();
-
-      ReorgTimerTick = Environment.TickCount;
-      //
-      Utils.SetProperty("#latestMediaHandler.scanned", "false");
-      //
-      Lmh.EmptyLatestMediaPropsMusic();
-      Lmvh.EmptyLatestMediaPropsMyVideos();
-      Lph.EmptyLatestMediaPropsPictures();
-      Ltvsh.EmptyLatestMediaPropsTVSeries();
-      Lmph.EmptyLatestMediaPropsMovingPictures();
-      Lmfh.EmptyLatestMediaPropsMyFilms();
-      Lmch.EmptyLatestMediaPropsMvCentral();
-      ltvrh.EmptyLatestMediaPropsTVRecordings();
-      ltvrh.EmptyRecordingProps();
-
-      //
-      ControlIDFacades = new List<int>();
-      ControlIDPlays = new List<int>();
-      //
-      ControlIDFacades.AddRange(Lmh.ControlIDFacades);
-      ControlIDPlays.AddRange(Lmh.ControlIDPlays);
-
-      ControlIDFacades.AddRange(Lmvh.ControlIDFacades);
-      ControlIDPlays.AddRange(Lmvh.ControlIDPlays);  
-      ControlIDFacades.AddRange(Ltvsh.ControlIDFacades);
-      ControlIDPlays.AddRange(Ltvsh.ControlIDPlays);  
-      ControlIDFacades.AddRange(Lph.ControlIDFacades);
-      ControlIDPlays.AddRange(Lph.ControlIDPlays);  
-      ControlIDFacades.AddRange(Lmph.ControlIDFacades);
-      ControlIDPlays.AddRange(Lmph.ControlIDPlays);  
-      ControlIDFacades.AddRange(Lmfh.ControlIDFacades);
-      ControlIDPlays.AddRange(Lmfh.ControlIDPlays);  
-      ControlIDFacades.AddRange(Lmch.ControlIDFacades);
-      ControlIDPlays.AddRange(Lmch.ControlIDPlays);  
-      ControlIDFacades.AddRange(ltvrh.ControlIDFacades);
-      ControlIDPlays.AddRange(ltvrh.ControlIDPlays);  
-
-      // logger.Debug("*** Init active facade controls: "+string.Join(" ", ControlIDFacades));
-      // logger.Debug("*** Init active button controls: "+string.Join(" ", ControlIDPlays));
-
-      // Utils.InitCheckMarks();
-    }
-
-/*
-        internal static void UnloadLatestCache(ref ArrayList al)
-        {
-            if (al != null)
-            {
-                foreach (String s in al)
-                {
-                    GUITextureManager.ReleaseTexture(s);
-                }             
-            }
-        }
-
-        internal static void ReloadLatestCache(ref ArrayList images)
-        {           
-            if (images != null && images.Count > 0)
-            {
-                foreach (String s in images)
-                {
-                    Utils.LoadImage(s);
-                }
-            }
-        }
-
-        internal static void UpdateLatestCache(ref ArrayList al, ArrayList images)
-        {
-            if (al != null)
-            {
-                foreach (String s in al)
-                {
-                    GUITextureManager.ReleaseTexture(s);
-                }
-                al.Clear();    
-            }
-                       
-            if (images != null && images.Count > 0)
-            {
-                foreach (String s in images)
-                {
-                    if (al.Contains(s) == false)
-                    {
-                        try
-                        {
-                            al.Add(s);
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Error("UpdateLatestCache: " + ex.ToString());
-                        }
-                        Utils.LoadImage(s);
-                    }
-                }
-            }
-        }
-*/
-
-    /// <summary>
-    /// Setup logger. This funtion made by the team behind Moving Pictures 
-    /// (http://code.google.com/p/moving-pictures/)
-    /// </summary>
-    private void InitLogger()
-    {
-      //LoggingConfiguration config = new LoggingConfiguration();
-      LoggingConfiguration config = LogManager.Configuration ?? new LoggingConfiguration();
-
-      try
-      {
-        FileInfo logFile = new FileInfo(Config.GetFile(Config.Dir.Log, LogFileName));
-        if (logFile.Exists)
-        {
-          if (File.Exists(Config.GetFile(Config.Dir.Log, OldLogFileName)))
-            File.Delete(Config.GetFile(Config.Dir.Log, OldLogFileName));
-
-          logFile.CopyTo(Config.GetFile(Config.Dir.Log, OldLogFileName));
-          logFile.Delete();
-        }
-      }
-      catch (Exception) { }
-
-      FileTarget fileTarget = new FileTarget();
-      fileTarget.FileName = Config.GetFile(Config.Dir.Log, LogFileName);
-      fileTarget.Encoding = "utf-8";
-      fileTarget.Layout = "${date:format=dd-MMM-yyyy HH\\:mm\\:ss} " +
-                          "${level:fixedLength=true:padding=5} " +
-                          "[${logger:fixedLength=true:padding=20:shortName=true}]: ${message} " +
-                          "${exception:format=tostring}";
-
-      config.AddTarget("latestmedia-handler", fileTarget);
-
-      // Get current Log Level from MediaPortal 
-      LogLevel logLevel;
-      MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
-
-      string str = xmlreader.GetValue("general", "ThreadPriority");
-      LMHThreadPriority = str == null || !str.Equals("Normal", StringComparison.CurrentCulture) ? (str == null || !str.Equals("BelowNormal", StringComparison.CurrentCulture) ? "BelowNormal" : "Lowest") : "Lowest";
-
-      switch ((Level) xmlreader.GetValueAsInt("general", "loglevel", 0))
-      {
-        case Level.Error:
-          logLevel = LogLevel.Error;
-          break;
-        case Level.Warning:
-          logLevel = LogLevel.Warn;
-          break;
-        case Level.Information:
-          logLevel = LogLevel.Info;
-          break;
-        case Level.Debug:
-        default:
-          logLevel = LogLevel.Debug;
-          break;
-      }
-
-#if DEBUG
-      logLevel = LogLevel.Debug;
-#endif
-
-      LoggingRule rule = new LoggingRule("*", logLevel, fileTarget);
-      config.LoggingRules.Add(rule);
-
-      LogManager.Configuration = config;
-    }
-
-    /// <summary>
-    /// The plugin is started by Mediaportal
-    /// </summary>
-    public void Start()
-    {
-      try
-      {
-        Utils.DelayStop = new Hashtable();
-        Utils.SetIsStopping(false);
-
-        InitLogger();
-        logger.Info("Latest Media Handler is starting.");
-        logger.Info("Latest Media Handler version is " + Utils.GetAllVersionNumber());
-
-        MpVersion = FileVersionInfo.GetVersionInfo(Application.ExecutablePath).ProductVersion;
-        logger.Info("MediaPortal version is " + MpVersion);
-        // TODO need to see if it didn't break on older MP version (< 1.03)
-        //MpVersion = FileVersionInfo.GetVersionInfo(Application.ExecutablePath).ProductMajorPart.ToString()+"."+
-        //            FileVersionInfo.GetVersionInfo(Application.ExecutablePath).ProductMinorPart.ToString().PadLeft(2, '0');
-        MpVersion = FileVersionInfo.GetVersionInfo(Application.ExecutablePath).FileVersion;
-
-        SetupConfigFile();
-        Utils.LoadSettings();
-
-        Translation.Init();
-
-        SetupWindowsUsingLatestMediaHandlerVisibility();
-        SetupVariables();
-        Utils.SyncPointInit();
-
-        GetLatestMediaInfo();
-
-        Thread.Sleep(1000);
-        
-        InitHandlers();
-
-        GUIWindowManager.OnActivateWindow += new GUIWindowManager.WindowActivationHandler(GuiWindowManagerOnActivateWindow);
-        GUIGraphicsContext.OnNewAction += new OnActionHandler(OnNewAction);
-        GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
-        SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnSystemPowerModeChanged);
-
-        ReorgTimer = new System.Timers.Timer((Int32.Parse(ReorgInterval)*60000));
-        ReorgTimer.Elapsed += new ElapsedEventHandler(UpdateReorgTimer);
-        ReorgTimer.Interval = (Int32.Parse(ReorgInterval)*60000);
-        ReorgTimer.Start();
-
-        refreshTimer = new System.Timers.Timer(250);
-        refreshTimer.Elapsed += new ElapsedEventHandler(UpdateImageTimer);
-        refreshTimer.Interval = 250;
-        refreshTimer.Start();
-
-        RefreshActiveWindow();
-
-        Starting = false ;
-
-        logger.Info("Latest Media Handler is started.");
-      }
-      catch (Exception ex)
-      {
-        logger.Error("Start: " + ex.ToString());
-      }
-    }
-
-    private void RefreshActiveWindow()
-    {
-        string windowId = String.Empty + GUIWindowManager.ActiveWindow;
-        if (Utils.GetIsStopping() == false && WindowsUsingFanartLatest.ContainsKey(windowId))
-        {
-          GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          if (fWindow != null)
-          {
-            GUIWindowManager.ActivateWindow(fWindow.GetID, true, true, fWindow.GetFocusControlId());
-          }
-        }
-    }
-
-    private void GetLatestMediaInfo(string Mode = (string) "Start", int Level = (int) 0)
-    {
-      // Level 0 - All, 1 - Video, 2 - Music, 3 - Pictures, 4 - TV
-      if ((Level == 0) || (Level == 1))
-        GetLatestMediaInfoVideo(Mode) ;
-      if ((Level == 0) || (Level == 2))
-        GetLatestMediaInfoMusic(Mode) ;
-      if ((Level == 0) || (Level == 3))
-        GetLatestMediaInfoPictures(Mode) ;
-      if ((Level == 0) || (Level == 4))
-        GetLatestMediaInfoTV(Mode) ;
-    }
-
-    private static void GetLatestMediaInfoMusic(string Mode = (string) "Update")
-    {
-      // Music
-      if (LatestMusic.Equals("True", StringComparison.CurrentCulture))
-      {
-        try
-        {
-          Lmh.GetLatestMediaInfoThread();
-        }
-        catch (Exception ex)
-        {
-          logger.Error("GetLatestMediaInfoMusic ["+Mode+"]: " + ex.ToString());
-        }
-      }
-    }
-
-    private static void GetLatestMediaInfoPictures(string Mode = (string) "Update")
-    {
-      // Pictures
-      if (LatestPictures.Equals("True", StringComparison.CurrentCulture))
-      {
-        try
-        {
-          Lph.GetLatestMediaInfoThread();
-        }
-        catch (Exception ex)
-        {
-          logger.Error("GetLatestMediaInfoPictures ["+Mode+"]: " + ex.ToString());
-        }
-      }
-    }
-
-    private static void GetLatestMediaInfoTV(string Mode = (string) "Update")
-    {
-      // TV Record
-      if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
-      {
-        try
-        {
-          Ltvrh.GetTVRecordings();
-        }
-        catch (Exception ex)
-        {
-          logger.Error("GetLatestMediaInfoTV ["+Mode+"]: " + ex.ToString());
-        }
-      }
-    }
-
-    private static void GetLatestMediaInfoVideo(string Mode = (string) "Update")
-    {
-      // MyVideo
-      if (LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
-      {
-        try
-        {
-          Lmvh.MyVideosUpdateLatestThread();
-        }
-        catch (Exception ex)
-        {
-          logger.Error("GetLatestMediaInfoVideo ["+Mode+"]: " + ex.ToString());
-        }
-      }
-
-      // TVSeries
-      if (LatestTVSeries.Equals("True", StringComparison.CurrentCulture))
-      {
-        try
-        {
-          Ltvsh.TVSeriesUpdateLatestThread();
-        }
-        catch (Exception ex)
-        {
-          logger.Error("GetLatestMediaInfoVideo ["+Mode+"]: " + ex.ToString());
-        }
-      }
-
-      // Moving Pictures
-      if (LatestMovingPictures.Equals("True", StringComparison.CurrentCulture))
-      {
-        try
-        {
-          Lmph.MovingPictureUpdateLatestThread();
-        }
-        catch (Exception ex)
-        {
-          logger.Error("GetLatestMediaInfoVideo ["+Mode+"]: " + ex.ToString());
-        }
-      }
-
-      // MyFilms
-      if (LatestMyFilms.Equals("True", StringComparison.CurrentCulture))
-      {
-        try
-        {
-          Lmfh.MyFilmsUpdateLatestThread();
-        }
-        catch (Exception ex)
-        {
-          logger.Error("GetLatestMediaInfoVideo ["+Mode+"]: " + ex.ToString());
-        }
-      }
-
-      // mvCentral
-      if (LatestMvCentral.Equals("True", StringComparison.CurrentCulture))
-      {
-        try
-        {
-          Lmch.GetLatestMediaInfoThread();
-        }
-        catch (Exception ex)
-        {
-          logger.Error("GetLatestMediaInfoVideo ["+Mode+"]: " + ex.ToString());
-        }
-      }
-    }
-
-    private void OnSystemPowerModeChanged(object sender, PowerModeChangedEventArgs e)
-    {
-      try
-      {
-        if (e.Mode == PowerModes.Resume)
-        {
-          logger.Info("LatestMediaHandler is resuming from standby/hibernate.");
-          // StopTasks(false);
-          // Start();
-
-          // b: ajs
-          Utils.HasNewInit();
-          GetLatestMediaInfo();
-          // e: ajs
-        }
-        else if (e.Mode == PowerModes.Suspend)
-        {
-          logger.Info("LatestMediaHandler is suspending/hibernating...");
-          // StopTasks(true);
-          logger.Info("LatestMediaHandler is suspended/hibernated.");
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("OnSystemPowerModeChanged: " + ex);
-      }
-    }
-
-    internal static void TriggerGetLatestMediaInfoOnEvent(string type, string artist)
-    {
-      try
-      {
-        if (artist != null && Lmh.artistsWithImageMissing != null && Lmh.artistsWithImageMissing.Contains(artist))
-        {
-          logger.Info("Received new scraper event from FanartHandler plugin for artist " + artist + ".");
-          // Lmh.GetLatestMediaInfo(false);
-          GetLatestMediaInfoMusic("Fanart");
-        }
-/*
-        else
-        {
-          if (artist != null)
-          {
-            logger.Debug("Received new scraper event from FanartHandler plugin for artist " + artist + ".");
-          }
-        }
-*/
-      }
-      catch (Exception ex)
-      {
-        logger.Error("TriggerGetLatestMediaInfoOnEvent: " + ex.ToString());
-      }
-    }
-
-    private void DoContextMenu()
-    {
-      GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-      if (fWindow == null)
-        return ;
-
-      int FocusControlID = fWindow.GetFocusControlId();
-      if (!ControlIDFacades.Contains(FocusControlID) && !ControlIDPlays.Contains(FocusControlID))
-        return;
-
-      if ((Lmph != null) && (Lmph.ControlIDFacades.Contains(FocusControlID) || Lmph.ControlIDPlays.Contains(FocusControlID)))
-      {
-        Lmph.MyContextMenu();
-      }
-      else if ((Lmvh != null) && (Lmvh.ControlIDFacades.Contains(FocusControlID) || Lmvh.ControlIDPlays.Contains(FocusControlID)))
-      {
-        Lmvh.MyContextMenu();
-      }
-      else if ((Lmch != null) && (Lmch.ControlIDFacades.Contains(FocusControlID) || Lmch.ControlIDPlays.Contains(FocusControlID)))
-      {
-        Lmch.MyContextMenu();
-      }
-      else if ((Lph != null) && (Lph.ControlIDFacades.Contains(FocusControlID) || Lph.ControlIDPlays.Contains(FocusControlID)))
-      {
-        Lph.MyContextMenu();
-      }
-      else if ((Ltvsh != null) && (Ltvsh.ControlIDFacades.Contains(FocusControlID) || Ltvsh.ControlIDPlays.Contains(FocusControlID)))
-      {
-        Ltvsh.MyContextMenu();
-      }
-      else if ((Lmfh != null) && (Lmfh.ControlIDFacades.Contains(FocusControlID) || Lmfh.ControlIDPlays.Contains(FocusControlID)))
-      {
-        Lmfh.MyContextMenu();
-      }
-      else if ((Ltvrh != null) && (Ltvrh.ControlIDFacades.Contains(FocusControlID) || Ltvrh.ControlIDPlays.Contains(FocusControlID)))
-      {
-        Ltvrh.MyContextMenu();
-      }
-      else if ((Lmh != null) && (Lmh.ControlIDFacades.Contains(FocusControlID) || Lmh.ControlIDPlays.Contains(FocusControlID)))
-      {
-        Lmh.MyContextMenu();
-      }
-      /*
-      if ((FocusControlID == LatestMovingPicturesHandler.ControlID) || 
-          (FocusControlID == LatestMovingPicturesHandler.Play1ControlID) || (FocusControlID == LatestMovingPicturesHandler.Play2ControlID) || (FocusControlID == LatestMovingPicturesHandler.Play3ControlID))
-      {
-        Lmph.MyContextMenu();
-      }
-      else if ((FocusControlID == LatestMyVideosHandler.ControlID) ||
-          (FocusControlID == LatestMyVideosHandler.Play1ControlID) || (FocusControlID == LatestMyVideosHandler.Play2ControlID) || (FocusControlID == LatestMyVideosHandler.Play3ControlID))
-      {
-        Lmvh.MyContextMenu();
-      }
-      else if ((FocusControlID == LatestMvCentralHandler.ControlID) ||
-          (FocusControlID == LatestMvCentralHandler.Play1ControlID) || (FocusControlID == LatestMvCentralHandler.Play2ControlID) || (FocusControlID == LatestMvCentralHandler.Play3ControlID))
-      {
-        Lmch.MyContextMenu();
-      }
-      else if ((FocusControlID == LatestPictureHandler.ControlID) ||
-          (FocusControlID == LatestPictureHandler.Play1ControlID) || (FocusControlID == LatestPictureHandler.Play2ControlID) || (FocusControlID == LatestPictureHandler.Play3ControlID))
-      {
-        Lph.MyContextMenu();
-      }
-      else if ((FocusControlID == LatestTVSeriesHandler.ControlID) ||
-          (FocusControlID == LatestTVSeriesHandler.Play1ControlID) || (FocusControlID == LatestTVSeriesHandler.Play2ControlID) || (FocusControlID == LatestTVSeriesHandler.Play3ControlID))
-      {
-        Ltvsh.MyContextMenu();
-      }
-      else if ((FocusControlID == LatestMyFilmsHandler.ControlID) ||
-          (FocusControlID == LatestMyFilmsHandler.Play1ControlID) || (FocusControlID == LatestMyFilmsHandler.Play2ControlID) || (FocusControlID == LatestMyFilmsHandler.Play3ControlID))
-      {
-        Lmfh.MyContextMenu();
-      }
-      else if ((FocusControlID == LatestTVAllRecordingsHandler.ControlID) ||
-          (FocusControlID == LatestTVAllRecordingsHandler.Play1ControlID) || (FocusControlID == LatestTVAllRecordingsHandler.Play2ControlID) || (FocusControlID == LatestTVAllRecordingsHandler.Play3ControlID))
-      {
-        Ltvrh.MyContextMenu();
-      }
-      else if ((FocusControlID == LatestMusicHandler.ControlID) ||
-          (FocusControlID == LatestMusicHandler.Play1ControlID) || (FocusControlID == LatestMusicHandler.Play2ControlID) || (FocusControlID == LatestMusicHandler.Play3ControlID))
-      {
-        Lmh.MyContextMenu();
-      }
-      */
-    }
-
-    private void OnMessage(GUIMessage message)
-    {
-      Utils.ThreadToSleep();
-      try
-      {
-        if (message.Object is ShowLMHDialog)
-        {
-          DoContextMenu();
-        }
-      }
-      catch
-      {   }
-    }
-
-    internal void OnAction(GUIWindow fWindow, ref MediaPortal.GUI.Library.Action action, bool ContextMenu) 
-    {
-      if (fWindow != null)
-      {
-        //
-        int FocusControlID = fWindow.GetFocusControlId();
-        if (ControlIDFacades.Contains(FocusControlID) || ControlIDPlays.Contains(FocusControlID))
-        {
-          if (ContextMenu)
-          {
-            if (action.IsUserAction())
-              GUIGraphicsContext.ResetLastActivity();
-            action.wID = 0;
-
-            ShowLMHDialog slmhd = new ShowLMHDialog();
-            GUIWindowManager.SendThreadMessage(new GUIMessage()
-                                               {
-                                                 TargetWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME,
-                                                 SendToTargetWindow = true,
-                                                 Object = slmhd
-                                               });
-            return;
-          }
-          else
-          {
-            if (Lmh != null && Lmh.PlayMusicAlbum(fWindow)) return;
-            if (Lmvh != null && Lmvh.PlayMovie(fWindow)) return;
-            if (Lph != null && Lph.PlayPictures(fWindow)) return;
-            if (Ltvsh != null && Ltvsh.PlayTVSeries(fWindow)) return;
-            if (Lmph != null && Lmph.PlayMovingPicture(fWindow)) return;
-            if (Lmfh != null && Lmfh.PlayMovie(fWindow)) return;
-            if (Lmch != null && Lmch.PlayMusicAlbum(fWindow)) return;
-            if (Ltvrh != null && Ltvrh.PlayRecording(fWindow, ref action)) return;
-            return;
-          }
-        }
-      }
-    }
-
-    private void OnNewAction(MediaPortal.GUI.Library.Action action)
-    {
-      bool Action = false;
-      bool Context = false;
-
-      if (action == null)
-        return;
-
-      try
-      {
-        if ((GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME) && (GUIWindowManager.RoutedWindow == -1))
-        {
-          GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          if (fWindow == null)
-            return;
-
-          switch (action.wID)
-          {
-            case MediaPortal.GUI.Library.Action.ActionType.ACTION_CONTEXT_MENU:
-            {
-              Action = true ;
-              Context = true;
-              logger.Debug("OnNewAction: ACTION_CONTEXT_MENU");
-              break;
-            }
-            case MediaPortal.GUI.Library.Action.ActionType.ACTION_MOUSE_CLICK:
-            {
-              Action  = (action.MouseButton == MouseButtons.Left) || (action.MouseButton == MouseButtons.Right) ;
-              Context = (action.MouseButton == MouseButtons.Right);
-              logger.Debug("OnNewAction: ACTION_MOUSE_CLICK [" + ((action.MouseButton == MouseButtons.Left) ? "L" : (action.MouseButton == MouseButtons.Right) ? "R" : "U") + "]");
-              break;
-            }
-            case MediaPortal.GUI.Library.Action.ActionType.ACTION_SELECT_ITEM:
-            {
-              Action = true ;
-              Context = false;
-              logger.Debug("OnNewAction: ACTION_SELECT_ITEM");
-              break;
-            }
-            default:
-              break;
-          }
-
-          if (Action)
-          {
-            OnAction(fWindow, ref action, Context);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("OnNewAction: " + ex.ToString());
-      }
-    }
-
-    private void InitFacade(object obj, int windowId)
-    {
-      try
-      {
-        GUIWindow gw = GUIWindowManager.GetWindow(windowId);
-        int x = 0;
-        if (obj is LatestMovingPicturesHandler)
-          x = LatestMovingPicturesHandler.ControlID;
-        else if (obj is LatestMyVideosHandler)
-          x = LatestMyVideosHandler.ControlID;
-        else if (obj is LatestMvCentralHandler)
-          x = LatestMvCentralHandler.ControlID;
-        else if (obj is LatestTVSeriesHandler)
-          x = LatestTVSeriesHandler.ControlID;
-        else if (obj is LatestMusicHandler)
-          x = LatestMusicHandler.ControlID;
-        else if (obj is LatestTVAllRecordingsHandler)
-          x = LatestTVAllRecordingsHandler.ControlID;
-        else if (obj is LatestPictureHandler)
-          x = LatestPictureHandler.ControlID;
-        else if (obj is LatestMyFilmsHandler)
-          x = LatestMyFilmsHandler.ControlID;
-        //
-        if (x == LatestMovingPicturesHandler.ControlID)
-        {
-          if (Lmph != null)
-            Lmph.InitFacade(true) ;
-          return;
-        }
-        else if (x == LatestMyVideosHandler.ControlID)
-        {
-          if (Lmvh != null)
-            Lmvh.InitFacade(true) ;
-          return ;
-        }
-        else if (x == LatestMvCentralHandler.ControlID)
-        {
-          if (Lmch != null)
-            Lmch.InitFacade(true);
-          return;
-        }
-        else if (x == LatestTVSeriesHandler.ControlID)
-        {
-          if (Ltvsh != null)
-            Ltvsh.InitFacade(true);
-          return;
-        }
-        else if (x == LatestMusicHandler.ControlID)
-        {
-          if (Lmh != null)
-            Lmh.InitFacade(true);
-          return ;
-        }
-        else if (x == LatestPictureHandler.ControlID)
-        {
-          if (Lph != null)
-            Lph.InitFacade(true);
-          return;
-        }
-        else if (x == LatestMyFilmsHandler.ControlID)
-        {
-          if (Lmfh != null)
-          Lmfh.InitFacade(true);
-          return;
-        }
-        //
-        GUIFacadeControl facade = gw.GetControl(x) as GUIFacadeControl;
-        if (facade != null)
-        {
-          facade.Clear();
-          if (x == LatestTVAllRecordingsHandler.ControlID)
-          {
-            if (Ltvrh != null)
-            {
-              Ltvrh.InitFacade(ref facade);
-              facade.SelectedListItemIndex = Ltvrh.LastFocusedId;
-              Utils.UpdateFacade(ref facade);
-              facade.Visible = false;
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("InitFacade: " + ex.ToString());
-      }
-    }
-
-    internal void DeInitFacade(int windowId)
-    {
-      if (Lmh != null)
-        Lmh.DeInitFacade();
-      if (Lmvh != null)
-        Lmvh.DeInitFacade();
-      if (Ltvsh != null)
-        Ltvsh.DeInitFacade();
-      if (Lmph != null)
-        Lmph.DeInitFacade();
-      if (Lph != null)
-        Lph.DeInitFacade();
-      if (Lmch != null)
-        Lmch.DeInitFacade();
-      if (Lmfh != null)
-        Lmfh.DeInitFacade();
-
-      GUIWindow gw = GUIWindowManager.GetWindow(windowId);
-      GUIFacadeControl facade = gw.GetControl(LatestTVAllRecordingsHandler.ControlID) as GUIFacadeControl;
-      if (facade != null)
-      {
-        Ltvrh.ClearFacade(ref facade) ;
-      }
-    }
-
-    internal void GuiWindowManagerOnActivateWindow(int activeWindowId)
-    {
-      try
-      {
-        string windowId = String.Empty + GUIWindowManager.ActiveWindow;
-        if (windowId != activeWindowId.ToString())
-          logger.Debug("GuiWindowManagerOnActivateWindow: Hmmm, recieve ID: " + activeWindowId.ToString() + " but actual ID: "+windowId);
-
-        if (Utils.GetIsStopping() == false && WindowsUsingFanartLatest.ContainsKey(windowId))
-        {
-          InitFacade(Lmph, activeWindowId);
-          InitFacade(Ltvsh, activeWindowId);
-          InitFacade(Lmh, activeWindowId);
-          InitFacade(Ltvrh, activeWindowId);
-          InitFacade(Lph, activeWindowId);
-          InitFacade(Lmfh, activeWindowId);
-          InitFacade(Lmvh, activeWindowId);
-          InitFacade(Lmch, activeWindowId);
-          //
-          if (ReorgTimer != null && !ReorgTimer.Enabled)
-          {
-            ReorgTimer.Interval = GetReorgTimerInterval();
-            ReorgTimer.Start();
-          }
-          //
-          if (refreshTimer != null && !refreshTimer.Enabled)
-            refreshTimer.Start();
-          //
-          GetLatestMediaInfoTV("WindowActivate");
-        }
-        else
-        {
-          if (refreshTimer != null && refreshTimer.Enabled)
-            refreshTimer.Stop();
-          if (ReorgTimer != null && ReorgTimer.Enabled)
-            ReorgTimer.Stop();
-
-          DeInitFacade (activeWindowId) ;
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("GUIWindowManager_OnActivateWindow: " + ex.ToString());
-      }
-    }
-
-    private void UpdateImageTimer(Object stateInfo, ElapsedEventArgs e)
-    {
-      try
-      {
-        int sync = Interlocked.CompareExchange(ref Utils.SyncPointRefresh, 1, 0);
-        if (sync == 0)
-        {
-          if (Utils.IsIdle())
-          {
-            if (GUIWindowManager.ActiveWindow > (int)GUIWindow.Window.WINDOW_INVALID)
-            {
-              GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-              if (fWindow != null)
-              {
-                /*                            
-                Utils.LogDevMsg("*******************************");
-                Utils.LogDevMsg("Lmvh.images.Count:" + Lmvh.images.Count);
-                Utils.LogDevMsg("Lmch.images.Count:" + Lmch.images.Count);
-                Utils.LogDevMsg("Lmvh.imagesThumbs.Count:" + Lmvh.imagesThumbs.Count);
-                Utils.LogDevMsg("Lmph.images.Count:" + Lmph.images.Count);
-                Utils.LogDevMsg("Lmph.imagesThumbs.Count:" + Lmph.imagesThumbs.Count);
-                Utils.LogDevMsg("Ltvsh.images.Count:" + Ltvsh.images.Count);
-                Utils.LogDevMsg("Ltvsh.imagesThumbs.Count:" + Ltvsh.imagesThumbs.Count);
-                Utils.LogDevMsg("Lmh.images.Count:" + Lmh.images.Count);
-                Utils.LogDevMsg("Lmh.imagesThumbs.Count:" + Lmh.imagesThumbs.Count);
-                Utils.LogDevMsg("Lph.images.Count:" + Lph.images.Count);
-                Utils.LogDevMsg("Lph.imagesThumbs.Count:" + Lph.imagesThumbs.Count);
-                Utils.LogDevMsg("Lmfh.images.Count:" + Lmfh.images.Count);
-                Utils.LogDevMsg("Lmfh.imagesThumbs.Count:" + Lmfh.imagesThumbs.Count);
-                */
-                Lmh.UpdateImageTimer(fWindow, stateInfo, e);
-                Lph.UpdateImageTimer(fWindow, stateInfo, e);
-                Lmvh.UpdateImageTimer(fWindow, stateInfo, e);
-                Ltvsh.UpdateImageTimer(fWindow, stateInfo, e);
-                Lmph.UpdateImageTimer(fWindow, stateInfo, e);
-                Lmfh.UpdateImageTimer(fWindow, stateInfo, e);
-                Lmch.UpdateImageTimer(fWindow, stateInfo, e);
-                Ltvrh.UpdateImageTimer(fWindow, stateInfo, e);
-              }
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("UpdateImageTimer: " + ex.ToString());
-      }
-      Utils.SyncPointRefresh = 0;
-    }
-
-    private void SetupConfigFile()
-    {
-      /*
-      try
-      {
-        String path = Config.GetFolder(Config.Dir.Config) + @"\LatestMediaHandler.xml";
-        String pathOrg = Config.GetFolder(Config.Dir.Config) + @"\LatestMediaHandler.org";
-        if (File.Exists(path))
-        {
-          //do nothing
-        }
-        else
-        {
-          File.Copy(pathOrg, path);
-        }
-      }
-      catch (Exception ex)
-      {
-        logger.Error("setupConfigFile: " + ex.ToString());
-      }
-      */
-    }
-
-    /// <summary>
-    /// The Plugin is stopped
-    /// </summary>
-    public void Stop()
-    {
-      try
-      {
-        StopTasks(false);
-        logger.Info("Latest Media Handler is stopped.");
-      }
-      catch (Exception ex)
-      {
-        logger.Error("Stop: " + ex.ToString());
-      }
-    }
-
-    private void StopTasks(bool suspending)
-    {
-      try
-      {
-        Utils.SetIsStopping(true);
-
-        GUIWindowManager.OnActivateWindow -=  new GUIWindowManager.WindowActivationHandler(GuiWindowManagerOnActivateWindow);
-        GUIGraphicsContext.OnNewAction -= new OnActionHandler(OnNewAction);
-        GUIWindowManager.Receivers -= new SendMessageHandler(OnMessage);
-        try
-        {
-          if (!suspending)
-            SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(OnSystemPowerModeChanged);
-        }
-        catch { }
-
-        int ix = 0;
-
-        while (Utils.GetDelayStop() && ix < 20)
-        {
-          System.Threading.Thread.Sleep(500);
-          ix++;
-        }
-
-        if (ReorgTimer != null)
-        {
-          ReorgTimer.Stop();
-          ReorgTimer.Dispose();
-        }
-        if (MyLatestReorgWorker != null)
-        {
-          MyLatestReorgWorker.CancelAsync();
-          MyLatestReorgWorker.Dispose();
-        }
-        if (refreshTimer != null)
-        {
-          refreshTimer.Stop();
-          refreshTimer.Dispose();
-        }
-
-        DisposeHandlers();
-
-        Utils.DelayStop = new Hashtable();
-      }
-      catch (Exception ex)
-      {
-        logger.Error("Stop: " + ex.ToString());
-      }
-    }
 
     #region ISetupForm Members
 

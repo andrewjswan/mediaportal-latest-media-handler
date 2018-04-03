@@ -10,6 +10,9 @@
 // Copyright        : Open Source software licensed under the GNU/GPL agreement.
 //***********************************************************************
 
+using System;
+using System.Globalization;
+
 namespace LatestMediaHandler
 {
   internal class Latest
@@ -34,6 +37,7 @@ namespace LatestMediaHandler
     private object playable;
     //string fanart1;        
     //string fanart2;
+    private string directory;
     private string id;
     private string summary;
     private bool isnew;
@@ -41,6 +45,10 @@ namespace LatestMediaHandler
     private string clearart;
     private string clearlogo;
     private string cd;
+    private string dateWatched;
+    private string userrating;
+    private string animatedPoster;
+    private string animatedBackground;
 
     internal string Summary
     {
@@ -120,6 +128,23 @@ namespace LatestMediaHandler
       set { rating = value; }
     }
 
+    internal double DoubleRating
+    {
+      get
+      {
+        double r = 0.0;
+        if (!string.IsNullOrEmpty(rating))
+        {
+          if (!Double.TryParse(rating, out r))
+          {
+            Double.TryParse(rating.Replace(".", ","), out r);
+          }
+        }
+        return r;
+      }
+      set { rating = value.ToString(CultureInfo.CurrentCulture); }
+    }
+
     internal string RoundedRating
     {
       get { return roundedRating; }
@@ -142,6 +167,18 @@ namespace LatestMediaHandler
     {
       get { return year; }
       set { year = value; }
+    }
+
+    internal string DateWatched
+    {
+      get { return dateWatched; }
+      set { dateWatched = value; }
+    }
+
+    internal string UserRating
+    {
+      get { return userrating; }
+      set { userrating = value; }
     }
 
     internal string SeriesIndex
@@ -180,16 +217,62 @@ namespace LatestMediaHandler
       set { clearlogo = value; }
     }
 
+    internal string AnimatedPoster
+    {
+      get { return animatedPoster; }
+      set { animatedPoster = value; }
+    }
+
+    internal string AnimatedBackground
+    {
+      get { return animatedBackground; }
+      set { animatedBackground = value; }
+    }
+
     internal string CD
     {
       get { return cd; }
       set { cd = value; }
+    }
+    
+    internal string Plot
+    {
+      get { return (string.IsNullOrEmpty(summary) ? Translation.NoDescription : summary); }
+    }
+
+    internal string PlotOutline
+    {
+      get { return Utils.GetSentences(Plot, Utils.LatestPlotOutlineSentencesNum); }
+    }
+
+    internal string MoviePlotOutline
+    {
+      get
+      {
+        if (string.IsNullOrWhiteSpace(Subtitle))
+        {
+          return Utils.GetSentences(Plot, Utils.LatestPlotOutlineSentencesNum);
+        }
+        return Subtitle;
+      }
+    }
+
+    internal string Directory
+    {
+      get { return directory; }
+      set { directory = value; }
     }
 
     internal string New
     {
       get { return (isnew ? "true" : "false"); }
       set { isnew = value.ToLower().Equals("true"); }
+    }
+
+    internal bool IsNew
+    {
+      get { return isnew; }
+      set { isnew = value; }
     }
 
     internal Latest(string dateAdded, 
@@ -247,11 +330,31 @@ namespace LatestMediaHandler
       this.seasonIndex = seasonIndex;
       this.episodeIndex = episodeIndex;
       this.playable = playable;
-      //this.fanart1 = fanart1;
-      //this.fanart2 = fanart2;
       this.id = id;
       this.summary = summary;
       this.isnew = isnew;
+    }
+
+    internal Latest(string dateAdded, 
+                    string thumb, string fanart, 
+                    string title, string subtitle, 
+                    string artist, string album, string genre, 
+                    string rating, string roundedRating, string classification, string runtime, string year, 
+                    string seasonIndex, string episodeIndex, 
+                    string thumbSeries, object playable, string id, string summary, 
+                    string seriesIndex, 
+                    string directory,
+                    bool isnew = false)
+             : this(dateAdded, 
+                    thumb, fanart, 
+                    title, subtitle, 
+                    artist, album, genre, 
+                    rating, roundedRating, classification, runtime, year, 
+                    seasonIndex, episodeIndex, 
+                    thumbSeries, playable, id, summary, 
+                    seriesIndex, isnew)
+    {
+      this.directory = directory;
     }
 
     internal Latest(string dateAdded, 
@@ -277,6 +380,56 @@ namespace LatestMediaHandler
       this.clearart = clearart;
       this.clearlogo = clearlogo;
       this.cd = cd;
+    }
+
+    internal Latest(string dateAdded,
+                    string thumb, string fanart,
+                    string title, string subtitle,
+                    string artist, string album, string genre,
+                    string rating, string roundedRating, string classification, string runtime, string year,
+                    string seasonIndex, string episodeIndex,
+                    string thumbSeries, object playable, string id, string summary,
+                    string seriesIndex,
+                    string banner, string clearart, string clearlogo, string cd,
+                    string aposter, string abackground,
+                    bool isnew = false)
+             : this(dateAdded,
+                    thumb, fanart,
+                    title, subtitle,
+                    artist, album, genre,
+                    rating, roundedRating, classification, runtime, year,
+                    seasonIndex, episodeIndex,
+                    thumbSeries, playable, id, summary, seriesIndex, 
+                    banner, clearart, clearlogo, cd, 
+                    isnew)
+    {
+      this.animatedPoster = aposter;
+      this.animatedBackground = abackground;
+    }
+
+    internal Latest(string dateAdded, string dateWatched,
+                    string thumb, string fanart,
+                    string title, string subtitle,
+                    string artist, string album, string genre,
+                    string rating, string roundedRating, string classification, string runtime, string year,
+                    string seasonIndex, string episodeIndex,
+                    string thumbSeries, object playable, string id, string summary,
+                    string seriesIndex,
+                    string banner, string clearart, string clearlogo, string cd,
+                    string aposter, string abackground,
+                    bool isnew = false)
+             : this(dateAdded,
+                    thumb, fanart,
+                    title, subtitle,
+                    artist, album, genre,
+                    rating, roundedRating, classification, runtime, year,
+                    seasonIndex, episodeIndex,
+                    thumbSeries, playable, id, summary, seriesIndex,
+                    banner, clearart, clearlogo, cd,
+                    aposter, abackground,
+                    isnew)
+    {
+      this.dateWatched = dateWatched;
     }
   }
 }

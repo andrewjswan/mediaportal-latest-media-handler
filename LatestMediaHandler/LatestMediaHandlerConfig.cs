@@ -30,143 +30,10 @@ namespace LatestMediaHandler
     private const string LogFileName = "LatestMediaHandler_config.log";
     private const string OldLogFileName = "LatestMediaHandler_config.bak";
 
-    private string DateFormat
-    {
-      get { return Utils.dateFormat; }
-      set { Utils.dateFormat = value; }
-    }
-
-    private string ReorgInterval
-    {
-      get { return Utils.reorgInterval; }
-      set { Utils.reorgInterval = value; }
-    }
-
-    private string RefreshDbPicture
-    {
-      get { return Utils.refreshDbPicture; }
-      set { Utils.refreshDbPicture = value; }
-    }
-
-    private string RefreshDbMusic
-    {
-      get { return Utils.refreshDbMusic; }
-      set { Utils.refreshDbMusic = value; }
-    }
-
-    private string LatestTVRecordings
-    {
-      get { return Utils.latestTVRecordings; }
-      set { Utils.latestTVRecordings = value; }
-    }
-
-    private string LatestTVRecordingsWatched
-    {
-      get { return Utils.latestTVRecordingsWatched; }
-      set { Utils.latestTVRecordingsWatched = value; }
-    }
-
-    private string LatestTVRecordingsUnfinished
-    {
-      get { return Utils.latestTVRecordingsUnfinished; }
-      set { Utils.latestTVRecordingsUnfinished = value; }
-    }
-
-    private string LatestTVSeries
-    {
-      get { return Utils.latestTVSeries; }
-      set { Utils.latestTVSeries = value; }
-    }
-
-    private string LatestTVSeriesWatched
-    {
-      get { return Utils.latestTVSeriesWatched; }
-      set { Utils.latestTVSeriesWatched = value; }
-    }
-
-    private int LatestTVSeriesType
-    {
-      get { return Utils.latestTVSeriesType; }
-      set { Utils.latestTVSeriesType = value; }
-    }
-
-    private string LatestTVSeriesRatings
-    {
-      get { return Utils.latestTVSeriesRatings; }
-      set { Utils.latestTVSeriesRatings = value; }
-    }
-
-    private string LatestMyVideos
-    {
-      get { return Utils.latestMyVideos; }
-      set { Utils.latestMyVideos = value; }
-    }
-
-    private string LatestMyVideosWatched
-    {
-      get { return Utils.latestMyVideosWatched; }
-      set { Utils.latestMyVideosWatched = value; }
-    }
-
-    private string LatestMvCentral
-    {
-      get { return Utils.latestMvCentral; }
-      set { Utils.latestMvCentral = value; }
-    }
-
-    private int LatestMvCentralThumbType
-    {
-      get { return Utils.latestMvCentralThumbType; }
-      set { Utils.latestMvCentralThumbType = value; }
-    }
-
-    private string LatestMovingPictures
-    {
-      get { return Utils.latestMovingPictures; }
-      set { Utils.latestMovingPictures = value; }
-    }
-
-    private string LatestMovingPicturesWatched
-    {
-      get { return Utils.latestMovingPicturesWatched; }
-      set { Utils.latestMovingPicturesWatched = value; }
-    }
-
-    private string LatestMusic
-    {
-      get { return Utils.latestMusic; }
-      set { Utils.latestMusic = value; }
-    }
-
-    private string LatestMusicType
-    {
-      get { return Utils.latestMusicType; }
-      set { Utils.latestMusicType = value; }
-    }
-
-    private string LatestPictures
-    {
-      get { return Utils.latestPictures; }
-      set { Utils.latestPictures = value; }
-    }
-
-    private string LatestMyFilms
-    {
-      get { return Utils.latestMyFilms; }
-      set { Utils.latestMyFilms = value; }
-    }
-
-    private string LatestMyFilmsWatched
-    {
-      get { return Utils.latestMyFilmsWatched; }
-      set { Utils.latestMyFilmsWatched = value; }
-    }
-
     public LatestMediaHandlerConfig()
     {
       InitializeComponent();
     }
-
 
     private void SetupConfigFile()
     {
@@ -222,25 +89,25 @@ namespace LatestMediaHandler
     {
       try
       {
-        LatestPictures = checkBox5.Checked ? "True" : "False";
-        LatestMusic = checkBox6.Checked ? "True" : "False";
-        LatestMyVideos = checkBox9.Checked ? "True" : "False";
-        LatestMyVideosWatched = checkBox8.Checked ? "True" : "False";
-        LatestMovingPictures = checkBox7.Checked ? "True" : "False";
-        LatestMovingPicturesWatched = checkBox10.Checked ? "True" : "False";
-        LatestTVSeries = checkBox2.Checked ? "True" : "False";
-        LatestTVSeriesWatched = checkBox11.Checked ? "True" : "False";
-        LatestTVSeriesRatings = GetTVSeriesRatings();
-        LatestTVSeriesType = comboBoxTVSeriesType.SelectedIndex;
-        LatestTVRecordings = checkBox3.Checked ? "True" : "False";
-        LatestTVRecordingsWatched = checkBox14.Checked ? "True" : "False";
-        LatestTVRecordingsUnfinished = checkBoxRecordingsUnfinished.Checked ? "True" : "False";
-        LatestMyFilms = checkBox1.Checked ? "True" : "False";
-        LatestMyFilmsWatched = checkBox4.Checked ? "True" : "False";
-        RefreshDbPicture = checkBox12.Checked ? "True" : "False";
-        RefreshDbMusic = checkBox13.Checked ? "True" : "False";
-        LatestMvCentral = checkBox15.Checked ? "True" : "False";
-        LatestMvCentralThumbType = comboBoxMvCThumbType.SelectedIndex + 1;
+        Utils.LatestPictures = checkBox5.Checked;
+        Utils.LatestMusic = checkBox6.Checked;
+        Utils.LatestMyVideos = checkBox9.Checked;
+        Utils.LatestMyVideosWatched = checkBox8.Checked;
+        Utils.LatestMovingPictures = checkBox7.Checked;
+        Utils.LatestMovingPicturesWatched = checkBox10.Checked;
+        Utils.LatestTVSeries = checkBox2.Checked;
+        Utils.LatestTVSeriesWatched = checkBox11.Checked;
+        Utils.LatestTVSeriesRatings = GetTVSeriesRatings();
+        Utils.LatestTVSeriesType = comboBoxTVSeriesType.SelectedIndex;
+        Utils.LatestTVRecordings = checkBox3.Checked;
+        Utils.LatestTVRecordingsWatched = checkBox14.Checked;
+        Utils.LatestTVRecordingsUnfinished = checkBoxRecordingsUnfinished.Checked;
+        Utils.LatestMyFilms = checkBox1.Checked;
+        Utils.LatestMyFilmsWatched = checkBox4.Checked;
+        Utils.RefreshDbPicture = checkBox12.Checked;
+        Utils.RefreshDbMusic = checkBox13.Checked;
+        Utils.LatestMvCentral = checkBox15.Checked;
+        Utils.LatestMvCentralThumbType = comboBoxMvCThumbType.SelectedIndex + 1;
       }
       catch (Exception ex)
       {
@@ -248,21 +115,14 @@ namespace LatestMediaHandler
       }
       try
       {
-        ReorgInterval = comboBox1.SelectedItem.ToString();
-        LatestMusicType = comboBox2.SelectedItem.ToString();
-        DateFormat = comboBox3.SelectedItem.ToString();
+        Utils.ReorgInterval = comboBox1.SelectedItem.ToString();
+        Utils.LatestMusicType = Utils.StringToMusicType(comboBox2.SelectedItem.ToString());
+        Utils.DateFormat = comboBox3.SelectedItem.ToString();
       }
       catch (Exception ex)
       {
         logger.Error("DoSave: " + ex);
       }
-
-      if (LatestMusicType == Translation.PrefsMostPlayedMusic)
-        LatestMusicType = LatestMusicHandler.MusicTypeMostPlayed;
-      else if (LatestMusicType == Translation.PrefsLatestPlayedMusic)
-        LatestMusicType = LatestMusicHandler.MusicTypeLatestPlayed;
-      else // if (LatestMusicType == Translation.PrefsLatestAddedMusic)
-        LatestMusicType = LatestMusicHandler.MusicTypeLatestAdded;
 
       Utils.SaveSettings();
 
@@ -397,9 +257,9 @@ namespace LatestMediaHandler
       SetupConfigFile();
       Utils.LoadSettings(true);
 
-      if (!string.IsNullOrEmpty(LatestTVSeriesRatings))
+      if (!string.IsNullOrEmpty(Utils.LatestTVSeriesRatings))
       {
-        string[] s = LatestTVSeriesRatings.Split(';');
+        string[] s = Utils.LatestTVSeriesRatings.Split(';');
         for (int i = 0; i < s.Length; i++)
         {
           checkedListBox1.SetItemChecked(i, s[i].Equals("1"));
@@ -413,259 +273,53 @@ namespace LatestMediaHandler
         }
       }
 
-      if (!string.IsNullOrEmpty(DateFormat))
+      if (!string.IsNullOrEmpty(Utils.DateFormat))
       {
-        comboBox3.SelectedItem = DateFormat;
+        comboBox3.SelectedItem = Utils.DateFormat;
       }
       else
       {
         comboBox3.SelectedItem = "yyyy-MM-dd";
       }
 
-      if (!string.IsNullOrEmpty(ReorgInterval))
+      if (!string.IsNullOrEmpty(Utils.ReorgInterval))
       {
-        comboBox1.SelectedItem = ReorgInterval;
+        comboBox1.SelectedItem = Utils.ReorgInterval;
       }
       else
       {
         comboBox1.SelectedItem = "1440";
       }
 
-      if (!string.IsNullOrEmpty(LatestMusicType))
-      {
-        comboBox2.SelectedItem = LatestMusicType;
-      }
-      else
-      {
-        comboBox2.SelectedItem = Translation.PrefsLatestAddedMusic;
-      }
+      comboBox2.SelectedItem = Utils.MusicTypeToConfig(Utils.LatestMusicType);
 
-      if (!string.IsNullOrEmpty(LatestMyFilms))
-      {
-        if (LatestMyFilms.Equals("True", StringComparison.CurrentCulture))
-          checkBox1.Checked = true;
-        else
-          checkBox1.Checked = false;
-      }
-      else
-      {
-        LatestMyFilms = "True";
-        checkBox1.Checked = true;
-      }
+      checkBox1.Checked = Utils.LatestMyFilms;
+      checkBox5.Checked = Utils.LatestPictures;
+      checkBox6.Checked = Utils.LatestMusic;
+      checkBox9.Checked = Utils.LatestMyVideos;
+      checkBox15.Checked = Utils.LatestMvCentral;
 
-      if (!string.IsNullOrEmpty(LatestPictures))
+      if (Utils.LatestMvCentralThumbType > 0 && Utils.LatestMvCentralThumbType <= 3)
       {
-        if (LatestPictures.Equals("True", StringComparison.CurrentCulture))
-          checkBox5.Checked = true;
-        else
-          checkBox5.Checked = false;
-      }
-      else
-      {
-        LatestPictures = "False";
-        checkBox5.Checked = false;
-      }
-
-      /*          if (!string.IsNullOrEmpty(useLatestMediaCache))
-            {
-                if (useLatestMediaCache.Equals("True", StringComparison.CurrentCulture))
-                    checkBox16.Checked = true;
-                else
-                    checkBox16.Checked = false;
-            }
-            else
-            {
-                useLatestMediaCache = "True";
-                checkBox16.Checked = true;
-            }
-*/
-
-      if (!string.IsNullOrEmpty(LatestMusic))
-      {
-        if (LatestMusic.Equals("True", StringComparison.CurrentCulture))
-          checkBox6.Checked = true;
-        else
-          checkBox6.Checked = false;
-      }
-      else
-      {
-        LatestMusic = "True";
-        checkBox6.Checked = true;
-      }
-
-      if (!string.IsNullOrEmpty(LatestMyVideos))
-      {
-        if (LatestMyVideos.Equals("True", StringComparison.CurrentCulture))
-          checkBox9.Checked = true;
-        else
-          checkBox9.Checked = false;
-      }
-      else
-      {
-        LatestMyVideos = "True";
-        checkBox9.Checked = true;
-      }
-
-      if (!string.IsNullOrEmpty(LatestMvCentral))
-      {
-        if (LatestMvCentral.Equals("True", StringComparison.CurrentCulture))
-          checkBox15.Checked = true;
-        else
-          checkBox15.Checked = false;
-      }
-      else
-      {
-        LatestMvCentral = "False";
-        checkBox15.Checked = false;
-      }
-
-      if (LatestMvCentralThumbType > 0 && LatestMvCentralThumbType <= 3)
-      {
-        comboBoxMvCThumbType.SelectedIndex = LatestMvCentralThumbType - 1;
+        comboBoxMvCThumbType.SelectedIndex = Utils.LatestMvCentralThumbType - 1;
       }
       else
       {
         comboBoxMvCThumbType.SelectedIndex = 0;
       }
 
-      if (LatestMyVideos.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestMyVideosWatched))
-      {
-        if (LatestMyVideosWatched.Equals("True", StringComparison.CurrentCulture))
-          checkBox8.Checked = true;
-        else
-          checkBox8.Checked = false;
-      }
-      else
-      {
-        LatestMyVideosWatched = "False";
-        checkBox8.Checked = true;
-      }
-
-      if (!string.IsNullOrEmpty(LatestMovingPictures))
-      {
-        if (LatestMovingPictures.Equals("True", StringComparison.CurrentCulture))
-          checkBox7.Checked = true;
-        else
-          checkBox7.Checked = false;
-      }
-      else
-      {
-        LatestMovingPictures = "True";
-        checkBox7.Checked = true;
-      }
-
-      if (LatestMovingPictures.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestMovingPicturesWatched))
-      {
-        if (LatestMovingPicturesWatched.Equals("True", StringComparison.CurrentCulture))
-          checkBox10.Checked = true;
-        else
-          checkBox10.Checked = false;
-      }
-      else
-      {
-        LatestMovingPicturesWatched = "False";
-        checkBox10.Checked = true;
-      }
-
-      if (!string.IsNullOrEmpty(LatestTVSeries))
-      {
-        if (LatestTVSeries.Equals("True", StringComparison.CurrentCulture))
-          checkBox2.Checked = true;
-        else
-          checkBox2.Checked = false;
-      }
-      else
-      {
-        LatestTVSeries = "True";
-        checkBox2.Checked = true;
-      }
-
-      if (LatestTVSeries.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestTVSeriesWatched))
-      {
-        if (LatestTVSeriesWatched.Equals("True", StringComparison.CurrentCulture))
-          checkBox11.Checked = true;
-        else
-          checkBox11.Checked = false;
-      }
-      else
-      {
-        LatestTVSeriesWatched = "False";
-        checkBox11.Checked = true;
-      }
-
-      comboBoxTVSeriesType.SelectedIndex = LatestTVSeriesType;
-
-      if (!string.IsNullOrEmpty(RefreshDbPicture))
-      {
-        if (RefreshDbPicture.Equals("True", StringComparison.CurrentCulture))
-          checkBox12.Checked = true;
-        else
-          checkBox12.Checked = false;
-      }
-      else
-      {
-        RefreshDbPicture = "False";
-        checkBox12.Checked = false;
-      }
-
-      if (!string.IsNullOrEmpty(RefreshDbMusic))
-      {
-        if (RefreshDbMusic.Equals("True", StringComparison.CurrentCulture))
-          checkBox13.Checked = true;
-        else
-          checkBox13.Checked = false;
-      }
-      else
-      {
-        RefreshDbMusic = "False";
-        checkBox13.Checked = false;
-      }
-
-      if (!string.IsNullOrEmpty(LatestTVRecordings))
-      {
-        if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture))
-          checkBox3.Checked = true;
-        else
-          checkBox3.Checked = false;
-      }
-      else
-      {
-        LatestTVRecordings = "True";
-        checkBox3.Checked = true;
-      }
-
-      if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestTVRecordingsWatched))
-      {
-        checkBox14.Checked = LatestTVRecordingsWatched.Equals("True", StringComparison.CurrentCulture) ;
-      }
-      else
-      {
-        LatestTVRecordingsWatched = "False";
-        checkBox14.Checked = true;
-      }
-
-      if (LatestTVRecordings.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestTVRecordingsUnfinished))
-      {
-        checkBoxRecordingsUnfinished.Checked = LatestTVRecordingsUnfinished.Equals("True", StringComparison.CurrentCulture);
-      }
-      else
-      {
-        LatestTVRecordingsUnfinished = "True";
-        checkBoxRecordingsUnfinished.Checked = true;
-      }
-
-      if (LatestMyFilms.Equals("True", StringComparison.CurrentCulture) && !string.IsNullOrEmpty(LatestMyFilmsWatched))
-      {
-        if (LatestMyFilmsWatched.Equals("True", StringComparison.CurrentCulture))
-          checkBox4.Checked = true;
-        else
-          checkBox4.Checked = false;
-      }
-      else
-      {
-        LatestMyFilmsWatched = "False";
-        checkBox4.Checked = true;
-      }
+      checkBox8.Checked = Utils.LatestMyVideosWatched;
+      checkBox7.Checked = Utils.LatestMovingPictures;
+      checkBox10.Checked = Utils.LatestMovingPicturesWatched;
+      checkBox2.Checked = Utils.LatestTVSeries;
+      checkBox11.Checked = Utils.LatestTVSeriesWatched;
+      comboBoxTVSeriesType.SelectedIndex = Utils.LatestTVSeriesType;
+      checkBox12.Checked = Utils.RefreshDbPicture;
+      checkBox13.Checked = Utils.RefreshDbMusic;
+      checkBox3.Checked = Utils.LatestTVRecordings;
+      checkBox14.Checked = Utils.LatestTVRecordingsWatched;
+      checkBoxRecordingsUnfinished.Checked = Utils.LatestTVRecordingsUnfinished;
+      checkBox4.Checked = Utils.LatestMyFilmsWatched;
 
       try
       {
@@ -782,7 +436,7 @@ namespace LatestMediaHandler
 
     private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
-      ReorgInterval = comboBox1.SelectedItem.ToString();
+      Utils.ReorgInterval = comboBox1.SelectedItem.ToString();
     }
 
     private void checkBox13_CheckedChanged(object sender, EventArgs e)
@@ -820,7 +474,7 @@ namespace LatestMediaHandler
 
     private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
     {
-      LatestMusicType = comboBox2.SelectedItem.ToString();
+      Utils.LatestMusicType = Utils.StringToMusicType(comboBox2.SelectedItem.ToString());
     }
 
     private void label3_Click(object sender, EventArgs e)
@@ -830,7 +484,7 @@ namespace LatestMediaHandler
 
     private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
     {
-      DateFormat = comboBox3.SelectedItem.ToString();
+      Utils.DateFormat = comboBox3.SelectedItem.ToString();
     }
 
     private void checkBox9_CheckedChanged(object sender, EventArgs e)

@@ -35,11 +35,11 @@ namespace LatestMediaHandler
 
     protected override void OnDoWork(DoWorkEventArgs e)
     {
-      if (Utils.GetIsStopping() == false)
+      if (!Utils.IsStopping)
       {
         try
         {
-          if (LatestMediaHandlerSetup.LMHThreadPriority.Equals("Lowest", StringComparison.CurrentCulture))
+          if (LatestMediaHandlerSetup.LMHThreadPriority == Utils.Priority.Lowest)
             Thread.CurrentThread.Priority = ThreadPriority.Lowest;
           else
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
@@ -49,31 +49,13 @@ namespace LatestMediaHandler
 
           Utils.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
 
-          if (LatestMediaHandlerSetup.LatestMusic.Equals("True", StringComparison.CurrentCulture) &&
-              LatestMediaHandlerSetup.RefreshDbMusic.Equals("True", StringComparison.CurrentCulture))
+          if (Utils.LatestMusic && Utils.RefreshDbMusic)
           {
-            try
-            {
-              logger.Info("Music Database reorganisation starting.");
-              LatestMediaHandlerSetup.Lmh.DoScanMusicShares();
-              logger.Info("Music Database reorganisation is done.");
-              LatestMediaHandlerSetup.Lmh.GetLatestMediaInfo(LatestMediaHandlerSetup.Starting);
-            }
-            catch
-            {   }
+            Reorganisation(Utils.LatestsCategory.Music);
           }
-          if (LatestMediaHandlerSetup.LatestPictures.Equals("True", StringComparison.CurrentCulture) &&
-              LatestMediaHandlerSetup.RefreshDbPicture.Equals("True", StringComparison.CurrentCulture))
+          if (Utils.LatestPictures && Utils.RefreshDbPicture)
           {
-            try
-            {
-              logger.Info("Picture Database reorganisation starting.");
-              LatestMediaHandlerSetup.Lph.RebuildPictureDatabase();
-              logger.Info("Picture Database reorganisation is done.");
-              LatestMediaHandlerSetup.Lph.GetLatestMediaInfo();
-            }
-            catch
-            {   }
+            Reorganisation(Utils.LatestsCategory.Pictures);
           }
         }
         catch (Exception ex)
@@ -88,7 +70,7 @@ namespace LatestMediaHandler
       try
       {
         Utils.ReleaseDelayStop("LatestReorgWorker-OnDoWork");
-        LatestMediaHandlerSetup.ReorgTimer.Interval = (Int32.Parse(LatestMediaHandlerSetup.ReorgInterval)*60000);
+        LatestMediaHandlerSetup.ReorgTimer.Interval = (Int32.Parse(Utils.ReorgInterval)*60000);
         LatestMediaHandlerSetup.ReorgTimerTick = Environment.TickCount;
         Utils.SyncPointReorg = 0;
 
@@ -100,5 +82,44 @@ namespace LatestMediaHandler
       }
     }
 
+    internal void Reorganisation(Utils.LatestsCategory type)
+    {
+      if (LatestMediaHandlerSetup.Handlers == null)
+      {
+        return;
+      }
+
+      try
+      {
+        foreach (object obj in LatestMediaHandlerSetup.Handlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
+
+          if (type == Utils.LatestsCategory.Music && obj is LatestMusicHandler)
+          {
+            logger.Info("Music Database reorganisation starting.");
+            ((LatestMusicHandler)obj).DoScanMusicShares();
+            logger.Info("Music Database reorganisation is done.");
+            ((LatestMusicHandler)obj).GetLatestMediaInfo(LatestMediaHandlerSetup.Starting);
+            return;
+          }
+          else if (type == Utils.LatestsCategory.Pictures && obj is LatestPictureHandler)
+          {
+            logger.Info("Picture Database reorganisation starting.");
+            ((LatestPictureHandler)obj).RebuildPictureDatabase();
+            logger.Info("Picture Database reorganisation is done.");
+            ((LatestPictureHandler)obj).GetLatestMediaInfo();
+            return;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("Reorganisation: " + ex.ToString());
+      }
+    }
   }
 }
