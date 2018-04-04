@@ -2665,7 +2665,7 @@ Add to setting XML file:
         <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
         <Version>
           <Major>2</Major>
-          <Minor>3</Minor>
+          <Minor>4</Minor>
           <Build>0</Build>
           <Revision>66</Revision>
         </Version>
