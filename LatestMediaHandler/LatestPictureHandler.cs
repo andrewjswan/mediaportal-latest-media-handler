@@ -485,7 +485,7 @@ namespace LatestMediaHandler
               }
               catch {   }
 
-              string title = Utils.GetFilenameNoPath(filename).ToUpperInvariant();
+              string title = Path.GetFileNameWithoutExtension(Utils.GetFilenameNoPath(filename)).ToUpperInvariant();
 
               string exif = string.Empty;
               string exifoutline =string.Empty;
