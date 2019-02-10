@@ -225,9 +225,10 @@ namespace LatestMediaHandler
       {
         logger.Error("UpdateActiveRecordings: " + ex.ToString());
       }
+      UpdateSheduledTVRecordings();
     }
 
-    internal LatestsCollection GetArgusRecordings()
+    internal void UpdateSheduledTVRecordings()
     {
       try
       {
@@ -288,7 +289,11 @@ namespace LatestMediaHandler
       {
         logger.Error("GetTVRecordings (Scheduled Recordings): " + ex.ToString());
       }
+    }
 
+    internal LatestsCollection GetArgusRecordings()
+    {
+      UpdateSheduledTVRecordings();
       LatestsCollection latests = new LatestsCollection();
       LatestsCollection resultTmp = new LatestsCollection();
       try

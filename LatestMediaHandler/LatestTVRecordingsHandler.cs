@@ -192,9 +192,10 @@ namespace LatestMediaHandler
       {
         logger.Error("UpdateActiveRecordings: " + ex.ToString());
       }
+      UpdateSheduledTVRecordings();
     }
 
-    internal LatestsCollection GetTVRecordings()
+    internal void UpdateSheduledTVRecordings()
     {
       if (TVHome.Connected)
       {
@@ -284,7 +285,14 @@ namespace LatestMediaHandler
         {
           logger.Error("GetTVRecordings (Scheduled Recordings): " + ex.ToString());
         }
+      }
+    }
 
+    internal LatestsCollection GetTVRecordings()
+    {
+      UpdateSheduledTVRecordings();
+      if (TVHome.Connected)
+      {
         LatestMediaHandler.LatestsCollection resultTmp = new LatestMediaHandler.LatestsCollection();
         LatestsCollection latests = new LatestsCollection();
         try
