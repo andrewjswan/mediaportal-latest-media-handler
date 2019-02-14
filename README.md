@@ -33,19 +33,19 @@ Automatically exported from code.google.com/p/mediaportal-latest-media-handler
  #latestMediaHandler.music.hasnew
  #latestMediaHandler.music.latest.mode
  #latestMediaHandler.music.latest.thumbtype
- #latestMediaHandler.music.latest[1,2,3,4].thumb
- #latestMediaHandler.music.latest[1,2,3,4].artist
- #latestMediaHandler.music.latest[1,2,3,4].artistbio
- #latestMediaHandler.music.latest[1,2,3,4].artistbiooutline
- #latestMediaHandler.music.latest[1,2,3,4].album
- #latestMediaHandler.music.latest[1,2,3,4].dateAdded
- #latestMediaHandler.music.latest[1,2,3,4].fanart
- #latestMediaHandler.music.latest[1,2,3,4].genre
- #latestMediaHandler.music.latest[1,2,3,4].new
- #latestMediaHandler.music.latest[1,2,3,4].banner
- #latestMediaHandler.music.latest[1,2,3,4].clearart
- #latestMediaHandler.music.latest[1,2,3,4].clearlogo
- #latestMediaHandler.music.latest[1,2,3,4].cd
+ #latestMediaHandler.music.latest[1..N*].thumb
+ #latestMediaHandler.music.latest[1..N*].artist
+ #latestMediaHandler.music.latest[1..N*].artistbio
+ #latestMediaHandler.music.latest[1..N*].artistbiooutline
+ #latestMediaHandler.music.latest[1..N*].album
+ #latestMediaHandler.music.latest[1..N*].dateAdded
+ #latestMediaHandler.music.latest[1..N*].fanart
+ #latestMediaHandler.music.latest[1..N*].genre
+ #latestMediaHandler.music.latest[1..N*].new
+ #latestMediaHandler.music.latest[1..N*].banner
+ #latestMediaHandler.music.latest[1..N*].clearart
+ #latestMediaHandler.music.latest[1..N*].clearlogo
+ #latestMediaHandler.music.latest[1..N*].cd
 
  #latestMediaHandler.music.selected.thumb
  #latestMediaHandler.music.selected.artist
@@ -68,26 +68,26 @@ Automatically exported from code.google.com/p/mediaportal-latest-media-handler
  #latestMediaHandler.myvideo.label
  #latestMediaHandler.myvideo.latest.enabled
  #latestMediaHandler.myvideo.hasnew
- #latestMediaHandler.myvideo.latest[1,2,3,4].thumb
- #latestMediaHandler.myvideo.latest[1,2,3,4].fanart
- #latestMediaHandler.myvideo.latest[1,2,3,4].title
- #latestMediaHandler.myvideo.latest[1,2,3,4].dateAdded
- #latestMediaHandler.myvideo.latest[1,2,3,4].genre
- #latestMediaHandler.myvideo.latest[1,2,3,4].rating
- #latestMediaHandler.myvideo.latest[1,2,3,4].roundedRating
- #latestMediaHandler.myvideo.latest[1,2,3,4].classification
- #latestMediaHandler.myvideo.latest[1,2,3,4].runtime
- #latestMediaHandler.myvideo.latest[1,2,3,4].year
- #latestMediaHandler.myvideo.latest[1,2,3,4].id
- #latestMediaHandler.myvideo.latest[1,2,3,4].plot
- #latestMediaHandler.myvideo.latest[1,2,3,4].plotoutline
- #latestMediaHandler.myvideo.latest[1,2,3,4].new
- #latestMediaHandler.myvideo.latest[1,2,3,4].banner
- #latestMediaHandler.myvideo.latest[1,2,3,4].clearart
- #latestMediaHandler.myvideo.latest[1,2,3,4].clearlogo
- #latestMediaHandler.myvideo.latest[1,2,3,4].cd
- #latestMediaHandler.myvideo.latest[1,2,3,4].aniposter
- #latestMediaHandler.myvideo.latest[1,2,3,4].anibackground
+ #latestMediaHandler.myvideo.latest[1..N*].thumb
+ #latestMediaHandler.myvideo.latest[1..N*].fanart
+ #latestMediaHandler.myvideo.latest[1..N*].title
+ #latestMediaHandler.myvideo.latest[1..N*].dateAdded
+ #latestMediaHandler.myvideo.latest[1..N*].genre
+ #latestMediaHandler.myvideo.latest[1..N*].rating
+ #latestMediaHandler.myvideo.latest[1..N*].roundedRating
+ #latestMediaHandler.myvideo.latest[1..N*].classification
+ #latestMediaHandler.myvideo.latest[1..N*].runtime
+ #latestMediaHandler.myvideo.latest[1..N*].year
+ #latestMediaHandler.myvideo.latest[1..N*].id
+ #latestMediaHandler.myvideo.latest[1..N*].plot
+ #latestMediaHandler.myvideo.latest[1..N*].plotoutline
+ #latestMediaHandler.myvideo.latest[1..N*].new
+ #latestMediaHandler.myvideo.latest[1..N*].banner
+ #latestMediaHandler.myvideo.latest[1..N*].clearart
+ #latestMediaHandler.myvideo.latest[1..N*].clearlogo
+ #latestMediaHandler.myvideo.latest[1..N*].cd
+ #latestMediaHandler.myvideo.latest[1..N*].aniposter
+ #latestMediaHandler.myvideo.latest[1..N*].anibackground
 
  #latestMediaHandler.myvideo.selected.thumb
  #latestMediaHandler.myvideo.selected.title
@@ -116,12 +116,12 @@ Automatically exported from code.google.com/p/mediaportal-latest-media-handler
  #latestMediaHandler.picture.label
  #latestMediaHandler.picture.latest.enabled
  #latestMediaHandler.picture.hasnew
- #latestMediaHandler.picture.latest[1,2,3,4].title
- #latestMediaHandler.picture.latest[1,2,3,4].thumb
- #latestMediaHandler.picture.latest[1,2,3,4].filename
- #latestMediaHandler.picture.latest[1,2,3,4].fanart
- #latestMediaHandler.picture.latest[1,2,3,4].dateAdded
- #latestMediaHandler.picture.latest[1,2,3,4].new
+ #latestMediaHandler.picture.latest[1..N*].title
+ #latestMediaHandler.picture.latest[1..N*].thumb
+ #latestMediaHandler.picture.latest[1..N*].filename
+ #latestMediaHandler.picture.latest[1..N*].fanart
+ #latestMediaHandler.picture.latest[1..N*].dateAdded
+ #latestMediaHandler.picture.latest[1..N*].new
 
  #latestMediaHandler.picture.selected.thumb
  #latestMediaHandler.picture.selected.title
@@ -140,27 +140,27 @@ Automatically exported from code.google.com/p/mediaportal-latest-media-handler
  #latestMediaHandler.tvseries.latest.mode - episodes, seasons, series
  #latestMediaHandler.tvseries.latest.type
  #latestMediaHandler.tvseries.latest.thumbtype
- #latestMediaHandler.tvseries.latest[1,2,3,4].thumb
- #latestMediaHandler.tvseries.latest[1,2,3,4].serieThumb
- #latestMediaHandler.tvseries.latest[1,2,3,4].fanart
- #latestMediaHandler.tvseries.latest[1,2,3,4].serieName
- #latestMediaHandler.tvseries.latest[1,2,3,4].seasonIndex
- #latestMediaHandler.tvseries.latest[1,2,3,4].episodeName
- #latestMediaHandler.tvseries.latest[1,2,3,4].episodeIndex
- #latestMediaHandler.tvseries.latest[1,2,3,4].dateAdded
- #latestMediaHandler.tvseries.latest[1,2,3,4].genre
- #latestMediaHandler.tvseries.latest[1,2,3,4].rating
- #latestMediaHandler.tvseries.latest[1,2,3,4].roundedRating
- #latestMediaHandler.tvseries.latest[1,2,3,4].classification
- #latestMediaHandler.tvseries.latest[1,2,3,4].runtime
- #latestMediaHandler.tvseries.latest[1,2,3,4].firstAired
- #latestMediaHandler.tvseries.latest[1,2,3,4].plot
- #latestMediaHandler.tvseries.latest[1,2,3,4].plotoutline
- #latestMediaHandler.tvseries.latest[1,2,3,4].new
- #latestMediaHandler.tvseries.latest[1,2,3,4].banner
- #latestMediaHandler.tvseries.latest[1,2,3,4].clearart
- #latestMediaHandler.tvseries.latest[1,2,3,4].clearlogo
- #latestMediaHandler.tvseries.latest[1,2,3,4].cd
+ #latestMediaHandler.tvseries.latest[1..N*].thumb
+ #latestMediaHandler.tvseries.latest[1..N*].serieThumb
+ #latestMediaHandler.tvseries.latest[1..N*].fanart
+ #latestMediaHandler.tvseries.latest[1..N*].serieName
+ #latestMediaHandler.tvseries.latest[1..N*].seasonIndex
+ #latestMediaHandler.tvseries.latest[1..N*].episodeName
+ #latestMediaHandler.tvseries.latest[1..N*].episodeIndex
+ #latestMediaHandler.tvseries.latest[1..N*].dateAdded
+ #latestMediaHandler.tvseries.latest[1..N*].genre
+ #latestMediaHandler.tvseries.latest[1..N*].rating
+ #latestMediaHandler.tvseries.latest[1..N*].roundedRating
+ #latestMediaHandler.tvseries.latest[1..N*].classification
+ #latestMediaHandler.tvseries.latest[1..N*].runtime
+ #latestMediaHandler.tvseries.latest[1..N*].firstAired
+ #latestMediaHandler.tvseries.latest[1..N*].plot
+ #latestMediaHandler.tvseries.latest[1..N*].plotoutline
+ #latestMediaHandler.tvseries.latest[1..N*].new
+ #latestMediaHandler.tvseries.latest[1..N*].banner
+ #latestMediaHandler.tvseries.latest[1..N*].clearart
+ #latestMediaHandler.tvseries.latest[1..N*].clearlogo
+ #latestMediaHandler.tvseries.latest[1..N*].cd
 
  #latestMediaHandler.tvseries.selected.thumb
  #latestMediaHandler.tvseries.selected.serieThumb
@@ -191,26 +191,26 @@ Automatically exported from code.google.com/p/mediaportal-latest-media-handler
  #latestMediaHandler.movingpicture.label
  #latestMediaHandler.movingpicture.latest.enabled
  #latestMediaHandler.movingpicture.hasnew
- #latestMediaHandler.movingpicture.latest[1,2,3,4].thumb
- #latestMediaHandler.movingpicture.latest[1,2,3,4].fanart
- #latestMediaHandler.movingpicture.latest[1,2,3,4].title
- #latestMediaHandler.movingpicture.latest[1,2,3,4].dateAdded
- #latestMediaHandler.movingpicture.latest[1,2,3,4].genre
- #latestMediaHandler.movingpicture.latest[1,2,3,4].rating
- #latestMediaHandler.movingpicture.latest[1,2,3,4].roundedRating
- #latestMediaHandler.movingpicture.latest[1,2,3,4].classification
- #latestMediaHandler.movingpicture.latest[1,2,3,4].runtime
- #latestMediaHandler.movingpicture.latest[1,2,3,4].year
- #latestMediaHandler.movingpicture.latest[1,2,3,4].id
- #latestMediaHandler.movingpicture.latest[1,2,3,4].plot
- #latestMediaHandler.movingpicture.latest[1,2,3,4].plotoutline
- #latestMediaHandler.movingpicture.latest[1,2,3,4].new
- #latestMediaHandler.movingpicture.latest[1,2,3,4].banner
- #latestMediaHandler.movingpicture.latest[1,2,3,4].clearart
- #latestMediaHandler.movingpicture.latest[1,2,3,4].clearlogo
- #latestMediaHandler.movingpicture.latest[1,2,3,4].cd
- #latestMediaHandler.movingpicture.latest[1,2,3,4].aniposter
- #latestMediaHandler.movingpicture.latest[1,2,3,4].anibackground
+ #latestMediaHandler.movingpicture.latest[1..N*].thumb
+ #latestMediaHandler.movingpicture.latest[1..N*].fanart
+ #latestMediaHandler.movingpicture.latest[1..N*].title
+ #latestMediaHandler.movingpicture.latest[1..N*].dateAdded
+ #latestMediaHandler.movingpicture.latest[1..N*].genre
+ #latestMediaHandler.movingpicture.latest[1..N*].rating
+ #latestMediaHandler.movingpicture.latest[1..N*].roundedRating
+ #latestMediaHandler.movingpicture.latest[1..N*].classification
+ #latestMediaHandler.movingpicture.latest[1..N*].runtime
+ #latestMediaHandler.movingpicture.latest[1..N*].year
+ #latestMediaHandler.movingpicture.latest[1..N*].id
+ #latestMediaHandler.movingpicture.latest[1..N*].plot
+ #latestMediaHandler.movingpicture.latest[1..N*].plotoutline
+ #latestMediaHandler.movingpicture.latest[1..N*].new
+ #latestMediaHandler.movingpicture.latest[1..N*].banner
+ #latestMediaHandler.movingpicture.latest[1..N*].clearart
+ #latestMediaHandler.movingpicture.latest[1..N*].clearlogo
+ #latestMediaHandler.movingpicture.latest[1..N*].cd
+ #latestMediaHandler.movingpicture.latest[1..N*].aniposter
+ #latestMediaHandler.movingpicture.latest[1..N*].anibackground
   
  #latestMediaHandler.movingpicture.selected.thumb
  #latestMediaHandler.movingpicture.selected.title
@@ -240,23 +240,23 @@ Automatically exported from code.google.com/p/mediaportal-latest-media-handler
  #latestMediaHandler.myfilms.label
  #latestMediaHandler.myfilms.latest.enabled
  #latestMediaHandler.myfilms.hasnew
- #latestMediaHandler.myfilms.latest[1,2,3,4].thumb
- #latestMediaHandler.myfilms.latest[1,2,3,4].fanart
- #latestMediaHandler.myfilms.latest[1,2,3,4].title
- #latestMediaHandler.myfilms.latest[1,2,3,4].dateAdded
- #latestMediaHandler.myfilms.latest[1,2,3,4].rating
- #latestMediaHandler.myfilms.latest[1,2,3,4].roundedRating
- #latestMediaHandler.myfilms.latest[1,2,3,4].year
- #latestMediaHandler.myfilms.latest[1,2,3,4].id
- #latestMediaHandler.myfilms.latest[1,2,3,4].plot
- #latestMediaHandler.myfilms.latest[1,2,3,4].plotoutline
- #latestMediaHandler.myfilms.latest[1,2,3,4].new
- #latestMediaHandler.myfilms.latest[1,2,3,4].banner
- #latestMediaHandler.myfilms.latest[1,2,3,4].clearart
- #latestMediaHandler.myfilms.latest[1,2,3,4].clearlogo
- #latestMediaHandler.myfilms.latest[1,2,3,4].cd
- #latestMediaHandler.myfilms.latest[1,2,3,4].aniposter
- #latestMediaHandler.myfilms.latest[1,2,3,4].anibackground
+ #latestMediaHandler.myfilms.latest[1..N*].thumb
+ #latestMediaHandler.myfilms.latest[1..N*].fanart
+ #latestMediaHandler.myfilms.latest[1..N*].title
+ #latestMediaHandler.myfilms.latest[1..N*].dateAdded
+ #latestMediaHandler.myfilms.latest[1..N*].rating
+ #latestMediaHandler.myfilms.latest[1..N*].roundedRating
+ #latestMediaHandler.myfilms.latest[1..N*].year
+ #latestMediaHandler.myfilms.latest[1..N*].id
+ #latestMediaHandler.myfilms.latest[1..N*].plot
+ #latestMediaHandler.myfilms.latest[1..N*].plotoutline
+ #latestMediaHandler.myfilms.latest[1..N*].new
+ #latestMediaHandler.myfilms.latest[1..N*].banner
+ #latestMediaHandler.myfilms.latest[1..N*].clearart
+ #latestMediaHandler.myfilms.latest[1..N*].clearlogo
+ #latestMediaHandler.myfilms.latest[1..N*].cd
+ #latestMediaHandler.myfilms.latest[1..N*].aniposter
+ #latestMediaHandler.myfilms.latest[1..N*].anibackground
 
  #latestMediaHandler.myfilms.selected.thumb
  #latestMediaHandler.myfilms.selected.title
@@ -287,20 +287,20 @@ Automatically exported from code.google.com/p/mediaportal-latest-media-handler
  #latestMediaHandler.mvcentral.hasnew
  #latestMediaHandler.mvcentral.latest.mode
  #latestMediaHandler.mvcentral.latest.thumbtype
- #latestMediaHandler.mvcentral.latest[1,2,3,4].thumb
- #latestMediaHandler.mvcentral.latest[1,2,3,4].artist
- #latestMediaHandler.mvcentral.latest[1,2,3,4].artistbio
- #latestMediaHandler.mvcentral.latest[1,2,3,4].artistbiooutline
- #latestMediaHandler.mvcentral.latest[1,2,3,4].album
- #latestMediaHandler.mvcentral.latest[1,2,3,4].track
- #latestMediaHandler.mvcentral.latest[1,2,3,4].dateAdded
- #latestMediaHandler.mvcentral.latest[1,2,3,4].fanart
- #latestMediaHandler.mvcentral.latest[1,2,3,4].genre
- #latestMediaHandler.mvcentral.latest[1,2,3,4].new
- #latestMediaHandler.mvcentral.latest[1,2,3,4].banner
- #latestMediaHandler.mvcentral.latest[1,2,3,4].clearart
- #latestMediaHandler.mvcentral.latest[1,2,3,4].clearlogo
- #latestMediaHandler.mvcentral.latest[1,2,3,4].cd
+ #latestMediaHandler.mvcentral.latest[1..N*].thumb
+ #latestMediaHandler.mvcentral.latest[1..N*].artist
+ #latestMediaHandler.mvcentral.latest[1..N*].artistbio
+ #latestMediaHandler.mvcentral.latest[1..N*].artistbiooutline
+ #latestMediaHandler.mvcentral.latest[1..N*].album
+ #latestMediaHandler.mvcentral.latest[1..N*].track
+ #latestMediaHandler.mvcentral.latest[1..N*].dateAdded
+ #latestMediaHandler.mvcentral.latest[1..N*].fanart
+ #latestMediaHandler.mvcentral.latest[1..N*].genre
+ #latestMediaHandler.mvcentral.latest[1..N*].new
+ #latestMediaHandler.mvcentral.latest[1..N*].banner
+ #latestMediaHandler.mvcentral.latest[1..N*].clearart
+ #latestMediaHandler.mvcentral.latest[1..N*].clearlogo
+ #latestMediaHandler.mvcentral.latest[1..N*].cd
 
  #latestMediaHandler.mvcentral.selected.thumb
  #latestMediaHandler.mvcentral.selected.artist
@@ -324,36 +324,39 @@ Automatically exported from code.google.com/p/mediaportal-latest-media-handler
  #latestMediaHandler.tvrecordings.label
  #latestMediaHandler.tvrecordings.latest.enabled
  #latestMediaHandler.tvrecordings.hasnew
+ #latestMediaHandler.tvrecordings.reddot
 
- #latestMediaHandler.tvrecordings.active[1,2,3,4].title
- #latestMediaHandler.tvrecordings.active[1,2,3,4].genre
- #latestMediaHandler.tvrecordings.active[1,2,3,4].startTime
- #latestMediaHandler.tvrecordings.active[1,2,3,4].startDate
- #latestMediaHandler.tvrecordings.active[1,2,3,4].endTime
- #latestMediaHandler.tvrecordings.active[1,2,3,4].endDate
- #latestMediaHandler.tvrecordings.active[1,2,3,4].channel
- #latestMediaHandler.tvrecordings.active[1,2,3,4].channelLogo
- #latestMediaHandler.tvrecordings.active[1,2,3,4].directory
+ #latestMediaHandler.tvrecordings.active.count
+ #latestMediaHandler.tvrecordings.active[1..N*].title
+ #latestMediaHandler.tvrecordings.active[1..N*].genre
+ #latestMediaHandler.tvrecordings.active[1..N*].startTime
+ #latestMediaHandler.tvrecordings.active[1..N*].startDate
+ #latestMediaHandler.tvrecordings.active[1..N*].endTime
+ #latestMediaHandler.tvrecordings.active[1..N*].endDate
+ #latestMediaHandler.tvrecordings.active[1..N*].channel
+ #latestMediaHandler.tvrecordings.active[1..N*].channelLogo
+ #latestMediaHandler.tvrecordings.active[1..N*].directory
 
- #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].title
- #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].startTime
- #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].startDate
- #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].endTime
- #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].endDate
- #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].channel
- #latestMediaHandler.tvrecordings.scheduled[1,2,3,4].channelLogo
+ #latestMediaHandler.tvrecordings.scheduled.count
+ #latestMediaHandler.tvrecordings.scheduled[1..N*].title
+ #latestMediaHandler.tvrecordings.scheduled[1..N*].startTime
+ #latestMediaHandler.tvrecordings.scheduled[1..N*].startDate
+ #latestMediaHandler.tvrecordings.scheduled[1..N*].endTime
+ #latestMediaHandler.tvrecordings.scheduled[1..N*].endDate
+ #latestMediaHandler.tvrecordings.scheduled[1..N*].channel
+ #latestMediaHandler.tvrecordings.scheduled[1..N*].channelLogo
 
- #latestMediaHandler.tvrecordings.latest[1,2,3,4].thumb
- #latestMediaHandler.tvrecordings.latest[1,2,3,4].title
- #latestMediaHandler.tvrecordings.latest[1,2,3,4].dateAdded
- #latestMediaHandler.tvrecordings.latest[1,2,3,4].genre
- #latestMediaHandler.tvrecordings.latest[1,2,3,4].new
- #latestMediaHandler.tvrecordings.latest[1,2,3,4].summary
- #latestMediaHandler.tvrecordings.latest[1,2,3,4].summaryoutline
- #latestMediaHandler.tvrecordings.latest[1,2,3,4].series
- #latestMediaHandler.tvrecordings.latest[1,2,3,4].episode
- #latestMediaHandler.tvrecordings.latest[1,2,3,4].episodename
- #latestMediaHandler.tvrecordings.latest[1,2,3,4].directory
+ #latestMediaHandler.tvrecordings.latest[1..N*].thumb
+ #latestMediaHandler.tvrecordings.latest[1..N*].title
+ #latestMediaHandler.tvrecordings.latest[1..N*].dateAdded
+ #latestMediaHandler.tvrecordings.latest[1..N*].genre
+ #latestMediaHandler.tvrecordings.latest[1..N*].new
+ #latestMediaHandler.tvrecordings.latest[1..N*].summary
+ #latestMediaHandler.tvrecordings.latest[1..N*].summaryoutline
+ #latestMediaHandler.tvrecordings.latest[1..N*].series
+ #latestMediaHandler.tvrecordings.latest[1..N*].episode
+ #latestMediaHandler.tvrecordings.latest[1..N*].episodename
+ #latestMediaHandler.tvrecordings.latest[1..N*].directory
   
  #latestMediaHandler.tvrecordings.selected.thumb
  #latestMediaHandler.tvrecordings.selected.title
@@ -369,6 +372,8 @@ Automatically exported from code.google.com/p/mediaportal-latest-media-handler
  #latestMediaHandler.tvrecordings.selected.fanart2
  #latestMediaHandler.tvrecordings.selected.showfanart1
  #latestMediaHandler.tvrecordings.selected.showfanart2
+
+ * N - Depend from LatestMediaHandler skin settings - default 4, max 10
 </pre>
 
 Facade & Buttons IDs: https://github.com/yoavain/mediaportal-latest-media-handler/blob/master/IDs.md

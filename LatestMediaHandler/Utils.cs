@@ -101,8 +101,8 @@ namespace LatestMediaHandler
     public const int ThreadSleep = 0;
     //
     public const int FacadeMaxNum = 10;
-    public const int LatestsMaxNum = 4;
-    public const int LatestsMaxTVNum = 4;
+    public static int LatestsMaxNum = 4;
+    public static int LatestsMaxTVNum = 4;
     //
     internal static DateTime LastRefreshRecording
     {
@@ -658,16 +658,11 @@ namespace LatestMediaHandler
       {
         return null;
       }
-      /*
-      if (Utils.SkinUseFacades)
+      if (!Utils.SkinUseFacades)
       {
-        return GetLatestsFacadeFast(ControlID);
+        return null;
       }
-      else
-      {
-        return GetLatestsFacadeSlow(ControlID);
-      }
-      */
+
       if (fast)
       {
         return GetLatestsFacadeFast(ControlID);
@@ -1764,7 +1759,7 @@ namespace LatestMediaHandler
       ScanDelay = 0;
       PreloadImages = true;
       PreloadImagesInThread = true;
-      SkinUseFacades = false;
+      SkinUseFacades = true;
 
       try
       {
@@ -1982,6 +1977,332 @@ namespace LatestMediaHandler
                     logger.Debug("Skin use " + Utils.Check(SkinUseFacades) + " facades.");
                   }
                 }
+
+                nodeText = nodeSkinMain.SelectSingleNode("latestscount");
+                if (nodeText != null && nodeText.InnerText != null)
+                {
+                  string innerText = nodeText.InnerText;
+                  if (!string.IsNullOrWhiteSpace(innerText))
+                  {
+                    int innerInt = LatestsMaxNum;
+                    if (Int32.TryParse(innerText, out innerInt))
+                    {
+                      if (innerInt <= 0)
+                      {
+                        innerInt = LatestsMaxNum;
+                      }
+                      if (innerInt > FacadeMaxNum)
+                      {
+                        innerInt = FacadeMaxNum;
+                      }
+                      LatestsMaxNum = innerInt;
+                      logger.Debug("Skin - Latests items count: {0}", LatestsMaxNum);
+                    }
+                  }
+                }
+                nodeText = nodeSkinMain.SelectSingleNode("tvlatestscount");
+                if (nodeText != null && nodeText.InnerText != null)
+                {
+                  string innerText = nodeText.InnerText;
+                  if (!string.IsNullOrWhiteSpace(innerText))
+                  {
+                    int innerInt = LatestsMaxTVNum;
+                    if (Int32.TryParse(innerText, out innerInt))
+                    {
+                      if (innerInt <= 0)
+                      {
+                        innerInt = LatestsMaxTVNum;
+                      }
+                      if (innerInt > FacadeMaxNum)
+                      {
+                        innerInt = FacadeMaxNum;
+                      }
+                      LatestsMaxTVNum = innerInt;
+                      logger.Debug("Skin - TV Latests items count: {0}", LatestsMaxTVNum);
+                    }
+                  }
+                }
+              }
+              #endregion
+
+              #region Additional Play IDs
+              XmlNode nodeIDs = nodeSetting.SelectSingleNode("playids");
+              if (nodeIDs != null)
+              {
+                logger.Debug("Load Skin settings Additional Play IDs for Latests from file: {0}", skinSettings);
+
+                // Videos Play IDs
+                if (Utils.LatestMyVideos && LatestsMaxNum > 4)
+                {
+                  XmlNode nodeMain = nodeIDs.SelectSingleNode("video");
+                  if (nodeMain != null)
+                  {
+                    LatestMyVideosHandler mainHandler = (LatestMyVideosHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.Movies);
+                    if (mainHandler != null)
+                    {
+                      // Additional Play IDs
+                      XmlNodeList additionalList = nodeMain.SelectNodes("id");
+                      foreach (XmlNode nodeAdditional in additionalList)
+                      {
+                        if (nodeAdditional != null && nodeAdditional.InnerText != null)
+                        {
+                          string innerText = nodeAdditional.InnerText;
+                          if (!string.IsNullOrWhiteSpace(innerText))
+                          {
+                            int innerInt = 0;
+                            if (Int32.TryParse(innerText, out innerInt))
+                            {
+                              if (mainHandler.ControlIDPlays.IndexOf(innerInt) < 0)
+                              {
+                                mainHandler.ControlIDPlays.Add(innerInt);
+                                logger.Debug("Skin settings - Video, add additional ID: {0}", innerInt);
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+
+                // MovingPictures Play IDs
+                if (Utils.LatestMovingPictures && LatestsMaxNum > 4)
+                {
+                  XmlNode nodeMain = nodeIDs.SelectSingleNode("movingpictures");
+                  if (nodeMain != null)
+                  {
+                    LatestMovingPicturesHandler mainHandler = (LatestMovingPicturesHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.MovingPictures);
+                    if (mainHandler != null)
+                    {
+                      // Additional Play IDs
+                      XmlNodeList additionalList = nodeMain.SelectNodes("id");
+                      foreach (XmlNode nodeAdditional in additionalList)
+                      {
+                        if (nodeAdditional != null && nodeAdditional.InnerText != null)
+                        {
+                          string innerText = nodeAdditional.InnerText;
+                          if (!string.IsNullOrWhiteSpace(innerText))
+                          {
+                            int innerInt = 0;
+                            if (Int32.TryParse(innerText, out innerInt))
+                            {
+                              if (mainHandler.ControlIDPlays.IndexOf(innerInt) < 0)
+                              {
+                                mainHandler.ControlIDPlays.Add(innerInt);
+                                logger.Debug("Skin settings - MovingPictures, add additional ID: {0}", innerInt);
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+
+                // MyFilms Play IDs
+                if (Utils.LatestMyFilms && LatestsMaxNum > 4)
+                {
+                  XmlNode nodeMain = nodeIDs.SelectSingleNode("myfilms");
+                  if (nodeMain != null)
+                  {
+                    LatestMyFilmsHandler mainHandler = (LatestMyFilmsHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.MyFilms);
+                    if (mainHandler != null)
+                    {
+                      // Additional Play IDs
+                      XmlNodeList additionalList = nodeMain.SelectNodes("id");
+                      foreach (XmlNode nodeAdditional in additionalList)
+                      {
+                        if (nodeAdditional != null && nodeAdditional.InnerText != null)
+                        {
+                          string innerText = nodeAdditional.InnerText;
+                          if (!string.IsNullOrWhiteSpace(innerText))
+                          {
+                            int innerInt = 0;
+                            if (Int32.TryParse(innerText, out innerInt))
+                            {
+                              if (mainHandler.ControlIDPlays.IndexOf(innerInt) < 0)
+                              {
+                                mainHandler.ControlIDPlays.Add(innerInt);
+                                logger.Debug("Skin settings - MyFilms, add additional ID: {0}", innerInt);
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+
+                // TVSeries Play IDs
+                if (Utils.LatestTVSeries && LatestsMaxNum > 4)
+                {
+                  XmlNode nodeMain = nodeIDs.SelectSingleNode("tvseries");
+                  if (nodeMain != null)
+                  {
+                    LatestTVSeriesHandler mainHandler = (LatestTVSeriesHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.TVSeries);
+                    if (mainHandler != null)
+                    {
+                      // Additional Play IDs
+                      XmlNodeList additionalList = nodeMain.SelectNodes("id");
+                      foreach (XmlNode nodeAdditional in additionalList)
+                      {
+                        if (nodeAdditional != null && nodeAdditional.InnerText != null)
+                        {
+                          string innerText = nodeAdditional.InnerText;
+                          if (!string.IsNullOrWhiteSpace(innerText))
+                          {
+                            int innerInt = 0;
+                            if (Int32.TryParse(innerText, out innerInt))
+                            {
+                              if (mainHandler.ControlIDPlays.IndexOf(innerInt) < 0)
+                              {
+                                mainHandler.ControlIDPlays.Add(innerInt);
+                                logger.Debug("Skin settings - TVSeries, add additional ID: {0}", innerInt);
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+
+                // MvCentral Play IDs
+                if (Utils.LatestMvCentral && LatestsMaxNum > 4)
+                {
+                  XmlNode nodeMain = nodeIDs.SelectSingleNode("mvcentral");
+                  if (nodeMain != null)
+                  {
+                    LatestMvCentralHandler mainHandler = (LatestMvCentralHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.MvCentral);
+                    if (mainHandler != null)
+                    {
+                      // Additional Play IDs
+                      XmlNodeList additionalList = nodeMain.SelectNodes("id");
+                      foreach (XmlNode nodeAdditional in additionalList)
+                      {
+                        if (nodeAdditional != null && nodeAdditional.InnerText != null)
+                        {
+                          string innerText = nodeAdditional.InnerText;
+                          if (!string.IsNullOrWhiteSpace(innerText))
+                          {
+                            int innerInt = 0;
+                            if (Int32.TryParse(innerText, out innerInt))
+                            {
+                              if (mainHandler.ControlIDPlays.IndexOf(innerInt) < 0)
+                              {
+                                mainHandler.ControlIDPlays.Add(innerInt);
+                                logger.Debug("Skin settings - MvCentral, add additional ID: {0}", innerInt);
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+
+                // Music Play IDs
+                if (Utils.LatestMusic && LatestsMaxNum > 4)
+                {
+                  XmlNode nodeMain = nodeIDs.SelectSingleNode("music");
+                  if (nodeMain != null)
+                  {
+                    LatestMusicHandler mainHandler = (LatestMusicHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.Music);
+                    if (mainHandler != null)
+                    {
+                      // Additional Play IDs
+                      XmlNodeList additionalList = nodeMain.SelectNodes("id");
+                      foreach (XmlNode nodeAdditional in additionalList)
+                      {
+                        if (nodeAdditional != null && nodeAdditional.InnerText != null)
+                        {
+                          string innerText = nodeAdditional.InnerText;
+                          if (!string.IsNullOrWhiteSpace(innerText))
+                          {
+                            int innerInt = 0;
+                            if (Int32.TryParse(innerText, out innerInt))
+                            {
+                              if (mainHandler.ControlIDPlays.IndexOf(innerInt) < 0)
+                              {
+                                mainHandler.ControlIDPlays.Add(innerInt);
+                                logger.Debug("Skin settings - Music, add additional ID: {0}", innerInt);
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+
+                // Pictures Play IDs
+                if (Utils.LatestPictures && LatestsMaxNum > 4)
+                {
+                  XmlNode nodeMain = nodeIDs.SelectSingleNode("pictures");
+                  if (nodeMain != null)
+                  {
+                    LatestPictureHandler mainHandler = (LatestPictureHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.Pictures);
+                    if (mainHandler != null)
+                    {
+                      // Additional Play IDs
+                      XmlNodeList additionalList = nodeMain.SelectNodes("id");
+                      foreach (XmlNode nodeAdditional in additionalList)
+                      {
+                        if (nodeAdditional != null && nodeAdditional.InnerText != null)
+                        {
+                          string innerText = nodeAdditional.InnerText;
+                          if (!string.IsNullOrWhiteSpace(innerText))
+                          {
+                            int innerInt = 0;
+                            if (Int32.TryParse(innerText, out innerInt))
+                            {
+                              if (mainHandler.ControlIDPlays.IndexOf(innerInt) < 0)
+                              {
+                                mainHandler.ControlIDPlays.Add(innerInt);
+                                logger.Debug("Skin settings - Pictures, add additional ID: {0}", innerInt);
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+
+                // TV Play IDs
+                if (Utils.LatestPictures && LatestsMaxTVNum > 4)
+                {
+                  XmlNode nodeMain = nodeIDs.SelectSingleNode("tv");
+                  if (nodeMain != null)
+                  {
+                    LatestTVAllRecordingsHandler mainHandler = (LatestTVAllRecordingsHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.TV);
+                    if (mainHandler != null)
+                    {
+                      // Additional Play IDs
+                      XmlNodeList additionalList = nodeMain.SelectNodes("id");
+                      foreach (XmlNode nodeAdditional in additionalList)
+                      {
+                        if (nodeAdditional != null && nodeAdditional.InnerText != null)
+                        {
+                          string innerText = nodeAdditional.InnerText;
+                          if (!string.IsNullOrWhiteSpace(innerText))
+                          {
+                            int innerInt = 0;
+                            if (Int32.TryParse(innerText, out innerInt))
+                            {
+                              if (mainHandler.ControlIDPlays.IndexOf(innerInt) < 0)
+                              {
+                                mainHandler.ControlIDPlays.Add(innerInt);
+                                logger.Debug("Skin settings - TV, add additional ID: {0}", innerInt);
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+
               }
               #endregion
 
@@ -2147,6 +2468,174 @@ namespace LatestMediaHandler
                       }
                       logger.Debug("Load Skin settings TVSeries Facade {0}: {1} - {2} - {3} - {4} - {5}", facade.ControlID, Check(facade.LeftToRight), Check(facade.UnWatched), facade.Type, facade.SubType, facade.Layout);
                       LatestMediaHandlerSetup.Handlers.Add(new LatestTVSeriesHandler(facade));
+                    }
+                  }
+                }
+              }
+              #endregion
+
+              #region Music Skin settings
+              // Music settings
+              if (Utils.LatestMusic)
+              {
+                XmlNode node = nodeSetting.SelectSingleNode("music");
+                if (node != null)
+                {
+                  logger.Debug("Load Skin settings Music from file: {0}", skinSettings);
+
+                  XmlNode nodeMain = node.SelectSingleNode("main");
+                  if (nodeMain != null)
+                  {
+                    LatestMusicHandler mainHandler = (LatestMusicHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.Music);
+                    if (mainHandler != null)
+                    {
+                      mainHandler.CurrentFacade.SetMainFacadeFromSkin(nodeMain);
+                    }
+                  }
+
+                  // Additional Facades
+                  XmlNodeList additionalList = node.SelectNodes("additional");
+                  foreach (XmlNode nodeAdditional in additionalList)
+                  {
+                    if (nodeAdditional != null)
+                    {
+                      LatestsFacade facade = new LatestsFacade("Music", nodeAdditional);
+                      if (facade.ControlID == 0 || facade.ControlID == LatestMusicHandler.ControlID)
+                      {
+                        continue;
+                      }
+                      logger.Debug("Load Skin settings Music Facade {0}: {1} - {2} - {3} - {4}", facade.ControlID, Check(facade.LeftToRight), Check(facade.UnWatched), facade.Type, facade.Layout);
+                      LatestMediaHandlerSetup.Handlers.Add(new LatestMusicHandler(facade));
+                    }
+                  }
+                }
+              }
+              #endregion
+
+              #region MvCentral Skin settings
+              // MvCentral settings
+              if (Utils.LatestMvCentral)
+              {
+                XmlNode node = nodeSetting.SelectSingleNode("mvcentral");
+                if (node != null)
+                {
+                  logger.Debug("Load Skin settings MvCentral from file: {0}", skinSettings);
+
+                  XmlNode nodeMain = node.SelectSingleNode("main");
+                  if (nodeMain != null)
+                  {
+                    LatestMvCentralHandler mainHandler = (LatestMvCentralHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.MvCentral);
+                    if (mainHandler != null)
+                    {
+                      mainHandler.CurrentFacade.SetMainFacadeFromSkin(nodeMain);
+                    }
+                  }
+
+                  // Additional Facades
+                  XmlNodeList additionalList = node.SelectNodes("additional");
+                  foreach (XmlNode nodeAdditional in additionalList)
+                  {
+                    if (nodeAdditional != null)
+                    {
+                      LatestsFacade facade = new LatestsFacade("MvCentral", nodeAdditional);
+                      if (facade.ControlID == 0 || facade.ControlID == LatestMusicHandler.ControlID)
+                      {
+                        continue;
+                      }
+
+                      if (facade.SubType == LatestsFacadeSubType.None)
+                      {
+                        switch (Utils.LatestMvCentralThumbType)
+                        {
+                          case 1:
+                            facade.ThumbType = LatestsFacadeThumbType.Artist;
+                            break;
+                          case 2:
+                            facade.ThumbType = LatestsFacadeThumbType.Album;
+                            break;
+                          case 3:
+                            facade.ThumbType = LatestsFacadeThumbType.Track;
+                            break;
+                        }
+                      }
+                      logger.Debug("Load Skin settings MvCentral Facade {0}: {1} - {2} - {3} - {4} - {5}", facade.ControlID, Check(facade.LeftToRight), Check(facade.UnWatched), facade.Type, facade.SubType, facade.Layout);
+                      LatestMediaHandlerSetup.Handlers.Add(new LatestMvCentralHandler(facade));
+                    }
+                  }
+                }
+              }
+              #endregion
+
+              #region TVRecordings Skin settings
+              // TVRecordings settings
+              if (Utils.LatestTVRecordings)
+              {
+                XmlNode node = nodeSetting.SelectSingleNode("tv");
+                if (node != null)
+                {
+                  logger.Debug("Load Skin settings TVRecordings from file: {0}", skinSettings);
+
+                  XmlNode nodeMain = node.SelectSingleNode("main");
+                  if (nodeMain != null)
+                  {
+                    LatestTVAllRecordingsHandler mainHandler = (LatestTVAllRecordingsHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.TV);
+                    if (mainHandler != null)
+                    {
+                      mainHandler.CurrentFacade.SetMainFacadeFromSkin(nodeMain);
+                    }
+                  }
+
+                  // Additional Facades
+                  XmlNodeList additionalList = node.SelectNodes("additional");
+                  foreach (XmlNode nodeAdditional in additionalList)
+                  {
+                    if (nodeAdditional != null)
+                    {
+                      LatestsFacade facade = new LatestsFacade("TVRecordings", nodeAdditional);
+                      if (facade.ControlID == 0 || facade.ControlID == LatestMusicHandler.ControlID)
+                      {
+                        continue;
+                      }
+                      logger.Debug("Load Skin settings TVRecordings Facade {0}: {1} - {2} - {3} - {4}", facade.ControlID, Check(facade.LeftToRight), Check(facade.UnWatched), facade.Type, facade.Layout);
+                      LatestMediaHandlerSetup.Handlers.Add(new LatestTVAllRecordingsHandler(facade));
+                    }
+                  }
+                }
+              }
+              #endregion
+
+              #region Pictures Skin settings
+              // Pictures settings
+              if (Utils.LatestPictures)
+              {
+                XmlNode node = nodeSetting.SelectSingleNode("pictures");
+                if (node != null)
+                {
+                  logger.Debug("Load Skin settings Pictures from file: {0}", skinSettings);
+
+                  XmlNode nodeMain = node.SelectSingleNode("main");
+                  if (nodeMain != null)
+                  {
+                    LatestPictureHandler mainHandler = (LatestPictureHandler)LatestMediaHandlerSetup.GetMainHandler(LatestsCategory.Pictures);
+                    if (mainHandler != null)
+                    {
+                      mainHandler.CurrentFacade.SetMainFacadeFromSkin(nodeMain);
+                    }
+                  }
+
+                  // Additional Facades
+                  XmlNodeList additionalList = node.SelectNodes("additional");
+                  foreach (XmlNode nodeAdditional in additionalList)
+                  {
+                    if (nodeAdditional != null)
+                    {
+                      LatestsFacade facade = new LatestsFacade("Picture", nodeAdditional);
+                      if (facade.ControlID == 0 || facade.ControlID == LatestMusicHandler.ControlID)
+                      {
+                        continue;
+                      }
+                      logger.Debug("Load Skin settings Picture Facade {0}: {1} - {2} - {3} - {4}", facade.ControlID, Check(facade.LeftToRight), Check(facade.UnWatched), facade.Type, facade.Layout);
+                      LatestMediaHandlerSetup.Handlers.Add(new LatestPictureHandler(facade));
                     }
                   }
                 }

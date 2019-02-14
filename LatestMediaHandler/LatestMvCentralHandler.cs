@@ -77,6 +77,11 @@ namespace LatestMediaHandler
       get { return ControlIDFacades[currentFacade]; }
     }
 
+    public LatestsFacade LatestFacade
+    {
+      get { return ControlIDFacades[ControlIDFacades.Count - 1]; }
+    }
+
     public int NeedCleanupCount
     {
       get { return needCleanupCount; }
@@ -138,6 +143,11 @@ namespace LatestMediaHandler
 
       Utils.ClearSelectedMusicProperty(CurrentFacade);
       EmptyLatestMediaProperties();
+    }
+
+    internal LatestMvCentralHandler(LatestsFacade facade) : this (facade.ControlID)
+    {
+      ControlIDFacades[ControlIDFacades.Count - 1] = facade;
     }
 
     internal void GetLatestMediaInfoThread()
@@ -235,7 +245,7 @@ namespace LatestMediaHandler
 
         // Thumb Types
         pItem = new GUIListItem();
-        pItem.Label = "[^] " + CurrentFacade.SubTitle;
+        pItem.Label = "[^] " + CurrentFacade.ThumbType;
         pItem.ItemId = 2;
         dlg.Add(pItem);
 
@@ -260,7 +270,7 @@ namespace LatestMediaHandler
             PlayMusicAlbum(GUIWindowManager.GetWindow(Utils.ActiveWindow));
             break;
           }
-          case 4:
+          case 2:
           {
             GUIDialogMenu ldlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
             if (ldlg == null) return;

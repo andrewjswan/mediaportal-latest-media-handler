@@ -137,6 +137,7 @@ namespace LatestMediaHandler
         {
           IList<TvDatabase.Recording> recordings = TvDatabase.Recording.ListAllActive();
 
+          Utils.SetProperty("#latestMediaHandler.tvrecordings.active.count", "0");
           for (int z = 1; z <= Utils.LatestsMaxTVNum; z++)
           {
             Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".title", string.Empty);
@@ -169,6 +170,8 @@ namespace LatestMediaHandler
           }
 
           latestRecordings.Sort(new LatestRecordingsComparer());
+
+          Utils.SetProperty("#latestMediaHandler.tvrecordings.active.count", latestRecordings.Count.ToString());
           for (int x0 = 0; x0 < latestRecordings.Count; x0++)
           {
             Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + i + ".title", latestRecordings[x0].Title);
@@ -203,6 +206,7 @@ namespace LatestMediaHandler
         {
           IList<TvDatabase.Schedule> schedules = TvDatabase.Schedule.ListAll();
 
+          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled.count", "0");
           for (int z = 1; z <= Utils.LatestsMaxTVNum; z++)
           {
             Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".title", string.Empty);
@@ -266,6 +270,8 @@ namespace LatestMediaHandler
           }
 
           latestRecordings.Sort(new LatestRecordingsComparer());
+
+          Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled.count", latestRecordings.Count.ToString());
           for (int x0 = 0; x0 < latestRecordings.Count; x0++)
           {
             Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + i + ".title", latestRecordings[x0].Title);
@@ -486,6 +492,22 @@ namespace LatestMediaHandler
       {
         logger.Error("UpdateSelectedProperties: " + ex.ToString());
       }
+    }
+
+    internal bool GetRecordingRedDot()
+    {
+      try
+      {
+        if (TVHome.Connected)
+        {
+          return TVHome.IsAnyCardRecording;
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetRecordingRedDot: " + ex.ToString());
+      }
+      return false;
     }
 
     internal void UpdateSelectedImageProperties()

@@ -37,6 +37,7 @@ namespace LatestMediaHandler
     private int showFanart = 1;
     private bool needCleanup = false;
     private int needCleanupCount = 0;
+    private bool TVRecordingShowRedDot = false;
 
     private LatestTVRecordingsWorker MyLatestTVRecordingsWorker = null;
     #endregion
@@ -58,6 +59,11 @@ namespace LatestMediaHandler
     public LatestsFacade CurrentFacade
     {
       get { return ControlIDFacades[currentFacade]; }
+    }
+
+    public LatestsFacade LatestFacade
+    {
+      get { return ControlIDFacades[ControlIDFacades.Count - 1]; }
     }
 
     public int ShowFanart
@@ -112,6 +118,11 @@ namespace LatestMediaHandler
       Largusrh = new LatestArgusRecordingsHandler(this);
     }
 
+    internal LatestTVAllRecordingsHandler(LatestsFacade facade) : this (facade.ControlID)
+    {
+      ControlIDFacades[ControlIDFacades.Count - 1] = facade;
+    }
+
     internal void EmptyRecordingProps()
     {
       if (!MainFacade && !CurrentFacade.AddProperties)
@@ -120,7 +131,10 @@ namespace LatestMediaHandler
       }
 
       Utils.SetProperty("#latestMediaHandler.tvrecordings.label", Translation.LabelLatestAdded);
+      Utils.SetProperty("#latestMediaHandler.tvrecordings.reddot", "false");
+
       //Active Recordings
+      Utils.SetProperty("#latestMediaHandler.tvrecordings.active.count", string.Empty);
       for (int z = 1; z <= Utils.LatestsMaxTVNum; z++)
       {
         Utils.SetProperty("#latestMediaHandler.tvrecordings.active" + z + ".title", string.Empty);
@@ -134,6 +148,7 @@ namespace LatestMediaHandler
       }
 
       //Scheduled recordings
+      Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled.count", string.Empty);
       for (int z = 1; z <= Utils.LatestsMaxTVNum; z++)
       {
         Utils.SetProperty("#latestMediaHandler.tvrecordings.scheduled" + z + ".title", string.Empty);
@@ -414,6 +429,28 @@ namespace LatestMediaHandler
     {
       if (Utils.LatestTVRecordings)
       {
+        try
+        {
+          bool showRedDot = false;
+          if (Utils.UsedArgus)
+          {
+            showRedDot = Largusrh.GetRecordingRedDot();
+          }
+          else
+          {
+            showRedDot = Ltvrh.GetRecordingRedDot();
+          }
+          if (showRedDot != TVRecordingShowRedDot)
+          {
+            TVRecordingShowRedDot = showRedDot;
+            Utils.SetProperty("#latestMediaHandler.tvrecordings.reddot", TVRecordingShowRedDot ? "true" : "false");
+          }
+        }
+        catch (Exception ex)
+        {
+          logger.Error("UpdateImageTimer/RedDot: " + ex.ToString());
+        }
+
         try
         {
           if (fWindow.GetFocusControlId() == CurrentFacade.ControlID)

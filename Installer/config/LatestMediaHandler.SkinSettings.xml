@@ -13,8 +13,52 @@
     </additional>
     -->
   <main>
-     <facades>yes</facades>
+     <latestscount>3</latestscount>
+     <tvlatestscount>3</tvlatestscount>
+     <!-- facades>yes</facades Not implemented-->
   </main>
+  <playids>
+    <video> <!-- If latestscount more than 4 - add additional Play IDs for skin -->
+      <id>NNN</id>
+      <id>NNN</id>
+      <id>NNN</id>
+    </video>
+    <movingpictures> <!-- If latestscount more than 4 - add additional Play IDs for skin -->
+      <id>NNN</id>
+      <id>NNN</id>
+      <id>NNN</id>
+    </movingpictures>
+    <myfilms> <!-- If latestscount more than 4 - add additional Play IDs for skin -->
+      <id>NNN</id>
+      <id>NNN</id>
+      <id>NNN</id>
+    </myfilms>
+    <tvseries> <!-- If latestscount more than 4 - add additional Play IDs for skin -->
+      <id>NNN</id>
+      <id>NNN</id>
+      <id>NNN</id>
+    </tvseries>
+    <mvcentral> <!-- If latestscount more than 4 - add additional Play IDs for skin -->
+      <id>NNN</id>
+      <id>NNN</id>
+      <id>NNN</id>
+    </mvcentral>
+    <music> <!-- If latestscount more than 4 - add additional Play IDs for skin -->
+      <id>NNN</id>
+      <id>NNN</id>
+      <id>NNN</id>
+    </music>
+    <pictures> <!-- If latestscount more than 4 - add additional Play IDs for skin -->
+      <id>NNN</id>
+      <id>NNN</id>
+      <id>NNN</id>
+    </pictures>
+    <tv> <!-- If tvlatestscount more than 4 - add additional Play IDs for skin -->
+      <id>NNN</id>
+      <id>NNN</id>
+      <id>NNN</id>
+    </tv>
+  </playids>
   <video>
     <main>
       <lefttoright>yes</lefttoright>

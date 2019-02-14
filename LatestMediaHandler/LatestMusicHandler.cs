@@ -86,6 +86,11 @@ namespace LatestMediaHandler
       get { return ControlIDFacades[currentFacade]; }
     }
 
+    public LatestsFacade LatestFacade
+    {
+      get { return ControlIDFacades[ControlIDFacades.Count - 1]; }
+    }
+
     public int NeedCleanupCount
     {
       get { return needCleanupCount; }
@@ -136,6 +141,11 @@ namespace LatestMediaHandler
 
       Utils.ClearSelectedMusicProperty(CurrentFacade);
       EmptyLatestMediaProperties();
+    }
+
+    internal LatestMusicHandler(LatestsFacade facade) : this (facade.ControlID)
+    {
+      ControlIDFacades[ControlIDFacades.Count - 1] = facade;
     }
 
     /// <summary>
