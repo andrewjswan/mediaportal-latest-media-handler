@@ -410,6 +410,9 @@ namespace LatestMediaHandler
         case "mostplayed":
           Type = LatestsFacadeType.MostPlayed;
           break;
+        case "next":
+          Type = LatestsFacadeType.Next;
+          break;
       }
     }
 

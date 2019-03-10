@@ -58,6 +58,7 @@ namespace LatestMediaHandler
     public static bool LatestTVSeries { get; set; }
     public static bool LatestTVSeriesWatched { get; set; }
     public static string LatestTVSeriesRatings { get; set; }
+    public static int LatestTVSeriesView { get; set; }
     public static int LatestTVSeriesType { get; set; }
     public static bool LatestTVRecordings { get; set; }
     public static bool LatestTVRecordingsWatched { get; set; }
@@ -1041,6 +1042,10 @@ namespace LatestMediaHandler
       {
         SetProperty("#latestMediaHandler." + handler + id + ".latest.thumbtype", facade.ThumbType.ToString().ToLowerInvariant());
       }
+      else
+      {
+        SetProperty("#latestMediaHandler." + handler + id + ".latest.thumbtype", string.Empty);
+      }
     }
 
     internal static void FillLatestsTVSeriesProperty(LatestsFacade facade, LatestsCollection collection, bool main)
@@ -1209,6 +1214,10 @@ namespace LatestMediaHandler
       if (facade.ThumbType != LatestsFacadeThumbType.None)
       {
         SetProperty("#latestMediaHandler." + handler + id + ".latest.thumbtype", facade.ThumbType.ToString().ToLowerInvariant());
+      }
+      else
+      {
+        SetProperty("#latestMediaHandler." + handler + id + ".latest.thumbtype", string.Empty);
       }
     }
 
@@ -1733,6 +1742,7 @@ namespace LatestMediaHandler
       LatestPictures = true;
       LatestMusic = true;
       LatestMusicType = LatestsFacadeType.Latests;
+      LatestTVSeriesView = 0;
       LatestTVSeriesType = 1;
       LatestPlotOutlineSentencesNum = 2;
       LatestMyVideos = true;
@@ -1777,6 +1787,7 @@ namespace LatestMediaHandler
           LatestTVSeries = GetBool(xmlreader.GetValueAsString("LatestMediaHandler", "latestTVSeries", LatestTVSeries.ToString()));
           LatestTVSeriesWatched = GetBool(xmlreader.GetValueAsString("LatestMediaHandler", "latestTVSeriesWatched", LatestTVSeriesWatched.ToString()));
           LatestTVSeriesRatings = xmlreader.GetValueAsString("LatestMediaHandler", "latestTVSeriesRatings", LatestTVSeriesRatings);
+          LatestTVSeriesView = xmlreader.GetValueAsInt("LatestMediaHandler", "latestTVSeriesView", LatestTVSeriesView);
           LatestTVSeriesType = xmlreader.GetValueAsInt("LatestMediaHandler", "latestTVSeriesType", LatestTVSeriesType);
           LatestPlotOutlineSentencesNum = xmlreader.GetValueAsInt("LatestMediaHandler", "latestPlotOutlineSentencesNum", LatestPlotOutlineSentencesNum);
           LatestTVRecordings = GetBool(xmlreader.GetValueAsString("LatestMediaHandler", "latestTVRecordings", LatestTVRecordings.ToString()));
@@ -1845,6 +1856,7 @@ namespace LatestMediaHandler
                                 Check(LatestMyFilms) + Check(LatestMyFilmsWatched) + " MyFilms, " +
                                 Check(LatestMvCentral) + " MvCentral");
       logger.Debug("Music Type: " + LatestMusicType) ;
+      logger.Debug("TVSeries View: " + (LatestTVSeriesView == 0 ? "Latests" : (LatestTVSeriesType == 1 ? "Watched" : (LatestTVSeriesType == 2 ? "Rated" : "Next"))));
       logger.Debug("TVSeries Type: " + (LatestTVSeriesType == 2 ? "Series" : (LatestTVSeriesType == 1 ? "Seasons" : "Episodes")));
       logger.Debug("MvCentral Thumb Type: " + (LatestMvCentralThumbType == 2 ? "Album" : (LatestMvCentralThumbType == 1 ? "Artist" : "Track")));
       logger.Debug("TVSeries ratings: " + LatestTVSeriesRatings) ;
@@ -1902,6 +1914,7 @@ namespace LatestMediaHandler
           xmlwriter.SetValue("LatestMediaHandler", "latestTVSeries", LatestTVSeries);
           xmlwriter.SetValue("LatestMediaHandler", "latestTVSeriesWatched", LatestTVSeriesWatched);
           xmlwriter.SetValue("LatestMediaHandler", "latestTVSeriesRatings", LatestTVSeriesRatings);
+          xmlwriter.SetValue("LatestMediaHandler", "latestTVSeriesView", LatestTVSeriesView);
           xmlwriter.SetValue("LatestMediaHandler", "latestTVSeriesType", LatestTVSeriesType);
           // xmlwriter.SetValue("LatestMediaHandler", "latestPlotOutlineSentencesNum", LatestPlotOutlineSentencesNum);
           xmlwriter.SetValue("LatestMediaHandler", "latestTVRecordings", LatestTVRecordings);

@@ -322,6 +322,10 @@ namespace LatestMediaHandler
     public static string PrefsLatestEpisodes = "Latest Episodes";
     public static string PrefsLatestSeasons = "Latest Seasons";
     public static string PrefsLatestSeries = "Latest Series";
+    public static string PrefsViewNextEpisodes = "Display Next Episodes For Last Watched";
+    public static string PrefsViewLatestAdded = "Display Latest added";
+    public static string PrefsViewHighestRated = "Display Highest rated";
+    public static string PrefsViewLatestWatched = "Display Latest watched";
     public static string PrefsMvCThumbArtist = "Artist thumb";
     public static string PrefsMvCThumbAlbum = "Album thumb";
     public static string PrefsMvCThumbTrack = "Track thumb";

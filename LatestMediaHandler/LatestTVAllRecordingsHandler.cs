@@ -444,6 +444,9 @@ namespace LatestMediaHandler
           {
             TVRecordingShowRedDot = showRedDot;
             Utils.SetProperty("#latestMediaHandler.tvrecordings.reddot", TVRecordingShowRedDot ? "true" : "false");
+
+            logger.Debug("TV Recordings reddot changes detected: Refreshing Active/Schedulled.");
+            UpdateActiveRecordingsThread();
           }
         }
         catch (Exception ex)
@@ -643,13 +646,25 @@ namespace LatestMediaHandler
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
         {
-          logger.Debug("Playback End/Stop detected: Refreshing latest.");
+          logger.Debug("Playback End/Stop detected: Refreshing Active/Schedulled.");
           Update = true;
           break;
         }
         case GUIMessage.MessageType.GUI_MSG_NOTIFY_REC:
         {
-          logger.Debug("TV Recordings notify detected: Refreshing latest.");
+          logger.Debug("TV Recordings notify detected: Refreshing Active/Schedulled.");
+          Update = true;
+          break;
+        }
+        case GUIMessage.MessageType.GUI_MSG_TV_ERROR_NOTIFY:
+        {
+          logger.Debug("TV Recordings error notify detected: Refreshing Active/Schedulled.");
+          Update = true;
+          break;
+        }
+        case GUIMessage.MessageType.GUI_MSG_MANUAL_RECORDING_STARTED:
+        {
+          logger.Debug("TV Recordings manual recording detected: Refreshing Active/Schedulled.");
           Update = true;
           break;
         }

@@ -28,6 +28,7 @@ using System.Timers;
 using WindowPlugins.GUITVSeries;
 using System.Runtime.CompilerServices;
 
+using ViewTypes = LatestMediaHandler.LatestsFacadeType;
 using ResultTypes = LatestMediaHandler.LatestsFacadeSubType;
 
 namespace LatestMediaHandler
@@ -126,6 +127,22 @@ namespace LatestMediaHandler
       }
 
       CurrentFacade.UnWatched = Utils.LatestTVSeriesWatched;
+      switch (Utils.LatestTVSeriesView)
+      {
+        case 0:
+          CurrentFacade.Type = ViewTypes.Latests;
+          break;
+        case 1:
+          CurrentFacade.Type = ViewTypes.Watched;
+          break;
+        case 2:
+          CurrentFacade.Type = ViewTypes.Rated;
+          break;
+        case 3:
+          CurrentFacade.Type = ViewTypes.Next;
+          break;
+      }
+
       switch (Utils.LatestTVSeriesType)
       {
         case 0:

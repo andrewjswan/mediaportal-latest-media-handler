@@ -292,18 +292,13 @@ cul8er</Value>
 * latest added videos (mvcentral)
 * latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>Add net TVRecordings property
-- #latestMediaHandler.tvrecordings.reddot
-- #latestMediaHandler.tvrecordings.active.count
-- #latestMediaHandler.tvrecordings.scheduled.count
-Add SkinSettings for custom latest Count
-Fix MvCenter Context menu
-Fix for Multi facade controls
+    <VersionDescription>Add default view settings for TVSeries on startup
+Force TV recording update by RedDot changes event
 
 WARNING: In skins using the facade control (DWHD, PVHD, Titanius), it may not work in MP versions below 1.19.</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2019-02-14T09:06:46</ReleaseDate>
+    <ReleaseDate>2019-03-10T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>

@@ -15,7 +15,7 @@
   <main>
      <latestscount>3</latestscount>
      <tvlatestscount>3</tvlatestscount>
-     <!-- facades>yes</facades Not implemented-->
+     <facades>yes</facades>
   </main>
   <playids>
     <video> <!-- If latestscount more than 4 - add additional Play IDs for skin -->

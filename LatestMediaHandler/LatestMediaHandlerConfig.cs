@@ -99,6 +99,7 @@ namespace LatestMediaHandler
         Utils.LatestTVSeriesWatched = checkBox11.Checked;
         Utils.LatestTVSeriesRatings = GetTVSeriesRatings();
         Utils.LatestTVSeriesType = comboBoxTVSeriesType.SelectedIndex;
+        Utils.LatestTVSeriesView = comboBoxTVSeriesMode.SelectedIndex;
         Utils.LatestTVRecordings = checkBox3.Checked;
         Utils.LatestTVRecordingsWatched = checkBox14.Checked;
         Utils.LatestTVRecordingsUnfinished = checkBoxRecordingsUnfinished.Checked;
@@ -183,6 +184,11 @@ namespace LatestMediaHandler
       comboBoxTVSeriesType.Items.Add(Translation.PrefsLatestEpisodes);
       comboBoxTVSeriesType.Items.Add(Translation.PrefsLatestSeasons);
       comboBoxTVSeriesType.Items.Add(Translation.PrefsLatestSeries);
+
+      comboBoxTVSeriesMode.Items.Add(Translation.PrefsViewLatestAdded);
+      comboBoxTVSeriesMode.Items.Add(Translation.PrefsViewLatestWatched);
+      comboBoxTVSeriesMode.Items.Add(Translation.PrefsViewHighestRated);
+      comboBoxTVSeriesMode.Items.Add(Translation.PrefsViewNextEpisodes);
 
       comboBoxMvCThumbType.Items.Add(Translation.PrefsMvCThumbArtist);
       comboBoxMvCThumbType.Items.Add(Translation.PrefsMvCThumbAlbum);
@@ -313,6 +319,7 @@ namespace LatestMediaHandler
       checkBox10.Checked = Utils.LatestMovingPicturesWatched;
       checkBox2.Checked = Utils.LatestTVSeries;
       checkBox11.Checked = Utils.LatestTVSeriesWatched;
+      comboBoxTVSeriesMode.SelectedIndex = Utils.LatestTVSeriesView;
       comboBoxTVSeriesType.SelectedIndex = Utils.LatestTVSeriesType;
       checkBox12.Checked = Utils.RefreshDbPicture;
       checkBox13.Checked = Utils.RefreshDbMusic;
