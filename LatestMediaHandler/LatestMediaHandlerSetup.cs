@@ -62,7 +62,7 @@ namespace LatestMediaHandler
     private static int reorgTimerTick;
     private static string mpVersion = null;
 
-    private Hashtable windowsUsingFanartLatest; //used to know what skin files that supports latest media fanart     
+    private Hashtable windowsUsingFanartLatest; // Used to know what skin files that supports latest media fanart     
 
     private List<LatestsFacade> ControlIDFacades;
     private List<int> ControlIDPlays;
@@ -927,7 +927,8 @@ namespace LatestMediaHandler
             ShowLMHDialog slmhd = new ShowLMHDialog();
             GUIWindowManager.SendThreadMessage(new GUIMessage()
             {
-              TargetWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME,
+              // TargetWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME,
+              TargetWindowId = fWindow.GetID,
               SendToTargetWindow = true,
               Object = slmhd
             });
@@ -1008,7 +1009,8 @@ namespace LatestMediaHandler
 
       try
       {
-        if ((Utils.ActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME) && (GUIWindowManager.RoutedWindow == -1))
+        // if ((Utils.ActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME) && (GUIWindowManager.RoutedWindow == -1))
+        if (WindowsUsingFanartLatest.ContainsKey(Utils.ActiveWindowStr) && (GUIWindowManager.RoutedWindow == -1))
         {
           GUIWindow fWindow = GUIWindowManager.GetWindow(Utils.ActiveWindow);
           if (fWindow == null)
