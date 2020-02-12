@@ -147,7 +147,7 @@ namespace LatestMediaHandler
     /// <returns>if database was successfully or not</returns>
     private bool InitDB()
     {
-      string dbFilename = "PictureDatabase.db3";
+      string dbFilename = PictureDatabase.DatabaseName;
       try
       {
         String filename = Config.GetFolder(Config.Dir.Database) + @"\" + dbFilename;
