@@ -150,12 +150,11 @@ namespace LatestMediaHandler
       string dbFilename = PictureDatabase.DatabaseName;
       try
       {
-        String filename = Config.GetFolder(Config.Dir.Database) + @"\" + dbFilename;
-        if (File.Exists(filename))
+        if (File.Exists(dbFilename))
         {
-          if (new FileInfo(filename).Length > 0)
+          if (new FileInfo(dbFilename).Length > 0)
           {
-            PicturesDB = new SQLiteClient(filename);
+            PicturesDB = new SQLiteClient(dbFilename);
             DatabaseUtility.SetPragmas(PicturesDB);
             return true;
           }
@@ -163,7 +162,7 @@ namespace LatestMediaHandler
       }
       catch //(Exception e)
       {
-        //logger.Error("initDB: Could Not Open Database: " + dbFilename + ". " + e.ToString());
+        // logger.Error("initDB: Could Not Open Database: " + dbFilename + ". " + e.ToString());
       }
 
       PicturesDB = null;
@@ -186,7 +185,7 @@ namespace LatestMediaHandler
       }
       catch (Exception ex)
       {
-        logger.Error("close: " + ex.ToString());
+        logger.Error("Close: " + ex.ToString());
       }
     }
 
