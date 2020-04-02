@@ -21,965 +21,6 @@
               <Items />
             </Files>
           </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>Requires MediaPortal version 1.2</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Skin</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Skin version 1.4.0.0 to 1.4.0.0.</Message>
-            <Name>Skin</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Installer</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>9</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>99</Minor>
-              <Build>999</Build>
-              <Revision>999</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Installer version 1.9.0.0 to 1.99.999.999</Message>
-            <Name>Installer</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items />
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>Latest Media Handler</Name>
-        <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
-        <Author>ajs (maintained by yoavain, original by cul8er)</Author>
-        <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
-        <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
-        <Version>
-          <Major>2</Major>
-          <Minor>3</Minor>
-          <Build>0</Build>
-          <Revision>54</Revision>
-        </Version>
-        <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
-
-* latest added pictures
-* latest added music
-* latest added videos
-* latest added series (tvseries)
-* latest added movies (moving pictures)
-* latest added movies (my films)
-* latest added videos (mvcentral)
-* latest added tv recordings
-</ExtensionDescription>
-        <VersionDescription>Added controls:
-91919901  - Latest 4 Music
-91919902  - Latest 4 MyVideo
-91919903  - Latest 4 Pictures
-91919904  - Latest 4 TV Series
-91919905  - Latest 4 Moving Pictures
-91919906  - Latest 4 MyFilms
-91919907  - Latest 4 MvCentral
-Added Spanish translation (tnx XMaM)
-Fix TVSeries support (tnx Hawkeye)
-Fix FH compatibility (when FH not installed)
-Cosmetic
-
-</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-2.3.0.54.mpe1</OnlineLocation>
-        <ReleaseDate>2016-02-15T22:18:09.6911901+02:00</ReleaseDate>
-        <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
-        <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/LatestMediaHandler_Icon.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\process\latestmediahandler.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Languages">
-            <DisplayName>Languages</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Languages</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>Requires MediaPortal version 1.2</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Skin</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Skin version 1.4.0.0 to 1.4.0.0.</Message>
-            <Name>Skin</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Installer</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>9</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>99</Minor>
-              <Build>999</Build>
-              <Revision>999</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Installer version 1.9.0.0 to 1.99.999.999</Message>
-            <Name>Installer</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items />
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>Latest Media Handler</Name>
-        <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
-        <Author>ajs (maintained by yoavain, original by cul8er)</Author>
-        <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
-        <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
-        <Version>
-          <Major>2</Major>
-          <Minor>3</Minor>
-          <Build>0</Build>
-          <Revision>58</Revision>
-        </Version>
-        <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
-
-* latest added pictures
-* latest added music
-* latest added videos
-* latest added series (tvseries)
-* latest added movies (moving pictures)
-* latest added movies (my films)
-* latest added videos (mvcentral)
-* latest added tv recordings
-</ExtensionDescription>
-        <VersionDescription>Fix for mvCentral (thx mrbonsen)
-Removed 4TR, updated argus to 2.3.
-
-Add:
-#latestMediaHandler.mvcentral.latest.thumbtype - track | album | artist
-Add to setting XML file:
-&lt;entry name="latestMvCentralThumbType"&gt;1&lt;/entry&gt;
-1. Artist thumb
-2. Album thumb
-3. Track thumb</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-2.3.0.58.mpe1</OnlineLocation>
-        <ReleaseDate>2016-07-03T10:29:20.8756644+03:00</ReleaseDate>
-        <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
-        <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/LatestMediaHandler_Icon.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\process\latestmediahandler.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Languages">
-            <DisplayName>Languages</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Languages</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>Requires MediaPortal version 1.2</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Skin</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Skin version 1.4.0.0 to 1.4.0.0.</Message>
-            <Name>Skin</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Installer</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>9</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>99</Minor>
-              <Build>999</Build>
-              <Revision>999</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Installer version 1.9.0.0 to 1.99.999.999</Message>
-            <Name>Installer</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items />
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>Latest Media Handler</Name>
-        <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
-        <Author>ajs (maintained by yoavain, original by cul8er)</Author>
-        <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
-        <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
-        <Version>
-          <Major>2</Major>
-          <Minor>3</Minor>
-          <Build>0</Build>
-          <Revision>61</Revision>
-        </Version>
-        <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
-
-* latest added pictures
-* latest added music
-* latest added videos
-* latest added series (tvseries)
-* latest added movies (moving pictures)
-* latest added movies (my films)
-* latest added videos (mvcentral)
-* latest added tv recordings
-</ExtensionDescription>
-        <VersionDescription>Fix for Mediaportal version (thx Sebastiii) TV Latests</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-2.3.0.61.mpe1</OnlineLocation>
-        <ReleaseDate>2016-07-06T22:06:48.9717865+03:00</ReleaseDate>
-        <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
-        <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/LatestMediaHandler_Icon.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\process\latestmediahandler.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Languages">
-            <DisplayName>Languages</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Languages</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>Requires MediaPortal version 1.2</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Skin</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Skin version 1.4.0.0 to 1.4.0.0.</Message>
-            <Name>Skin</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Installer</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>9</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>99</Minor>
-              <Build>999</Build>
-              <Revision>999</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Installer version 1.9.0.0 to 1.99.999.999</Message>
-            <Name>Installer</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items />
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>Latest Media Handler</Name>
-        <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
-        <Author>ajs (maintained by yoavain, original by cul8er)</Author>
-        <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
-        <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
-        <Version>
-          <Major>2</Major>
-          <Minor>3</Minor>
-          <Build>0</Build>
-          <Revision>63</Revision>
-        </Version>
-        <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
-
-* latest added pictures
-* latest added music
-* latest added videos
-* latest added series (tvseries)
-* latest added movies (moving pictures)
-* latest added movies (my films)
-* latest added videos (mvcentral)
-* latest added tv recordings
-</ExtensionDescription>
-        <VersionDescription>Add External Access interface for Fanart Handler</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-2.3.0.63.mpe1</OnlineLocation>
-        <ReleaseDate>2017-01-21T15:42:33.4780901+02:00</ReleaseDate>
-        <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
-        <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/LatestMediaHandler_Icon.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\process\latestmediahandler.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Languages">
-            <DisplayName>Languages</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Languages</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>Requires MediaPortal version 1.2</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Skin</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Skin version 1.4.0.0 to 1.4.0.0.</Message>
-            <Name>Skin</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Installer</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>9</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>99</Minor>
-              <Build>999</Build>
-              <Revision>999</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Installer version 1.9.0.0 to 1.99.999.999</Message>
-            <Name>Installer</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items />
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>Latest Media Handler</Name>
-        <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
-        <Author>ajs (maintained by yoavain, original by cul8er)</Author>
-        <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
-        <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
-        <Version>
-          <Major>2</Major>
-          <Minor>3</Minor>
-          <Build>0</Build>
-          <Revision>65</Revision>
-        </Version>
-        <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
-
-* latest added pictures
-* latest added music
-* latest added videos
-* latest added series (tvseries)
-* latest added movies (moving pictures)
-* latest added movies (my films)
-* latest added videos (mvcentral)
-* latest added tv recordings
-</ExtensionDescription>
-        <VersionDescription>Add Fanart.TV Images support</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-2.3.0.65.mpe1</OnlineLocation>
-        <ReleaseDate>2017-11-15T20:28:06.9127471+02:00</ReleaseDate>
-        <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
-        <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/LatestMediaHandler_Icon.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\process\latestmediahandler.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Languages">
-            <DisplayName>Languages</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Languages</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Skin">
-            <DisplayName>Skin</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Skin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>Requires MediaPortal version 1.2</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Skin</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>4</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Skin version 1.4.0.0 to 1.4.0.0.</Message>
-            <Name>Skin</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Installer</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>9</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>99</Minor>
-              <Build>999</Build>
-              <Revision>999</Revision>
-            </MaxVersion>
-            <WarnOnly>true</WarnOnly>
-            <Message>Requires Installer version 1.9.0.0 to 1.99.999.999</Message>
-            <Name>Installer</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items />
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>Latest Media Handler</Name>
-        <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
-        <Author>ajs (maintained by yoavain, original by cul8er)</Author>
-        <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
-        <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
-        <Version>
-          <Major>2</Major>
-          <Minor>4</Minor>
-          <Build>0</Build>
-          <Revision>66</Revision>
-        </Version>
-        <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
-
-* latest added pictures
-* latest added music
-* latest added videos
-* latest added series (tvseries)
-* latest added movies (moving pictures)
-* latest added movies (my films)
-* latest added videos (mvcentral)
-* latest added tv recordings
-</ExtensionDescription>
-        <VersionDescription>Add Fanart.TV Images support
-Add Animated Images support
-Internal rework
-Bug fixes ...
-
-WARNING: In skins using the facade control (DWHD, PVHD, Titanius), it may not work in MP versions below 1.19.</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-2.4.0.66.mpe1</OnlineLocation>
-        <ReleaseDate>2018-04-03T11:25:23.4971736+03:00</ReleaseDate>
-        <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
-        <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/LatestMediaHandler_Icon.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\process\latestmediahandler.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Languages">
-            <DisplayName>Languages</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Languages</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
           <GroupItem Name="Skin">
             <DisplayName>Skin</DisplayName>
             <DefaulChecked>true</DefaulChecked>
@@ -1914,6 +955,168 @@ WARNING: In skins using the facade control (DWHD, PVHD, Titanius), it may not wo
         <DevelopmentStatus>Stable</DevelopmentStatus>
         <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-2.4.0.76.mpe1</OnlineLocation>
         <ReleaseDate>2020-03-04T14:24:06.2080154+02:00</ReleaseDate>
+        <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
+        <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
+        <Params>
+          <Items>
+            <SectionParam Name="Online Icon">
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/LatestMediaHandler_Icon.png</Value>
+              <ValueType>String</ValueType>
+              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
+            </SectionParam>
+            <SectionParam Name="Configuration file">
+              <Value>%Plugins%\process\latestmediahandler.dll</Value>
+              <ValueType>Template</ValueType>
+              <Description>The file used to configure the extension.
+ If have .exe extension the will be executed
+ If have .dll extension used like MP plugin configuration</Description>
+            </SectionParam>
+            <SectionParam Name="Online Screenshots">
+              <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
+              <ValueType>String</ValueType>
+              <Description>Online stored screenshot urls separated by ; </Description>
+            </SectionParam>
+            <SectionParam Name="Force to uninstall on update">
+              <Value>YES</Value>
+              <ValueType>Bool</ValueType>
+              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+      </GeneralInfo>
+      <UniqueFileList>
+        <Items />
+      </UniqueFileList>
+      <ProjectSettings>
+        <FolderGroups />
+      </ProjectSettings>
+      <IsSkin>false</IsSkin>
+    </PackageClass>
+    <PackageClass>
+      <Version>2.0</Version>
+      <Groups>
+        <Items>
+          <GroupItem Name="Default">
+            <DisplayName>Default</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Default</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Languages">
+            <DisplayName>Languages</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Languages</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Skin">
+            <DisplayName>Skin</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Skin</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+        </Items>
+      </Groups>
+      <Sections>
+        <Items />
+      </Sections>
+      <Dependencies>
+        <Items>
+          <DependencyItem>
+            <Type>MediaPortal</Type>
+            <Id />
+            <MinVersion>
+              <Major>1</Major>
+              <Minor>1</Minor>
+              <Build>6</Build>
+              <Revision>27644</Revision>
+            </MinVersion>
+            <MaxVersion>
+              <Major>1</Major>
+              <Minor>1</Minor>
+              <Build>6</Build>
+              <Revision>27644</Revision>
+            </MaxVersion>
+            <WarnOnly>false</WarnOnly>
+            <Message>This version of LatestsMediaHandler requires MediaPortal 1.25 Pre</Message>
+            <Name>MediaPortal</Name>
+          </DependencyItem>
+          <DependencyItem>
+            <Type>Skin</Type>
+            <Id />
+            <MinVersion>
+              <Major>1</Major>
+              <Minor>4</Minor>
+              <Build>0</Build>
+              <Revision>0</Revision>
+            </MinVersion>
+            <MaxVersion>
+              <Major>1</Major>
+              <Minor>4</Minor>
+              <Build>0</Build>
+              <Revision>0</Revision>
+            </MaxVersion>
+            <WarnOnly>true</WarnOnly>
+            <Message>Requires Skin version 1.4.0.0 to 1.4.0.0.</Message>
+            <Name>Skin</Name>
+          </DependencyItem>
+          <DependencyItem>
+            <Type>Installer</Type>
+            <Id />
+            <MinVersion>
+              <Major>1</Major>
+              <Minor>24</Minor>
+              <Build>100</Build>
+              <Revision>0</Revision>
+            </MinVersion>
+            <MaxVersion>
+              <Major>1</Major>
+              <Minor>99</Minor>
+              <Build>999</Build>
+              <Revision>999</Revision>
+            </MaxVersion>
+            <WarnOnly>false</WarnOnly>
+            <Message>This version of LatestsMediaHandler requires MediaPortal 1.25 Pre</Message>
+            <Name>Installer</Name>
+          </DependencyItem>
+        </Items>
+      </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
+      <GeneralInfo>
+        <Name>Latest Media Handler</Name>
+        <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
+        <Author>ajs (maintained by yoavain, original by cul8er)</Author>
+        <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
+        <ForumPage>http://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
+        <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
+        <Version>
+          <Major>2</Major>
+          <Minor>4</Minor>
+          <Build>0</Build>
+          <Revision>77</Revision>
+        </Version>
+        <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
+
+* latest added pictures
+* latest added music
+* latest added videos
+* latest added series (tvseries)
+* latest added movies (moving pictures)
+* latest added movies (my films)
+* latest added videos (mvcentral)
+* latest added tv recordings
+</ExtensionDescription>
+        <VersionDescription>Pictures support update...</VersionDescription>
+        <DevelopmentStatus>Stable</DevelopmentStatus>
+        <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-2.4.0.77.mpe1</OnlineLocation>
+        <ReleaseDate>2020-04-02T18:46:36.9025921+03:00</ReleaseDate>
         <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
         <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
         <Params>

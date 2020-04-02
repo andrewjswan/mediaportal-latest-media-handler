@@ -104,6 +104,12 @@
     <Reference Include="GUIVideos">
       <HintPath>..\External\GUIVideos.dll</HintPath>
     </Reference>
+    <Reference Include="MediaInfo.Wrapper">
+      <HintPath>..\External\MediaInfo.Wrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="MetadataExtractor">
+      <HintPath>..\External\MetadataExtractor.dll</HintPath>
+    </Reference>
     <Reference Include="MovingPictures, Version=1.2.0.1188, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\MovingPictures.dll</HintPath>

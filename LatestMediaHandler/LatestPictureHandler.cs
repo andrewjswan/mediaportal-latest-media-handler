@@ -43,7 +43,6 @@ namespace LatestMediaHandler
 
     private static Logger logger = LogManager.GetCurrentClassLogger();
 
-    private SQLiteClient PicturesDB;
     private bool noLargeThumbnails = true;
     private VirtualDirectory virtualDirectory = new VirtualDirectory();
 
@@ -140,55 +139,6 @@ namespace LatestMediaHandler
       ControlIDFacades[ControlIDFacades.Count - 1] = facade;
     }
 
-    /// <summary>
-    /// Initiation of the DatabaseManager.
-    /// </summary>
-    /// <param name="dbFilename">Database filename</param>
-    /// <returns>if database was successfully or not</returns>
-    private bool InitDB()
-    {
-      string dbFilename = PictureDatabase.DatabaseName;
-      try
-      {
-        if (File.Exists(dbFilename))
-        {
-          if (new FileInfo(dbFilename).Length > 0)
-          {
-            PicturesDB = new SQLiteClient(dbFilename);
-            DatabaseUtility.SetPragmas(PicturesDB);
-            return true;
-          }
-        }
-      }
-      catch //(Exception e)
-      {
-        // logger.Error("initDB: Could Not Open Database: " + dbFilename + ". " + e.ToString());
-      }
-
-      PicturesDB = null;
-      return false;
-    }
-
-    /// <summary>
-    /// Close the database client.
-    /// </summary>
-    private void CloseDB()
-    {
-      try
-      {
-        if (PicturesDB != null)
-        {
-          PicturesDB.Close();
-        }
-
-        PicturesDB = null;
-      }
-      catch (Exception ex)
-      {
-        logger.Error("Close: " + ex.ToString());
-      }
-    }
-
     internal void RebuildPictureDatabase()
     {
       logger.Info("Scanning picture collection for new pictures - starting");
@@ -220,6 +170,11 @@ namespace LatestMediaHandler
         // treat each picture file one by one
         foreach (string file in availableFiles)
         {
+          if (file.ToLowerInvariant().Contains(@"folder.jpg"))
+          {
+            continue;
+          }
+
           // create thumb if not created and add file to db if not already there         
           CreateThumbsAndAddPictureToDB(file);
           count++;
@@ -340,13 +295,22 @@ namespace LatestMediaHandler
         //
         if (idx > 0)
         {
-          GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_EXIF);
-          // Needed to set GUIDialogExif
-          exifDialog.Restore();
-          exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_EXIF);
-          exifDialog.FileName = latestPicturesFiles[idx].ToString();
-          exifDialog.DoModal(fWindow.GetID);
-          exifDialog.Restore();
+          if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\PictureExifInfo.xml")))
+          {
+            GUIPicureExif pictureExif = (GUIPicureExif)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_PICTURE_EXIF);
+            pictureExif.Picture = latestPicturesFiles[idx].ToString();
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_PICTURE_EXIF);
+          }
+          else
+          {
+            GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_EXIF);
+            // Needed to set GUIDialogExif
+            exifDialog.Restore();
+            exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_EXIF);
+            exifDialog.FileName = latestPicturesFiles[idx].ToString();
+            exifDialog.DoModal(fWindow.GetID);
+            exifDialog.Restore();
+          }
         }
       }
       catch (Exception ex)
@@ -384,8 +348,10 @@ namespace LatestMediaHandler
     internal void PlayPictures(int index)
     {
       // Stop video playback before starting show picture to avoid MP freezing
-      if (g_Player.MediaInfo != null && g_Player.MediaInfo.hasVideo || g_Player.IsTV || g_Player.IsVideo)
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.HasVideo || g_Player.IsTV || g_Player.IsVideo)
+      {
         g_Player.Stop();
+      }
 
       GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
       if (SlideShow == null)
@@ -435,7 +401,7 @@ namespace LatestMediaHandler
       latestPictures = new LatestsCollection();
       latestPicturesFiles = new Hashtable();
 
-      if (!InitDB())
+      if (!PictureDatabase.DbHealth)
       {
         return latestPictures;
       }
@@ -445,18 +411,19 @@ namespace LatestMediaHandler
       {
         CurrentFacade.HasNew = false;
 
-        string sqlQuery = "SELECT strFile, strDateTaken FROM picture ORDER BY strDateTaken DESC LIMIT " + Utils.FacadeMaxNum + ";";
-        SQLiteResultSet resultSet = PicturesDB.Execute(sqlQuery);
-        CloseDB();
+        string sqlQuery = "SELECT strFile, strDateTaken FROM picture" +
+                                  (PictureDatabase.FilterPrivate ? " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                                 " ORDER BY strDateTaken DESC LIMIT " + Utils.FacadeMaxNum + ";";
+        List<PictureData> pictures = PictureDatabase.GetPicturesByFilter(sqlQuery, "pictures");
 
-        if (resultSet != null)
+        if (pictures != null)
         {
-          if (resultSet.Rows.Count > 0)
+          if (pictures.Count > 0)
           {
             int i0 = 1;
-            for (int i = 0; i < resultSet.Rows.Count; i++)
+            for (int i = 0; i < pictures.Count; i++)
             {
-              string filename = resultSet.GetField(i, 0);
+              string filename = pictures[i].FileName;
               if (string.IsNullOrEmpty(filename))
               {
                 continue;
@@ -479,20 +446,15 @@ namespace LatestMediaHandler
                 continue;
               }
 
-              string dateAdded = resultSet.GetField(i, 1);
+              DateTime dTmp = pictures[i].DateTaken;
               bool isnew = false;
-              try
-              {
-                DateTime dTmp = DateTime.Parse(dateAdded);
-                dateAdded = String.Format("{0:" + Utils.DateFormat + "}", dTmp);
+              string dateAdded = String.Format("{0:" + Utils.DateFormat + "}", dTmp);
 
-                isnew = (dTmp > Utils.NewDateTime);
-                if (isnew)
-                {
-                  CurrentFacade.HasNew = true;
-                }
+              isnew = (dTmp > Utils.NewDateTime);
+              if (isnew)
+              {
+                CurrentFacade.HasNew = true;
               }
-              catch {   }
 
               string title = Path.GetFileNameWithoutExtension(Utils.GetFilenameNoPath(filename)).ToUpperInvariant();
 
@@ -504,22 +466,11 @@ namespace LatestMediaHandler
                 {
                   ExifMetadata.Metadata metaData = extractor.GetExifMetadata(filename);
 
-                  exif = exif + (!string.IsNullOrEmpty(metaData.CameraModel.DisplayValue) ? metaData.CameraModel.DisplayValue + System.Environment.NewLine : string.Empty);
-                  exif = exif + (!string.IsNullOrEmpty(metaData.DatePictureTaken.DisplayValue) ? metaData.DatePictureTaken.DisplayValue + System.Environment.NewLine : string.Empty);
-                  exif = exif + (!string.IsNullOrEmpty(metaData.EquipmentMake.DisplayValue) ? metaData.EquipmentMake.DisplayValue + System.Environment.NewLine : string.Empty);
-                  exif = exif + (!string.IsNullOrEmpty(metaData.ExposureCompensation.DisplayValue) ? metaData.ExposureCompensation.DisplayValue + System.Environment.NewLine : string.Empty);
-                  exif = exif + (!string.IsNullOrEmpty(metaData.ExposureTime.DisplayValue) ?metaData.ExposureTime.DisplayValue + System.Environment.NewLine : string.Empty);
-                  exif = exif + (!string.IsNullOrEmpty(metaData.Flash.DisplayValue) ? metaData.Flash.DisplayValue + System.Environment.NewLine : string.Empty);
-                  exif = exif + (!string.IsNullOrEmpty(metaData.Fstop.DisplayValue) ? metaData.Fstop.DisplayValue + System.Environment.NewLine : string.Empty);
-                  exif = exif + (!string.IsNullOrEmpty(metaData.ImageDimensions.DisplayValue) ? metaData.ImageDimensions.DisplayValue + System.Environment.NewLine : string.Empty);
-                  exif = exif + (!string.IsNullOrEmpty(metaData.MeteringMode.DisplayValue) ? metaData.MeteringMode.DisplayValue + System.Environment.NewLine : string.Empty);
-                  exif = exif + (!string.IsNullOrEmpty(metaData.Resolution.DisplayValue) ? metaData.Resolution.DisplayValue + System.Environment.NewLine : string.Empty);
-                  exif = exif + (!string.IsNullOrEmpty(metaData.ShutterSpeed.DisplayValue) ? metaData.ShutterSpeed.DisplayValue + System.Environment.NewLine : string.Empty);
-                  exif = exif + (!string.IsNullOrEmpty(metaData.ViewerComments.DisplayValue) ? metaData.ViewerComments.DisplayValue + System.Environment.NewLine : string.Empty);
-
-                  exifoutline = exifoutline + (!string.IsNullOrEmpty(metaData.EquipmentMake.DisplayValue) ? metaData.EquipmentMake.DisplayValue + " " : string.Empty);
-                  exifoutline = exifoutline + (!string.IsNullOrEmpty(metaData.CameraModel.DisplayValue) ? metaData.CameraModel.DisplayValue + " " : string.Empty);
-                  exifoutline = exifoutline + (!string.IsNullOrEmpty(metaData.ViewerComments.DisplayValue) ? metaData.ViewerComments.DisplayValue + " " : string.Empty);
+                  if (!metaData.IsEmpty())
+                  {
+                    exif = metaData.ToString();
+                    exifoutline = metaData.ToShortString();
+                  }
                 }
               }
 
@@ -537,7 +488,6 @@ namespace LatestMediaHandler
             }
           }
         }
-        resultSet = null;
       }
       catch (Exception ex)
       {

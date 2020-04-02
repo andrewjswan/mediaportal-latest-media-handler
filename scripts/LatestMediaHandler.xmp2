@@ -222,7 +222,7 @@ cul8er</Value>
           <Revision>27644</Revision>
         </MaxVersion>
         <WarnOnly>false</WarnOnly>
-        <Message>Requires MediaPortal version 1.2</Message>
+        <Message>This version of LatestsMediaHandler requires MediaPortal 1.25 Pre</Message>
         <Name>MediaPortal</Name>
       </DependencyItem>
       <DependencyItem>
@@ -249,8 +249,8 @@ cul8er</Value>
         <Id />
         <MinVersion>
           <Major>1</Major>
-          <Minor>9</Minor>
-          <Build>0</Build>
+          <Minor>24</Minor>
+          <Build>100</Build>
           <Revision>0</Revision>
         </MinVersion>
         <MaxVersion>
@@ -259,8 +259,8 @@ cul8er</Value>
           <Build>999</Build>
           <Revision>999</Revision>
         </MaxVersion>
-        <WarnOnly>true</WarnOnly>
-        <Message>Requires Installer version 1.9.0.0 to 1.99.999.999</Message>
+        <WarnOnly>false</WarnOnly>
+        <Message>This version of LatestsMediaHandler requires MediaPortal 1.25 Pre</Message>
         <Name>Installer</Name>
       </DependencyItem>
     </Items>
@@ -281,23 +281,21 @@ cul8er</Value>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
-    <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
-
-* latest added pictures
-* latest added music
-* latest added videos
-* latest added series (tvseries)
-* latest added movies (moving pictures)
-* latest added movies (my films)
-* latest added videos (mvcentral)
-* latest added tv recordings
+    <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
+
+* latest added pictures
+* latest added music
+* latest added videos
+* latest added series (tvseries)
+* latest added movies (moving pictures)
+* latest added movies (my films)
+* latest added videos (mvcentral)
+* latest added tv recordings
 </ExtensionDescription>
-    <VersionDescription>Pictures support update...
-
-WARNING: In skins using the facade control (DWHD, PVHD, Titanius), it may not work in MP versions below 1.19.</VersionDescription>
+    <VersionDescription>Pictures support update...</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2020-03-04T09:06:46</ReleaseDate>
+    <ReleaseDate>2020-04-02T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>

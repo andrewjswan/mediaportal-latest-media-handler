@@ -567,6 +567,8 @@ namespace LatestMediaHandler
 
     private void GetLatestMediaInfo(string Mode = "Start", Utils.Category Level = Utils.Category.All)
     {
+      Utils.HasNewInit();
+
       // Level 0 - All, 1 - Video, 2 - Music, 3 - Pictures, 4 - TV
       if ((Level == Utils.Category.All) || (Level == Utils.Category.Video))
       {
@@ -741,7 +743,6 @@ namespace LatestMediaHandler
         {
           logger.Info("LatestMediaHandler is resuming from standby/hibernate.");
 
-          Utils.HasNewInit();
           GetLatestMediaInfo();
         }
         else if (e.Mode == PowerModes.Suspend)
