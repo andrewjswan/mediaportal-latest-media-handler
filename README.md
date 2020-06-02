@@ -1,4 +1,6 @@
 # mediaportal-latest-media-handler
+[![Build status](https://ci.appveyor.com/api/projects/status/9gay73f8e62pr8v6/branch/master?svg=true)](https://ci.appveyor.com/project/andrewjswan79536/mediaportal-latest-media-handler/branch/master)
+
 Latest Media Handler is a plugin for MediaPortal (MP).
 
 The plugin supports pushing latest added media to your skin.
