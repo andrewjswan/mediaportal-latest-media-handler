@@ -356,30 +356,30 @@ namespace LatestMediaHandler
                 {
                   if (!rec.LastWatchedTime.HasValue)
                   {
-                    latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail,
-                                null,
-                                rec.Title, rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), 
-                                null, null, 
-                                rec.Category, 
-                                null, null, null, null, null, null, null, null, 
-                                rec, 
-                                null, 
-                                _summary, 
-                                null));
+                    latests.Add(new Latest()
+                    {
+                      DateTimeAdded = rec.StartTime,
+                      DateTimeWatched = rec.StartTime,
+                      Thumb = thumbNail,
+                      Title = rec.Title,
+                      Genre = rec.Category,
+                      Summary = _summary,
+                      Playable = rec
+                    });
                   }
                 }
                 else
                 {
-                  latests.Add(new Latest(rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), thumbNail,
-                              null, 
-                              rec.Title, rec.StartTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture), 
-                              null, null,
-                              rec.Category, 
-                              null, null, null, null, null, null, null, null, 
-                              rec, 
-                              null, 
-                              _summary, 
-                              null));
+                  latests.Add(new Latest()
+                  {
+                    DateTimeAdded = rec.StartTime,
+                    DateTimeWatched = rec.StartTime,
+                    Thumb = thumbNail,
+                    Title = rec.Title,
+                    Genre = rec.Category,
+                    Summary = _summary,
+                    Playable = rec
+                  }) ;
                 }
               }
               Utils.ThreadToSleep();
@@ -396,14 +396,6 @@ namespace LatestMediaHandler
             for (int x0 = 0; x0 < latests.Count; x0++)
             {
               //latests[x0].DateAdded = latests[x0].DateAdded.Substring(0, 10);
-              try
-              {
-                DateTime dTmp = DateTime.Parse(latests[x0].DateAdded);
-                latests[x0].DateAdded = String.Format("{0:" + Utils.DateFormat + "}", dTmp);
-              }
-              catch
-              {
-              }
               latests[x0].Directory = Utils.GetGetDirectoryName(((RecordingSummary) latests[x0].Playable).RecordingFileName);
               latests[x0].Fanart = (Utils.FanartHandler ? UtilsFanartHandler.GetFanartForLatest(latests[x0].Title) : string.Empty);
 
@@ -498,7 +490,7 @@ namespace LatestMediaHandler
         item.ThumbnailImage = latests.Thumb;
         item.Label = latests.Title;
         item.Label2 = latests.Genre;
-        item.Label3 = latests.DateAdded;
+        item.Label3 = latests.DateTimeAdded.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture);
         item.IsFolder = false;
         item.DVDLabel = latests.Fanart;
         item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
@@ -531,7 +523,7 @@ namespace LatestMediaHandler
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.dateAdded", item.Label3);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.genre", item.Label2);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.startTime", item.Label3);
-          Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.endTime", result[(item.ItemId - 1)].Subtitle);
+          Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.endTime", result[(item.ItemId - 1)].DateTimeWatched.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture));
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.summary", summary);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.summaryoutline", summaryoutline);
           Utils.SetProperty("#latestMediaHandler.tvrecordings.selected.directory", result[(item.ItemId - 1)].Directory);

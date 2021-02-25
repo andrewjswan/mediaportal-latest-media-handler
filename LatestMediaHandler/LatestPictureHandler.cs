@@ -446,11 +446,8 @@ namespace LatestMediaHandler
                 continue;
               }
 
-              DateTime dTmp = pictures[i].DateTaken;
               bool isnew = false;
-              string dateAdded = String.Format("{0:" + Utils.DateFormat + "}", dTmp);
-
-              isnew = (dTmp > Utils.NewDateTime);
+              isnew = (pictures[i].DateTaken > Utils.NewDateTime);
               if (isnew)
               {
                 CurrentFacade.HasNew = true;
@@ -474,10 +471,17 @@ namespace LatestMediaHandler
                 }
               }
 
-              latestPictures.Add(new Latest(dateAdded, thumb, filename, title, exifoutline, 
-                                            null, null, null, null, null, null, 
-                                            null, null, null, null, null, null, null,
-                                            exif, null, isnew));
+              latestPictures.Add(new Latest()
+              {
+                DateTimeAdded = pictures[i].DateTaken,
+                Title = title,
+                Subtitle = exifoutline,
+                Thumb = thumb,
+                Fanart = filename,
+                Classification = exif,
+                IsNew = isnew
+              });
+
               latestPicturesFiles.Add(i0, filename);
               Utils.ThreadToSleep();
 

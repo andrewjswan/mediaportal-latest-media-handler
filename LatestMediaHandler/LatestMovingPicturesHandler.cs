@@ -350,7 +350,6 @@ namespace LatestMediaHandler
             }
           }
 
-          string sTimestamp = item.DateAdded.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture);
           string fanart = item.CoverThumbFullPath;
           if (string.IsNullOrEmpty(fanart))
           {
@@ -375,21 +374,31 @@ namespace LatestMediaHandler
               () => abg = UtilsFanartHandler.GetAnimatedForLatestMedia(item.ImdbID, string.Empty, string.Empty, Utils.Animated.MoviesBackground)
             );
           }
-          latests.Add(new Latest(sTimestamp, fanart, item.BackdropFullPath, item.Title,
-                                 null, null, null,
-                                 item.Genres.ToPrettyString(2), 
-                                 item.Score.ToString(CultureInfo.CurrentCulture),
-                                 Math.Round(item.Score, MidpointRounding.AwayFromZero).ToString(CultureInfo.CurrentCulture),
-                                 item.Certification, GetMovieRuntime(item), item.Year.ToString(CultureInfo.CurrentCulture),
-                                 null, null, null,
-                                 item, item.ID.ToString(), item.Summary,
-                                 null,
-                                 fbanner, fclearart, fclearlogo, fcd,
-                                 aposter, abg));
-          if (item.WatchedHistory.Count > 0)
+
+          latests.Add(new Latest()
           {
-            latests[latests.Count - 1].DateWatched = item.WatchedHistory[item.WatchedHistory.Count - 1].DateWatched.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture);
-          }
+            DateTimeAdded = item.DateAdded,
+            DateTimeWatched = item.WatchedHistory.Count > 0 ? item.WatchedHistory[item.WatchedHistory.Count - 1].DateWatched : DateTime.MinValue,
+            Title = item.Title,
+            Thumb = fanart,
+            Fanart = item.BackdropFullPath,
+            Genre = item.Genres.ToPrettyString(2),
+            Rating = item.Score.ToString(CultureInfo.CurrentCulture),
+            Classification = item.Certification,
+            Runtime = GetMovieRuntime(item),
+            Year = item.Year.ToString(CultureInfo.CurrentCulture),
+            Summary = item.Summary,
+            Banner = fbanner,
+            ClearArt = fclearart,
+            ClearLogo = fclearlogo,
+            CD = fcd,
+            AnimatedPoster = aposter,
+            AnimatedBackground = abg,
+            Playable = item,
+            Id = item.ID.ToString(),
+            DBId = item.ImdbID
+          });
+
           Utils.ThreadToSleep();
         }
         if (vMovies != null)
@@ -404,20 +413,12 @@ namespace LatestMediaHandler
         int x = 0;
         for (int x0 = 0; x0 < latests.Count; x0++)
         {
-          try
+          DBMovieInfo Movie = (DBMovieInfo)latests[x0].Playable ;
+          latests[x0].IsNew = ((latests[x0].DateTimeAdded > Utils.NewDateTime) && (Movie.UserSettings[0].WatchedCount <= 0));
+          if (latests[x0].IsNew)
           {
-            DateTime dTmp = DateTime.Parse(latests[x0].DateAdded);
-            latests[x0].DateAdded = String.Format("{0:" + Utils.DateFormat + "}", dTmp);
-
-            DBMovieInfo Movie = (DBMovieInfo)latests[x0].Playable ;
-            latests[x0].IsNew = ((dTmp > Utils.NewDateTime) && (Movie.UserSettings[0].WatchedCount <= 0));
-            if (latests[x0].IsNew)
-            {
-              CurrentFacade.HasNew = true;
-            }
+            CurrentFacade.HasNew = true;
           }
-          catch
-          { }
 
           latestMovies.Add(latests[x0]);
           latestMovingPictures.Add(x0+1, latests[x0].Playable);
@@ -460,6 +461,19 @@ namespace LatestMediaHandler
             // logger.Debug("Make Latest List: MovingPictures: " + latestMovies[i].Id + " - " + latestMovies[i].Title);
             ht.Add(latestMovies[i].Id, latestMovies[i].Title) ;
           }
+        }
+      }
+      return ht;
+    }
+
+    public List<MQTTItem> GetMQTTLatestsList()
+    {
+      List<MQTTItem> ht = new List<MQTTItem>();
+      if (latestMovies != null)
+      {
+        for (int i = 0; i < latestMovies.Count; i++)
+        {
+          ht.Add(new MQTTItem(latestMovies[i]));
         }
       }
       return ht;

@@ -489,17 +489,11 @@ namespace LatestMediaHandler
             }
 
             // Date added
-            string dateAdded = string.Empty;
-            try
+            isnew = (allTrack.DateAdded > Utils.NewDateTime);
+            if (isnew)
             {
-              dateAdded = String.Format("{0:" + Utils.DateFormat + "}", allTrack.DateAdded);
-              isnew = (allTrack.DateAdded > Utils.NewDateTime);
-              if (isnew)
-              {
-                CurrentFacade.HasNew = true;
-              }
+              CurrentFacade.HasNew = true;
             }
-            catch { }
 
             string fbanner = string.Empty;
             string fclearart = string.Empty;
@@ -519,19 +513,30 @@ namespace LatestMediaHandler
             }
 
             // Add to latest
-            latestMusicAlbums.Add(new Latest(dateAdded, thumb, sFilename1, allTrack.Track,
-                                             sFileName,
-                                             sArtist, sAlbum,
-                                             sGenre,
-                                             allTrack.Rating.ToString(), allTrack.Rating.ToString(), 
-                                             null, null, 
-                                             sYear, 
-                                             artistThumb, albumThumb, trackThumb, 
-                                             null, null,
-                                             sArtistBio, 
-                                             null,
-                                             fbanner, fclearart, fclearlogo, fcd,
-                                             isnew)); 
+            latestMusicAlbums.Add(new Latest()
+            {
+              DateTimeAdded = allTrack.DateAdded,
+              Title = allTrack.Track,
+              Subtitle = sFileName,
+              Thumb = thumb,
+              Fanart = sFilename1,
+              Artist = sArtist,
+              Album = sAlbum,
+              Genre = sGenre,
+              Rating = allTrack.Rating.ToString(),
+              Year = sYear,
+              SeasonIndex = artistThumb,
+              EpisodeIndex = albumThumb,
+              ThumbSeries = trackThumb,
+              Summary = sArtistBio,
+              Banner = fbanner,
+              ClearArt = fclearart,
+              ClearLogo = fclearlogo,
+              CD = fcd,
+              Playable = allTrack,
+              IsNew = isnew
+            }) ;
+
             latestMusicAlbumsVideos.Add(i0, sFileName);
             Utils.ThreadToSleep();
 
@@ -567,6 +572,19 @@ namespace LatestMediaHandler
       return ht;
     }
 
+    public List<MQTTItem> GetMQTTLatestsList()
+    {
+      List<MQTTItem> ht = new List<MQTTItem>();
+      if (latestMusicAlbums != null)
+      {
+        for (int i = 0; i < latestMusicAlbums.Count; i++)
+        {
+          ht.Add(new MQTTItem(latestMusicAlbums[i]));
+        }
+      }
+      return ht;
+    }
+
     private void AddToFilmstrip(Latest latests, int x)
     {
       try
@@ -594,14 +612,7 @@ namespace LatestMediaHandler
         {
           mt.Year = 0;
         }
-        try
-        {
-          mt.Rating = Int32.Parse(latests.RoundedRating);
-        }
-        catch
-        {
-          mt.Rating = 0;
-        }
+        mt.Rating = latests.RoundedRating;
 
         Utils.LoadImage(latests.Thumb, ref imagesThumbs);
 

@@ -43,18 +43,8 @@ namespace LatestMediaHandler
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LatestMediaHandlerConfig));
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage20 = new System.Windows.Forms.TabPage();
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.comboBox3 = new System.Windows.Forms.ComboBox();
-      this.groupBox13 = new System.Windows.Forms.GroupBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.comboBox1 = new System.Windows.Forms.ComboBox();
-      this.label35 = new System.Windows.Forms.Label();
-      this.checkBox12 = new System.Windows.Forms.CheckBox();
-      this.checkBox13 = new System.Windows.Forms.CheckBox();
+      this.tabOptions = new System.Windows.Forms.TabControl();
+      this.tabLMH = new System.Windows.Forms.TabPage();
       this.groupBox11 = new System.Windows.Forms.GroupBox();
       this.comboBoxTVSeriesMode = new System.Windows.Forms.ComboBox();
       this.comboBoxMvCThumbType = new System.Windows.Forms.ComboBox();
@@ -77,157 +67,58 @@ namespace LatestMediaHandler
       this.checkBox5 = new System.Windows.Forms.CheckBox();
       this.checkBox6 = new System.Windows.Forms.CheckBox();
       this.checkBox7 = new System.Windows.Forms.CheckBox();
-      this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabAbout = new System.Windows.Forms.TabPage();
       this.pictureBox2 = new System.Windows.Forms.PictureBox();
       this.label11 = new System.Windows.Forms.Label();
       this.label10 = new System.Windows.Forms.Label();
       this.label9 = new System.Windows.Forms.Label();
       this.richTextBox1 = new System.Windows.Forms.RichTextBox();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.tabControl1.SuspendLayout();
-      this.tabPage20.SuspendLayout();
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.label4 = new System.Windows.Forms.Label();
+      this.comboBox3 = new System.Windows.Forms.ComboBox();
+      this.groupBox13 = new System.Windows.Forms.GroupBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
+      this.comboBox1 = new System.Windows.Forms.ComboBox();
+      this.label35 = new System.Windows.Forms.Label();
+      this.checkBox12 = new System.Windows.Forms.CheckBox();
+      this.checkBox13 = new System.Windows.Forms.CheckBox();
+      this.tabOptions.SuspendLayout();
+      this.tabLMH.SuspendLayout();
+      this.groupBox11.SuspendLayout();
+      this.tabPage1.SuspendLayout();
+      this.tabAbout.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.groupBox13.SuspendLayout();
-      this.groupBox11.SuspendLayout();
-      this.tabPage4.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
       this.SuspendLayout();
       // 
-      // tabControl1
+      // tabOptions
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+      this.tabOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabControl1.Controls.Add(this.tabPage20);
-      this.tabControl1.Controls.Add(this.tabPage4);
-      this.tabControl1.Location = new System.Drawing.Point(12, 12);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(768, 678);
-      this.tabControl1.TabIndex = 15;
+      this.tabOptions.Controls.Add(this.tabLMH);
+      this.tabOptions.Controls.Add(this.tabPage1);
+      this.tabOptions.Controls.Add(this.tabAbout);
+      this.tabOptions.Location = new System.Drawing.Point(12, 12);
+      this.tabOptions.Name = "tabOptions";
+      this.tabOptions.SelectedIndex = 0;
+      this.tabOptions.Size = new System.Drawing.Size(769, 487);
+      this.tabOptions.TabIndex = 15;
       // 
-      // tabPage20
+      // tabLMH
       // 
-      this.tabPage20.Controls.Add(this.groupBox1);
-      this.tabPage20.Controls.Add(this.groupBox13);
-      this.tabPage20.Controls.Add(this.groupBox11);
-      this.tabPage20.Location = new System.Drawing.Point(4, 22);
-      this.tabPage20.Name = "tabPage20";
-      this.tabPage20.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage20.Size = new System.Drawing.Size(760, 652);
-      this.tabPage20.TabIndex = 7;
-      this.tabPage20.Text = "Latest Media";
-      this.tabPage20.UseVisualStyleBackColor = true;
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Controls.Add(this.label4);
-      this.groupBox1.Controls.Add(this.comboBox3);
-      this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.groupBox1.Location = new System.Drawing.Point(6, 589);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(748, 51);
-      this.groupBox1.TabIndex = 10;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Other Options";
-      this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
-      // 
-      // label4
-      // 
-      this.label4.AutoSize = true;
-      this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-      this.label4.Location = new System.Drawing.Point(6, 23);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(82, 16);
-      this.label4.TabIndex = 7;
-      this.label4.Text = "Date Format";
-      // 
-      // comboBox3
-      // 
-      this.comboBox3.FormattingEnabled = true;
-      this.comboBox3.Location = new System.Drawing.Point(120, 20);
-      this.comboBox3.Name = "comboBox3";
-      this.comboBox3.Size = new System.Drawing.Size(121, 26);
-      this.comboBox3.TabIndex = 6;
-      this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
-      // 
-      // groupBox13
-      // 
-      this.groupBox13.Controls.Add(this.label2);
-      this.groupBox13.Controls.Add(this.label1);
-      this.groupBox13.Controls.Add(this.comboBox1);
-      this.groupBox13.Controls.Add(this.label35);
-      this.groupBox13.Controls.Add(this.checkBox12);
-      this.groupBox13.Controls.Add(this.checkBox13);
-      this.groupBox13.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.groupBox13.Location = new System.Drawing.Point(6, 455);
-      this.groupBox13.Name = "groupBox13";
-      this.groupBox13.Size = new System.Drawing.Size(748, 125);
-      this.groupBox13.TabIndex = 9;
-      this.groupBox13.TabStop = false;
-      this.groupBox13.Text = "Update Databases";
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-      this.label2.Location = new System.Drawing.Point(247, 98);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(54, 16);
-      this.label2.TabIndex = 6;
-      this.label2.Text = "minutes";
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-      this.label1.Location = new System.Drawing.Point(6, 96);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(104, 16);
-      this.label1.TabIndex = 5;
-      this.label1.Text = "Refresh intervall";
-      // 
-      // comboBox1
-      // 
-      this.comboBox1.FormattingEnabled = true;
-      this.comboBox1.Location = new System.Drawing.Point(120, 93);
-      this.comboBox1.Name = "comboBox1";
-      this.comboBox1.Size = new System.Drawing.Size(121, 26);
-      this.comboBox1.TabIndex = 4;
-      this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-      // 
-      // label35
-      // 
-      this.label35.AutoSize = true;
-      this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label35.Location = new System.Drawing.Point(6, 26);
-      this.label35.Name = "label35";
-      this.label35.Size = new System.Drawing.Size(335, 16);
-      this.label35.TabIndex = 2;
-      this.label35.Text = "Enable Automatic Update Of These Databases:";
-      // 
-      // checkBox12
-      // 
-      this.checkBox12.AutoSize = true;
-      this.checkBox12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.checkBox12.Location = new System.Drawing.Point(9, 44);
-      this.checkBox12.Name = "checkBox12";
-      this.checkBox12.Size = new System.Drawing.Size(75, 20);
-      this.checkBox12.TabIndex = 1;
-      this.checkBox12.Text = "Pictures";
-      this.checkBox12.UseVisualStyleBackColor = true;
-      // 
-      // checkBox13
-      // 
-      this.checkBox13.AutoSize = true;
-      this.checkBox13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.checkBox13.Location = new System.Drawing.Point(9, 67);
-      this.checkBox13.Name = "checkBox13";
-      this.checkBox13.Size = new System.Drawing.Size(62, 20);
-      this.checkBox13.TabIndex = 3;
-      this.checkBox13.Text = "Music";
-      this.checkBox13.UseVisualStyleBackColor = true;
-      this.checkBox13.CheckedChanged += new System.EventHandler(this.checkBox13_CheckedChanged);
+      this.tabLMH.Controls.Add(this.groupBox11);
+      this.tabLMH.Location = new System.Drawing.Point(4, 22);
+      this.tabLMH.Name = "tabLMH";
+      this.tabLMH.Padding = new System.Windows.Forms.Padding(3);
+      this.tabLMH.Size = new System.Drawing.Size(761, 461);
+      this.tabLMH.TabIndex = 7;
+      this.tabLMH.Text = "Latest Media";
+      this.tabLMH.UseVisualStyleBackColor = true;
       // 
       // groupBox11
       // 
@@ -514,20 +405,32 @@ namespace LatestMediaHandler
       this.checkBox7.UseVisualStyleBackColor = true;
       this.checkBox7.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
       // 
-      // tabPage4
+      // tabPage1
       // 
-      this.tabPage4.Controls.Add(this.pictureBox2);
-      this.tabPage4.Controls.Add(this.label11);
-      this.tabPage4.Controls.Add(this.label10);
-      this.tabPage4.Controls.Add(this.label9);
-      this.tabPage4.Controls.Add(this.richTextBox1);
-      this.tabPage4.Location = new System.Drawing.Point(4, 22);
-      this.tabPage4.Name = "tabPage4";
-      this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage4.Size = new System.Drawing.Size(760, 652);
-      this.tabPage4.TabIndex = 4;
-      this.tabPage4.Text = "About";
-      this.tabPage4.UseVisualStyleBackColor = true;
+      this.tabPage1.Controls.Add(this.groupBox1);
+      this.tabPage1.Controls.Add(this.groupBox13);
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage1.Size = new System.Drawing.Size(761, 461);
+      this.tabPage1.TabIndex = 8;
+      this.tabPage1.Text = "Options";
+      this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // tabAbout
+      // 
+      this.tabAbout.Controls.Add(this.pictureBox2);
+      this.tabAbout.Controls.Add(this.label11);
+      this.tabAbout.Controls.Add(this.label10);
+      this.tabAbout.Controls.Add(this.label9);
+      this.tabAbout.Controls.Add(this.richTextBox1);
+      this.tabAbout.Location = new System.Drawing.Point(4, 22);
+      this.tabAbout.Name = "tabAbout";
+      this.tabAbout.Padding = new System.Windows.Forms.Padding(3);
+      this.tabAbout.Size = new System.Drawing.Size(761, 461);
+      this.tabAbout.TabIndex = 4;
+      this.tabAbout.Text = "About";
+      this.tabAbout.UseVisualStyleBackColor = true;
       // 
       // pictureBox2
       // 
@@ -578,7 +481,7 @@ namespace LatestMediaHandler
       this.richTextBox1.Location = new System.Drawing.Point(6, 112);
       this.richTextBox1.Name = "richTextBox1";
       this.richTextBox1.ReadOnly = true;
-      this.richTextBox1.Size = new System.Drawing.Size(748, 449);
+      this.richTextBox1.Size = new System.Drawing.Size(749, 343);
       this.richTextBox1.TabIndex = 0;
       this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
       // 
@@ -588,46 +491,152 @@ namespace LatestMediaHandler
       this.toolTip1.InitialDelay = 500;
       this.toolTip1.ReshowDelay = 100;
       // 
+      // groupBox1
+      // 
+      this.groupBox1.Controls.Add(this.label4);
+      this.groupBox1.Controls.Add(this.comboBox3);
+      this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.groupBox1.Location = new System.Drawing.Point(6, 140);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(748, 51);
+      this.groupBox1.TabIndex = 12;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Other Options";
+      // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+      this.label4.Location = new System.Drawing.Point(6, 23);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(82, 16);
+      this.label4.TabIndex = 7;
+      this.label4.Text = "Date Format";
+      // 
+      // comboBox3
+      // 
+      this.comboBox3.FormattingEnabled = true;
+      this.comboBox3.Location = new System.Drawing.Point(120, 20);
+      this.comboBox3.Name = "comboBox3";
+      this.comboBox3.Size = new System.Drawing.Size(121, 26);
+      this.comboBox3.TabIndex = 6;
+      // 
+      // groupBox13
+      // 
+      this.groupBox13.Controls.Add(this.label2);
+      this.groupBox13.Controls.Add(this.label1);
+      this.groupBox13.Controls.Add(this.comboBox1);
+      this.groupBox13.Controls.Add(this.label35);
+      this.groupBox13.Controls.Add(this.checkBox12);
+      this.groupBox13.Controls.Add(this.checkBox13);
+      this.groupBox13.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.groupBox13.Location = new System.Drawing.Point(6, 6);
+      this.groupBox13.Name = "groupBox13";
+      this.groupBox13.Size = new System.Drawing.Size(748, 125);
+      this.groupBox13.TabIndex = 11;
+      this.groupBox13.TabStop = false;
+      this.groupBox13.Text = "Update Databases";
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+      this.label2.Location = new System.Drawing.Point(247, 98);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(54, 16);
+      this.label2.TabIndex = 6;
+      this.label2.Text = "minutes";
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+      this.label1.Location = new System.Drawing.Point(6, 96);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(104, 16);
+      this.label1.TabIndex = 5;
+      this.label1.Text = "Refresh intervall";
+      // 
+      // comboBox1
+      // 
+      this.comboBox1.FormattingEnabled = true;
+      this.comboBox1.Location = new System.Drawing.Point(120, 93);
+      this.comboBox1.Name = "comboBox1";
+      this.comboBox1.Size = new System.Drawing.Size(121, 26);
+      this.comboBox1.TabIndex = 4;
+      // 
+      // label35
+      // 
+      this.label35.AutoSize = true;
+      this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label35.Location = new System.Drawing.Point(6, 26);
+      this.label35.Name = "label35";
+      this.label35.Size = new System.Drawing.Size(335, 16);
+      this.label35.TabIndex = 2;
+      this.label35.Text = "Enable Automatic Update Of These Databases:";
+      // 
+      // checkBox12
+      // 
+      this.checkBox12.AutoSize = true;
+      this.checkBox12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.checkBox12.Location = new System.Drawing.Point(9, 44);
+      this.checkBox12.Name = "checkBox12";
+      this.checkBox12.Size = new System.Drawing.Size(75, 20);
+      this.checkBox12.TabIndex = 1;
+      this.checkBox12.Text = "Pictures";
+      this.checkBox12.UseVisualStyleBackColor = true;
+      // 
+      // checkBox13
+      // 
+      this.checkBox13.AutoSize = true;
+      this.checkBox13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.checkBox13.Location = new System.Drawing.Point(9, 67);
+      this.checkBox13.Name = "checkBox13";
+      this.checkBox13.Size = new System.Drawing.Size(62, 20);
+      this.checkBox13.TabIndex = 3;
+      this.checkBox13.Text = "Music";
+      this.checkBox13.UseVisualStyleBackColor = true;
+      // 
       // LatestMediaHandlerConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this.ClientSize = new System.Drawing.Size(792, 702);
-      this.Controls.Add(this.tabControl1);
+      this.ClientSize = new System.Drawing.Size(793, 511);
+      this.Controls.Add(this.tabOptions);
       this.DoubleBuffered = true;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MinimizeBox = false;
-      this.MinimumSize = new System.Drawing.Size(800, 600);
+      this.MinimumSize = new System.Drawing.Size(800, 550);
       this.Name = "LatestMediaHandlerConfig";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
       this.Text = "Latest Media Handler";
       this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LatestMediaHandlerConfig_FormClosing);
       this.Load += new System.EventHandler(this.LatestMediaHandlerConfig_Load);
-      this.tabControl1.ResumeLayout(false);
-      this.tabPage20.ResumeLayout(false);
+      this.tabOptions.ResumeLayout(false);
+      this.tabLMH.ResumeLayout(false);
+      this.groupBox11.ResumeLayout(false);
+      this.groupBox11.PerformLayout();
+      this.tabPage1.ResumeLayout(false);
+      this.tabAbout.ResumeLayout(false);
+      this.tabAbout.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.groupBox13.ResumeLayout(false);
       this.groupBox13.PerformLayout();
-      this.groupBox11.ResumeLayout(false);
-      this.groupBox11.PerformLayout();
-      this.tabPage4.ResumeLayout(false);
-      this.tabPage4.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
       this.ResumeLayout(false);
 
     }
     #endregion
 
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabOptions;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.TabPage tabAbout;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.TabPage tabPage20;
+        private System.Windows.Forms.TabPage tabLMH;
         private System.Windows.Forms.GroupBox groupBox11;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox3;
@@ -635,31 +644,32 @@ namespace LatestMediaHandler
         private System.Windows.Forms.CheckBox checkBox5;
         private System.Windows.Forms.CheckBox checkBox6;
         private System.Windows.Forms.CheckBox checkBox7;
-        private System.Windows.Forms.GroupBox groupBox13;
-        private System.Windows.Forms.Label label35;
-        private System.Windows.Forms.CheckBox checkBox12;
-        private System.Windows.Forms.CheckBox checkBox13;
         private System.Windows.Forms.CheckBox checkBox10;
         private System.Windows.Forms.CheckBox checkBox14;
         private System.Windows.Forms.CheckBox checkBoxRecordingsUnfinished;
         private System.Windows.Forms.CheckBox checkBox11;
-        private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.ComboBox comboBoxTVSeriesType;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.CheckBox checkBox8;
         private System.Windows.Forms.CheckBox checkBox9;
         private System.Windows.Forms.CheckBox checkBox15;
         private System.Windows.Forms.ComboBox comboBoxMvCThumbType;
         private System.Windows.Forms.ComboBox comboBoxTVSeriesMode;
+    private System.Windows.Forms.TabPage tabPage1;
+    private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.ComboBox comboBox3;
+    private System.Windows.Forms.GroupBox groupBox13;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.ComboBox comboBox1;
+    private System.Windows.Forms.Label label35;
+    private System.Windows.Forms.CheckBox checkBox12;
+    private System.Windows.Forms.CheckBox checkBox13;
   }
 }

@@ -588,19 +588,21 @@ namespace LatestMediaHandler
                   string dateAdded = episode[DBEpisode.cFileDateAdded];
                   //
                   bool isnew = false;
+                  DateTime dtTmp = DateTime.MinValue;
                   try
                   {
-                    DateTime dTmp = DateTime.Parse(dateAdded);
-                    dateAdded = String.Format("{0:" + Utils.DateFormat + "}", dTmp);
+                    dtTmp = DateTime.Parse(dateAdded);
 
-                    isnew = ((dTmp > Utils.NewDateTime) && (string.IsNullOrEmpty(episode[DBEpisode.cDateWatched])));
+                    isnew = ((dtTmp > Utils.NewDateTime) && (string.IsNullOrEmpty(episode[DBEpisode.cDateWatched])));
                     if (isnew)
                     {
                       CurrentFacade.HasNew = true;
                     }
                   }
                   catch
-                  {   }
+                  {   
+                    isnew = false;
+                  }
                   try
                   {
                     DateTime dTmp = DateTime.Parse(firstAired);
@@ -612,16 +614,9 @@ namespace LatestMediaHandler
                   NumberFormatInfo ni = (NumberFormatInfo) ci.NumberFormat.Clone();
                   ni.NumberDecimalSeparator = ".";
                   string latestRating = (_resultType == ResultTypes.Episodes ? episodeRating : (_resultType == ResultTypes.Seasons ? seasonRating : seriesRating));
-                  string mathRoundToString = string.Empty;
                   if (!string.IsNullOrEmpty(latestRating))
                   {
-                    try
-                    {
-                      latestRating = latestRating.Replace(",", ".");
-                      mathRoundToString = Math.Round(double.Parse(latestRating, ni), MidpointRounding.AwayFromZero).ToString(CultureInfo.CurrentCulture);
-                    }
-                    catch
-                    {   }
+                    latestRating = latestRating.Replace(",", ".");
                   }
                   //
                   if (string.IsNullOrEmpty(thumb))
@@ -689,13 +684,32 @@ namespace LatestMediaHandler
                     }
                   }
 
-                  latestTVSeries.Add(new Latest(dateAdded, thumb, fanart, seriesTitle, latestTitle, 
-                                                null, null, 
-                                                seriesGenre, latestRating, mathRoundToString, contentRating, latestRuntime, firstAired, seasonIdx, episodeIdx, seriesThumb, 
-                                                null, null, 
-                                                latestSummary, seriesIdx,
-                                                fbanner, fclearart, fclearlogo, fcd,
-                                                isnew));
+                  latestTVSeries.Add(new Latest()
+                  {
+                    DateTimeAdded = dtTmp,
+                    Title = seriesTitle,
+                    Subtitle = latestTitle,
+                    Thumb = thumb,
+                    ThumbSeries = seriesThumb,
+                    Fanart = fanart,
+                    Genre = seriesGenre,
+                    Rating = latestRating,
+                    Classification = contentRating,
+                    Runtime = latestRuntime,
+                    Year = firstAired,
+                    SeriesIndex = seriesIdx,
+                    SeasonIndex = seasonIdx,
+                    EpisodeIndex = episodeIdx,
+                    Summary = latestSummary,
+                    Studios = series[DBOnlineSeries.cNetwork],
+                    Banner = fbanner,
+                    ClearArt = fclearart,
+                    ClearLogo = fclearlogo,
+                    CD = fcd,
+                    DBId = seriesIdx,
+                    IsNew = isnew
+                  });
+
                   latestTVSeriesForPlay.Add(i0, episode);
                   Utils.ThreadToSleep();
 
@@ -744,6 +758,19 @@ namespace LatestMediaHandler
             // logger.Debug("Make Latest List: TVSeries: " + ((Utils.latestTVSeriesType == 0) ? "Episode" : (Utils.latestTVSeriesType == 1) ? "Season" : "Series") + " " + latestTVSeries[i].SeriesIndex + " - " + latestTVSeries[i].Title);
             ht.Add(latestTVSeries[i].SeriesIndex, latestTVSeries[i].Title) ;
           }
+        }
+      }
+      return ht;
+    }
+
+    public List<MQTTItem> GetMQTTLatestsList()
+    {
+      List<MQTTItem> ht = new List<MQTTItem>();
+      if (latestTVSeries != null)
+      {
+        for (int i = 0; i < latestTVSeries.Count; i++)
+        {
+          ht.Add(new MQTTItem(latestTVSeries[i]));
         }
       }
       return ht;
@@ -830,14 +857,7 @@ namespace LatestMediaHandler
           movie.Year = 0;
         }
         movie.DVDLabel = latests.Fanart;
-        try
-        {
-          movie.Rating = Int32.Parse(latests.RoundedRating);
-        }
-        catch
-        {
-          movie.Rating = 0;
-        }
+        movie.Rating = latests.RoundedRating;
         movie.Watched = 0;
 
         Utils.LoadImage(latests.ThumbSeries, ref imagesThumbs);

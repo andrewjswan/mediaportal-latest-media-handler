@@ -902,7 +902,7 @@ namespace LatestMediaHandler
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".dateAdded", collection[i].DateAdded);
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".genre", collection[i].Genre);
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".rating", collection[i].Rating);
-        SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".roundedRating", collection[i].RoundedRating);
+        SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".roundedRating", collection[i].RoundedRating.ToString());
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".classification", collection[i].Classification);
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".runtime", collection[i].Runtime);
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".year", collection[i].Year);
@@ -1085,7 +1085,7 @@ namespace LatestMediaHandler
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".dateAdded", collection[i].DateAdded);
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".genre", collection[i].Genre);
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".rating", collection[i].Rating);
-        SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".roundedRating", collection[i].RoundedRating);
+        SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".roundedRating", collection[i].RoundedRating.ToString());
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".classification", collection[i].Classification);
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".runtime", collection[i].Runtime);
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".firstAired", collection[i].Year);
@@ -1154,7 +1154,7 @@ namespace LatestMediaHandler
       SetProperty("#latestMediaHandler." + handler + ".selected.dateAdded", latest.DateAdded);
       SetProperty("#latestMediaHandler." + handler + ".selected.genre", latest.Genre);
       SetProperty("#latestMediaHandler." + handler + ".selected.rating", latest.Rating);
-      SetProperty("#latestMediaHandler." + handler + ".selected.roundedRating", latest.RoundedRating);
+      SetProperty("#latestMediaHandler." + handler + ".selected.roundedRating", latest.RoundedRating.ToString());
       SetProperty("#latestMediaHandler." + handler + ".selected.classification", latest.Classification);
       SetProperty("#latestMediaHandler." + handler + ".selected.runtime", latest.Runtime);
       SetProperty("#latestMediaHandler." + handler + ".selected.firstAired", latest.Year);
@@ -1247,7 +1247,7 @@ namespace LatestMediaHandler
       {
         logger.Info("Updating Media Info: " + title + " " + facade.Type + sId + ": [" + z + "] " + 
                                               collection[i].Artist + " - " + collection[i].Album + 
-                                              " [" + collection[i].DateAdded + (!string.IsNullOrEmpty(collection[i].Id) ? "/" + collection[i].Id : string.Empty) + "] - " + 
+                                              " [" + collection[i].DateAdded + (!string.IsNullOrEmpty(collection[i].DateWatched) ? "/" + collection[i].DateWatched : string.Empty) + "] - " + 
                                               collection[i].Fanart);
 
         SetProperty("#latestMediaHandler." + handler + id + ".latest" + z + ".thumb", collection[i].Thumb);

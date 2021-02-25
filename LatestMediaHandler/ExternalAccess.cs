@@ -15,6 +15,7 @@ using LMHNLog.NLog;
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace LatestMediaHandler
 {
@@ -66,17 +67,17 @@ namespace LatestMediaHandler
       return Utils.LatestTVRecordings;
     }
 
-    #region From FanartHandler
+    #region From FanartHandler & MQTT Plugin
 
     public static DateTime GetLatestsUpdate(string category)
     {
       Utils.LatestsCategory latestsCategory;
       if (Enum.TryParse(category, out latestsCategory))
       {
-        if (Enum.IsDefined(typeof(Utils.LatestsCategory), latestsCategory))  
+        if (Enum.IsDefined(typeof(Utils.LatestsCategory), latestsCategory))
         {
           return Utils.GetLatestsUpdate(latestsCategory);
-        } 
+        }
       }
       return new DateTime();
     }
@@ -85,17 +86,31 @@ namespace LatestMediaHandler
     {
       Hashtable ht = new Hashtable();
       if (string.IsNullOrEmpty(category))
-        return ht ;
+        return ht;
 
       Utils.LatestsCategory latestsCategory;
       if (!Enum.TryParse(category, out latestsCategory))
-        return ht ;
-      if (!Enum.IsDefined(typeof(Utils.LatestsCategory), latestsCategory))  
-        return ht ;
+        return ht;
+      if (!Enum.IsDefined(typeof(Utils.LatestsCategory), latestsCategory))
+        return ht;
 
       return GetLatestsList(latestsCategory);
     }
 
+    public static List<MQTTItem> GetMQTTLatests(string category)
+    {
+      List<MQTTItem> ht = new List<MQTTItem>();
+      if (string.IsNullOrEmpty(category))
+        return ht;
+
+      Utils.LatestsCategory latestsCategory;
+      if (!Enum.TryParse(category, out latestsCategory))
+        return ht;
+      if (!Enum.IsDefined(typeof(Utils.LatestsCategory), latestsCategory))
+        return ht;
+
+      return GetMQTTLatestsList(latestsCategory);
+    }
 
     private static Hashtable GetLatestsList(Utils.LatestsCategory type)
     {
@@ -155,6 +170,68 @@ namespace LatestMediaHandler
       }
       return new Hashtable();
     }
+
+    // https://github.com/custom-cards/upcoming-media-card#json-items
+    private static List<MQTTItem> GetMQTTLatestsList(Utils.LatestsCategory type)
+    {
+      if (LatestMediaHandlerSetup.Handlers == null)
+      {
+        return new List<MQTTItem>();
+      }
+
+      try
+      {
+        foreach (object obj in LatestMediaHandlerSetup.Handlers)
+        {
+          if (obj == null)
+          {
+            continue;
+          }
+
+          if (type == Utils.LatestsCategory.MovingPictures && obj is LatestMovingPicturesHandler)
+          {
+            return ((LatestMovingPicturesHandler)obj).GetMQTTLatestsList();
+          }
+          else if (type == Utils.LatestsCategory.Movies && obj is LatestMyVideosHandler)
+          {
+            return ((LatestMyVideosHandler)obj).GetMQTTLatestsList();
+          }
+          else if (type == Utils.LatestsCategory.MvCentral && obj is LatestMvCentralHandler)
+          {
+            return ((LatestMvCentralHandler)obj).GetMQTTLatestsList();
+          }
+          else if (type == Utils.LatestsCategory.TVSeries && obj is LatestTVSeriesHandler)
+          {
+            return ((LatestTVSeriesHandler)obj).GetMQTTLatestsList();
+          }
+          else if (type == Utils.LatestsCategory.Music && obj is LatestMusicHandler)
+          {
+            return ((LatestMusicHandler)obj).GetMQTTLatestsList();
+          }
+          /*
+          else if (type == Utils.LatestsCategory.TV && obj is LatestTVAllRecordingsHandler)
+          {
+            return ((LatestTVAllRecordingsHandler)obj).GetMQTTLatestsList();
+          }
+          else if (type == Utils.LatestsCategory.Pictures && obj is LatestPictureHandler)
+          {
+            return ((LatestPictureHandler)obj).GetMQTTLatestsList();
+          }
+          */
+          else if (type == Utils.LatestsCategory.MyFilms && obj is LatestMyFilmsHandler)
+          {
+            return ((LatestMyFilmsHandler)obj).GetMQTTLatestsList();
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error("GetLatestsList: " + ex.ToString());
+      }
+      return new List<MQTTItem>();
+    }
+
     #endregion
+
   }
 }

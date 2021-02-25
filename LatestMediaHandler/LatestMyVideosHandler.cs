@@ -383,13 +383,12 @@ namespace LatestMediaHandler
         string sql = String.Format("select movieinfo.fRating,movieinfo.strCredits,movieinfo.strTagLine,movieinfo.strPlotOutline, " +
                                           "movieinfo.strPlot,movieinfo.strPlotOutline,movieinfo.strVotes,movieinfo.strCast,movieinfo.iYear,movieinfo.strGenre,movieinfo.strPictureURL, " +
                                           "movieinfo.strTitle,path.strPath,movie.discid,movieinfo.IMDBID,movieinfo.idMovie,path.cdlabel,movieinfo.mpaa,movieinfo.runtime, " +
-                                          "movieinfo.iswatched, movieinfo.dateAdded,movieinfo.dateWatched from {0} {1} {2}", 
+                                          "movieinfo.iswatched, movieinfo.dateAdded,movieinfo.dateWatched,movieinfo.studios from {0} {1} {2}", 
                                            fromClause, whereClause, orderClause);
 
         VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
 
         int x = 0;
-        string sTimestamp = string.Empty;
         foreach (IMDBMovie item in movies)
         {
           if (item.IsEmpty)
@@ -399,7 +398,8 @@ namespace LatestMediaHandler
 
           if (!CheckItem(item.Path))
           {
-            sTimestamp = item.DateAdded;
+            DateTime dTmp = DateTime.MinValue;
+            DateTime dwTmp = DateTime.MinValue;
             string titleExt = item.Title + "{" + item.ID + "}";
             string thumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt); //item.ThumbURL;
             if (string.IsNullOrEmpty(thumb))
@@ -409,7 +409,7 @@ namespace LatestMediaHandler
             bool isnew = false;
             try
             {
-              DateTime dTmp = DateTime.Parse(sTimestamp);
+              dTmp = DateTime.Parse(item.DateAdded);
               isnew = ((dTmp > Utils.NewDateTime) && (item.Watched <= 0));
               if (isnew)
               {
@@ -417,6 +417,14 @@ namespace LatestMediaHandler
               }
             }
             catch 
+            {
+              isnew = false;
+            }
+            try
+            {
+              dwTmp = DateTime.Parse(item.DateWatched);
+            }
+            catch
             { }
 
             string fbanner = string.Empty;
@@ -439,21 +447,32 @@ namespace LatestMediaHandler
               );
             }
 
-            latests.Add(new Latest(sTimestamp, thumb, GetFanart(item.Title, item.ID), item.Title, item.PlotOutline,  
-                                   null, null, 
-                                   item.Genre,
-                                   item.Rating.ToString(CultureInfo.CurrentCulture),
-                                   Math.Round(item.Rating, MidpointRounding.AwayFromZero).ToString(CultureInfo.CurrentCulture), 
-                                   item.MPARating,
-                                   (item.RunTime).ToString(),
-                                   item.Year.ToString(CultureInfo.CurrentCulture), 
-                                   null, null, null, 
-                                   item, item.ID.ToString(), item.Plot, 
-                                   null,
-                                   fbanner, fclearart, fclearlogo, fcd,
-                                   aposter, abg,
-                                   isnew));
-            latests[latests.Count - 1].DateWatched = item.DateWatched;
+            latests.Add(new Latest()
+            {
+              DateTimeAdded = dTmp,
+              DateTimeWatched = dwTmp,
+              Title = item.Title,
+              Subtitle = item.PlotOutline,
+              Genre = item.Genre,
+              Thumb = thumb,
+              Fanart = GetFanart(item.Title, item.ID),
+              Rating = item.Rating.ToString(CultureInfo.CurrentCulture),
+              Classification = item.MPARating,
+              Runtime = item.RunTime.ToString(),
+              Year = item.Year.ToString(),
+              Summary = item.Plot,
+              Studios = item.Studios,
+              Banner = fbanner,
+              ClearArt = fclearart,
+              ClearLogo = fclearlogo,
+              CD = fcd,
+              AnimatedPoster = aposter,
+              AnimatedBackground = abg,
+              Playable = item,
+              Id = item.ID.ToString(),
+              DBId = item.IMDBNumber,
+              IsNew = isnew
+            });
 
             Utils.ThreadToSleep();
             x++;
@@ -471,16 +490,8 @@ namespace LatestMediaHandler
 
         for (int x0 = 0; x0 < latests.Count; x0++)
         {
-          try
-          {
-            DateTime dTmp = DateTime.Parse(latests[x0].DateAdded);
-            latests[x0].DateAdded = String.Format("{0:" + Utils.DateFormat + "}", dTmp);
-          }
-          catch {  }
-
           latestMyVideos.Add(latests[x0]);
           latestMyVideosForPlay.Add(x0+1, latests[x0].Playable);
-
         }
       }
       catch (Exception ex)
@@ -513,6 +524,19 @@ namespace LatestMediaHandler
             // logger.Debug("Make Latest List: MyVideo: " + latestMyVideos[i].Id + " - " + latestMyVideos[i].Title);
             ht.Add(latestMyVideos[i].Id, latestMyVideos[i].Title) ;
           }
+        }
+      }
+      return ht;
+    }
+
+    public List<MQTTItem> GetMQTTLatestsList()
+    {
+      List<MQTTItem> ht = new List<MQTTItem>();
+      if (latestMyVideos != null)
+      {
+        for (int i = 0; i < latestMyVideos.Count; i++)
+        {
+          ht.Add(new MQTTItem(latestMyVideos[i]));
         }
       }
       return ht;
@@ -642,14 +666,7 @@ namespace LatestMediaHandler
           movie.Year = 0;
         }
         movie.DVDLabel = latests.Fanart;
-        try
-        {
-          movie.Rating = Int32.Parse(latests.RoundedRating);
-        }
-        catch
-        {
-          movie.Rating = 0;
-        }
+        movie.Rating = latests.RoundedRating;
         movie.Watched = 0;
 
         Utils.LoadImage(latests.Thumb, ref imagesThumbs);

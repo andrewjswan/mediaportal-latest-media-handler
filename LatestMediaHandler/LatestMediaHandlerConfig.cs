@@ -210,8 +210,8 @@ namespace LatestMediaHandler
       checkedListBox1.Items.Add(Translation.PrefsRatingTV_14);
       checkedListBox1.Items.Add(Translation.PrefsRatingTV_MA);
       // 
-      tabPage20.Text = Translation.PrefsTabLMH;
-      tabPage4.Text = Translation.PrefsTabAbout;
+      tabLMH.Text = Translation.PrefsTabLMH;
+      tabAbout.Text = Translation.PrefsTabAbout;
       richTextBox1.AppendText(Translation.PrefsDescription.Replace("\r\n", Environment.NewLine).Replace("\n", Environment.NewLine));
       //
       groupBox11.Text = Translation.PrefsLMHOptions ;

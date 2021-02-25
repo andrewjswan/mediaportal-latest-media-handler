@@ -975,16 +975,7 @@ namespace LatestMediaHandler
               }
             }
 
-            try
-            {
-              dateAdded = String.Format("{0:" + Utils.DateFormat + "}", mySong.DateTimeModified);
-              isnew = ((mySong.DateTimeModified > Utils.NewDateTime) && (mySong.TimesPlayed <= 0));
-            }
-            catch 
-            { 
-              dateAdded = string.Empty;
-              isnew = false;
-            }
+            isnew = ((mySong.DateTimeModified > Utils.NewDateTime) && (mySong.TimesPlayed <= 0));
 
             string fbanner = string.Empty;
             string fclearart = string.Empty;
@@ -1012,19 +1003,29 @@ namespace LatestMediaHandler
               }
             }
 
-            latestMusicAlbums.Add(new Latest(dateAdded, thumb, sFilename1, 
-                                             sPaths, sFileType, // FileType 
-                                             sArtist, sAlbum, sGenres, 
-                                             null, null, 
-                                             sFileType, 
-                                             null, 
-                                             sYear, 
-                                             null, null, null, null, 
-                                             mySong.DateTimePlayed.ToString(), 
-                                             mySong.Lyrics, // Artist.BIO
-                                             null,
-                                             fbanner, fclearart, fclearlogo, fcd,
-                                             isnew));
+            latestMusicAlbums.Add(new Latest()
+            {
+              DateTimeAdded = mySong.DateTimeModified,
+              Thumb = thumb,
+              Fanart = sFilename1,
+              Title = sPaths,
+              Subtitle = sFileType, // FileType 
+              Artist = sArtist,
+              Album = sAlbum,
+              Genre = sGenres,
+              Classification = sFileType,
+              Year = sYear,
+              DateTimeWatched = mySong.DateTimePlayed,
+              Summary = mySong.Lyrics, // Artist.BIO
+              Banner = fbanner,
+              ClearArt = fclearart,
+              ClearLogo = fclearlogo,
+              CD = fcd,
+              Playable = mySong,
+              // DBId = mySong.MusicBrainzTrackId,
+              IsNew = isnew
+            });
+
             latestMusicAlbumsFolders.Add(i0, sPaths);
             Utils.ThreadToSleep();
             //
@@ -1092,6 +1093,19 @@ namespace LatestMediaHandler
       return ht;
     }
 
+    public List<MQTTItem> GetMQTTLatestsList()
+    {
+      List<MQTTItem> ht = new List<MQTTItem>();
+      if (latestMusicAlbums != null)
+      {
+        for (int i = 0; i < latestMusicAlbums.Count; i++)
+        {
+          ht.Add(new MQTTItem(latestMusicAlbums[i]));
+        }
+      }
+      return ht;
+    }
+
     private void AddToFilmstrip(Latest latests, int x)
     {
       try
@@ -1120,14 +1134,7 @@ namespace LatestMediaHandler
         {
           mt.Year = 0;
         }
-        try
-        {
-          mt.Rating = Int32.Parse(latests.RoundedRating);
-        }
-        catch
-        {
-          mt.Rating = 0;
-        }
+        mt.Rating = latests.RoundedRating;
 
         Utils.LoadImage(latests.Thumb, ref imagesThumbs);
 

@@ -174,8 +174,15 @@ namespace LatestMediaHandler
     internal static int GetReorgTimerInterval()
     {
       int newTick = Environment.TickCount - ReorgTimerTick;
-      newTick = (Int32.Parse(Utils.ReorgInterval) * 60000) - newTick;
-      if (newTick < 0)
+      try
+      {
+        newTick = (Int32.Parse(Utils.ReorgInterval) * 60000) - newTick;
+        if (newTick < 0)
+        {
+          newTick = 2000;
+        }
+      }
+      catch
       {
         newTick = 2000;
       }
