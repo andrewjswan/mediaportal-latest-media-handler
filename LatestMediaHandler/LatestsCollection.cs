@@ -25,7 +25,7 @@ namespace LatestMediaHandler
       int returnValue = 0;
       if (latest1 is Latest && latest2 is Latest)
       {
-        returnValue = latest2.DateAdded.CompareTo(latest1.DateAdded);
+        returnValue = latest2.DateTimeAdded.CompareTo(latest1.DateTimeAdded);
       }
       return returnValue;
     }
@@ -38,7 +38,7 @@ namespace LatestMediaHandler
       int returnValue = 0;
       if (latest1 is Latest && latest2 is Latest)
       {
-        returnValue = latest1.DateAdded.CompareTo(latest2.DateAdded);
+        returnValue = latest1.DateTimeAdded.CompareTo(latest2.DateTimeAdded);
       }
       return returnValue;
     }
@@ -77,7 +77,7 @@ namespace LatestMediaHandler
       int returnValue = 0;
       if (latest1 is Latest && latest2 is Latest)
       {
-        returnValue = latest2.DateWatched.CompareTo(latest1.Rating);
+        returnValue = latest2.DateTimeWatched.CompareTo(latest1.DateTimeWatched);
       }
       return returnValue;
     }
@@ -90,7 +90,7 @@ namespace LatestMediaHandler
       int returnValue = 0;
       if (latest1 is Latest && latest2 is Latest)
       {
-        returnValue = latest1.DateWatched.CompareTo(latest2.Rating);
+        returnValue = latest1.DateTimeWatched.CompareTo(latest2.DateTimeWatched);
       }
       return returnValue;
     }
