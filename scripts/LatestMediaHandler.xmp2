@@ -281,21 +281,31 @@ cul8er</Value>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
-    <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
-
-* latest added pictures
-* latest added music
-* latest added videos
-* latest added series (tvseries)
-* latest added movies (moving pictures)
-* latest added movies (my films)
-* latest added videos (mvcentral)
-* latest added tv recordings
+    <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
+
+
+
+* latest added pictures
+
+* latest added music
+
+* latest added videos
+
+* latest added series (tvseries)
+
+* latest added movies (moving pictures)
+
+* latest added movies (my films)
+
+* latest added videos (mvcentral)
+
+* latest added tv recordings
+
 </ExtensionDescription>
-    <VersionDescription>Pictures support update...</VersionDescription>
+    <VersionDescription>Some optimisations, add MQTT plugin support ...</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2020-04-02T09:06:46</ReleaseDate>
+    <ReleaseDate>2021-03-09T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>
