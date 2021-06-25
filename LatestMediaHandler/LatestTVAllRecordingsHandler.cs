@@ -13,6 +13,7 @@ extern alias LMHNLog;
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 using LMHNLog.NLog;
 
@@ -22,6 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Timers;
+
 
 namespace LatestMediaHandler
 {
@@ -308,9 +310,11 @@ namespace LatestMediaHandler
         LatestsCollection latestTVRecordings = null;
         try
         {
-          MediaPortal.Profile.Settings xmlreader =  new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
-
-          string useArgus = xmlreader.GetValue("plugins", "ARGUS TV");
+          string useArgus;
+          using (Settings xmlreader = new MPSettings())
+          {
+            useArgus = xmlreader.GetValue("plugins", "ARGUS TV");
+          }
           string dllFile = Config.GetFile(Config.Dir.Plugins, @"Windows\ArgusTV.UI.MediaPortal.dll");
 
           if (useArgus != null && useArgus.Equals("yes", StringComparison.CurrentCulture) && File.Exists(dllFile))

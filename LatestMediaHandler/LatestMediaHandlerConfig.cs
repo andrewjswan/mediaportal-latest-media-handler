@@ -19,8 +19,8 @@ using LMHNLog.NLog;
 using LMHNLog.NLog.Config;
 using LMHNLog.NLog.Targets;
 
-using MediaPortal.Services;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
 
 namespace LatestMediaHandler
 {
@@ -375,29 +375,33 @@ namespace LatestMediaHandler
       config.AddTarget("latestmedia-handler", fileTarget);
 
       // Get current Log Level from MediaPortal 
-      LogLevel logLevel;
-      MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+      LogLevel logLevel = LogLevel.Debug;
+      int intLogLevel = 3;
 
-      switch ((Level) xmlreader.GetValueAsInt("general", "loglevel", 0))
+      using (Settings xmlreader = new MPSettings())
       {
-        case Level.Error:
+        intLogLevel = xmlreader.GetValueAsInt("general", "loglevel", intLogLevel);
+      }
+
+      switch (intLogLevel)
+      {
+        case 0:
           logLevel = LogLevel.Error;
           break;
-        case Level.Warning:
+        case 1:
           logLevel = LogLevel.Warn;
           break;
-        case Level.Information:
+        case 2:
           logLevel = LogLevel.Info;
           break;
-        case Level.Debug:
         default:
           logLevel = LogLevel.Debug;
           break;
       }
 
-#if DEBUG
-            logLevel = LogLevel.Debug;
-#endif
+      #if DEBUG
+      logLevel = LogLevel.Debug;
+      #endif
 
       LoggingRule rule = new LoggingRule("*", logLevel, fileTarget);
       config.LoggingRules.Add(rule);

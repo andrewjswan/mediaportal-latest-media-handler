@@ -13,7 +13,7 @@ extern alias LMHNLog;
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Services;
+using MediaPortal.Profile;
 
 using Microsoft.Win32;
 
@@ -483,23 +483,27 @@ namespace LatestMediaHandler
       logLatestMediaHandlerConfiguration.AddTarget("latestmedia-handler", fileTarget);
 
       // Get current Log Level from MediaPortal 
-      MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
-      string str = settings.GetValue("general", "ThreadPriority");
-      LMHThreadPriority = str == null || !str.Equals("Normal", StringComparison.CurrentCulture) ? (str == null || !str.Equals("BelowNormal", StringComparison.CurrentCulture) ? Utils.Priority.BelowNormal : Utils.Priority.Lowest) : Utils.Priority.Lowest;
+      LogLevel logLevel = LogLevel.Debug;
+      string threadPriority = "Normal";
+      int intLogLevel = 3;
 
-      LogLevel logLevel;
-      switch ((Level)settings.GetValueAsInt("general", "loglevel", 0))
+      using (Settings xmlreader = new MPSettings())
       {
-        case Level.Error:
+        threadPriority = xmlreader.GetValueAsString("general", "ThreadPriority", threadPriority);
+        intLogLevel = xmlreader.GetValueAsInt("general", "loglevel", intLogLevel);
+      }
+
+      switch (intLogLevel)
+      {
+        case 0:
           logLevel = LogLevel.Error;
           break;
-        case Level.Warning:
+        case 1:
           logLevel = LogLevel.Warn;
           break;
-        case Level.Information:
+        case 2:
           logLevel = LogLevel.Info;
           break;
-        case Level.Debug:
         default:
           logLevel = LogLevel.Debug;
           break;
@@ -507,6 +511,13 @@ namespace LatestMediaHandler
       #if DEBUG
       logLevel = LogLevel.Debug;
       #endif
+
+      LMHThreadPriority = string.IsNullOrEmpty(threadPriority) || !threadPriority.Equals("Normal", StringComparison.CurrentCulture) ?
+                            (string.IsNullOrEmpty(threadPriority) || !threadPriority.Equals("BelowNormal", StringComparison.CurrentCulture) ?
+                              Utils.Priority.BelowNormal :
+                              Utils.Priority.Lowest) :
+                            Utils.Priority.Lowest;
+
 
       LoggingRule loggingRule = new LoggingRule("LatestMediaHandler.*", logLevel, fileTarget);
       // LoggingRule loggingRule = new LoggingRule("*", logLevel, fileTarget);
