@@ -302,10 +302,12 @@ cul8er</Value>
 * latest added tv recordings
 
 </ExtensionDescription>
-    <VersionDescription>MP Configuration fix</VersionDescription>
+    <VersionDescription>Rebuild to support x86 and x64 architectures.
+
+*** We Stand with Ukraine ***</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2021-06-25T09:06:46</ReleaseDate>
+    <ReleaseDate>2023-04-01T09:06:46</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
     <Params>

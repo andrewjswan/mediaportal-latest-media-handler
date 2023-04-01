@@ -2,7 +2,7 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{4E7B5EA7-A01E-4E5A-A0CE-A3684A68376B}</ProjectGuid>
@@ -34,7 +34,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -44,7 +44,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -65,29 +65,24 @@
     <Reference Include="Common.GUIPlugins">
       <HintPath>..\External\Common.GUIPlugins.dll</HintPath>
     </Reference>
-    <Reference Include="Common.Utils, Version=1.1.6.27644, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Common.Utils">
       <HintPath>..\External\Common.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Core">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\Core.dll</HintPath>
     </Reference>
-    <Reference Include="Cornerstone, Version=1.2.0.1188, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Cornerstone">
       <HintPath>..\External\Cornerstone.dll</HintPath>
       <Aliases>RealCornerstone</Aliases>
     </Reference>
     <Reference Include="Databases">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\Databases.dll</HintPath>
     </Reference>
     <Reference Include="Dialogs">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\Dialogs.dll</HintPath>
     </Reference>
-    <Reference Include="FanartHandler, Version=2.2.6.518, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="FanartHandler">
       <HintPath>..\External\FanartHandler.dll</HintPath>
     </Reference>
     <Reference Include="Gentle.Common">
@@ -95,7 +90,6 @@
       <HintPath>..\External\Gentle.Common.dll</HintPath>
     </Reference>
     <Reference Include="Gentle.Framework">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\Gentle.Framework.dll</HintPath>
     </Reference>
     <Reference Include="GUIPictures">
@@ -110,24 +104,20 @@
     <Reference Include="MetadataExtractor">
       <HintPath>..\External\MetadataExtractor.dll</HintPath>
     </Reference>
-    <Reference Include="MovingPictures, Version=1.2.0.1188, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="MovingPictures">
       <HintPath>..\External\MovingPictures.dll</HintPath>
     </Reference>
     <Reference Include="MP-TVSeries">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\MP-TVSeries.dll</HintPath>
     </Reference>
-    <Reference Include="mvCentral, Version=1.0.3.417, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="mvCentral">
       <HintPath>..\External\mvCentral.dll</HintPath>
     </Reference>
-    <Reference Include="MyFilms, Version=5.1.0.1468, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="MyFilms">
       <HintPath>..\External\MyFilms.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=1.0.0.505, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="NLog">
       <HintPath>..\External\NLog.dll</HintPath>
       <Aliases>LMHNLog</Aliases>
     </Reference>
@@ -139,16 +129,14 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TvControl, Version=1.1.6.19737, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="TvControl">
       <HintPath>..\External\TvControl.dll</HintPath>
     </Reference>
     <Reference Include="TVDatabase">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\TVDatabase.dll</HintPath>
     </Reference>
-    <Reference Include="TvPlugin, Version=1.1.6.19738, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="TvPlugin">
       <HintPath>..\External\TvPlugin.dll</HintPath>
     </Reference>
     <Reference Include="Utils">
@@ -266,5 +254,8 @@ copy $(ProjectDir)..\scripts\merge.bat .
 copy $(ProjectDir)..\scripts\Tools\libz.exe .
 merge.bat
 del /q merge.bat libz.exe</PostBuildEvent>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+        None
+    </ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
   </PropertyGroup>
 </Project>
