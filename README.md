@@ -1,5 +1,11 @@
 # mediaportal-latest-media-handler
+[![MP AnyCPU](https://img.shields.io/badge/MP-AnyCPU-blue?logo=windows&logoColor=white)](https://github.com/andrewjswan/mediaportal-latest-media-handler/releases)
 [![Build status](https://ci.appveyor.com/api/projects/status/9gay73f8e62pr8v6/branch/master?svg=true)](https://ci.appveyor.com/project/andrewjswan79536/mediaportal-latest-media-handler/branch/master)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/andrewjswan/mediaportal-latest-media-handler/build.yml?logo=github)](https://github.com/andrewjswan/mediaportal-latest-media-handler/actions)
+[![GitHub](https://img.shields.io/github/license/andrewjswan/mediaportal-latest-media-handler?color=blue)](https://github.com/andrewjswan/mediaportal-latest-media-handler/blob/master/LICENSE)
+[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/andrewjswan/mediaportal-latest-media-handler?include_prereleases)](https://github.com/andrewjswan/mediaportal-latest-media-handler/releases)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/downloads-pre/andrewjswan/mediaportal-latest-media-handler/latest/total?label=release@downloads)](https://github.com/andrewjswan/mediaportal-latest-media-handler/releases)
+[![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
 Latest Media Handler is a plugin for MediaPortal (MP).
 
