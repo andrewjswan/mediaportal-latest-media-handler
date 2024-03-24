@@ -308,6 +308,7 @@ cul8er</Value>
     <VersionDescription>Rebuild to support x86 and x64 architectures.
 Migrate to new Repository
 Migrate to Gihub Build Action
+Version bump
 
 *** We Stand with Ukraine ***</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
