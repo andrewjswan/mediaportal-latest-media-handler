@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PackageClass xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<PackageClass xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Version>2.0</Version>
   <Groups>
     <Items>
@@ -10,14 +10,14 @@
         <Description>Default</Description>
         <Files>
           <Items>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\LatestMediaHandler\bin\Release\LatestMediaHandler.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{3e0cdaf9-7327-465e-b13e-9bf42591759d}-LatestMediaHandler.dll</ZipFileName>
               <DestinationFilename>%Base%\plugins\process\LatestMediaHandler.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\config\LatestMediaHandler.xml</LocalFileName>
@@ -33,42 +33,42 @@
         <Description>Languages</Description>
         <Files>
           <Items>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\language\en.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c2eab1ba-0331-4372-80c0-fe560ec77f5f}-en.xml</ZipFileName>
               <DestinationFilename>%Language%\LatestMediaHandler\en.xml</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\language\sv.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{50137788-85a9-44d0-9037-6efdc2b7496e}-sv.xml</ZipFileName>
               <DestinationFilename>%Language%\LatestMediaHandler\sv.xml</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\language\fr.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{bf54ed8e-eea9-11e4-90ec-1681e6b88ec1}-fr.xml</ZipFileName>
               <DestinationFilename>%Language%\LatestMediaHandler\fr.xml</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\language\ru.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{b409cb17-1a68-48d9-976e-e82760ce6e13}-ru.xml</ZipFileName>
               <DestinationFilename>%Language%\LatestMediaHandler\ru.xml</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\language\de.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{0e27f0e5-ba0c-4d06-bd92-9715a1518443}-de.xml</ZipFileName>
               <DestinationFilename>%Language%\LatestMediaHandler\de.xml</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\language\es.xml</LocalFileName>
@@ -85,7 +85,7 @@
         <Description>Skin</Description>
         <Files>
           <Items>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\Installer\config\LatestMediaHandler.SkinSettings.xml</LocalFileName>
@@ -99,7 +99,7 @@
   </Groups>
   <Sections>
     <Items>
-      <SectionItem Guid="950f0bd4-b21d-4cfb-b5ee-8d12d0129679" Name="Welcome Screen" ConditionGroup="">
+      <SectionItem Guid="950f0bd4-b21d-4cfb-b5ee-8d12d0129679" Name="Welcome Screen" ConditionGroup="" Condition="None">
         <Params>
           <Items>
             <SectionParam Name="Header text">
@@ -136,7 +136,7 @@ cul8er</Value>
         <PanelName>Welcome Screen</PanelName>
         <WizardButtonsEnum>NextCancel</WizardButtonsEnum>
       </SectionItem>
-      <SectionItem Guid="ea79a142-a7c9-4530-b7a8-d3eac63eef42" Name="Install Section" ConditionGroup="">
+      <SectionItem Guid="ea79a142-a7c9-4530-b7a8-d3eac63eef42" Name="Install Section" ConditionGroup="" Condition="None">
         <Params>
           <Items>
             <SectionParam Name="Header Title">
@@ -158,7 +158,7 @@ cul8er</Value>
         </Params>
         <Actions>
           <Items>
-            <ActionItem Name="InstallFiles" ActionType="InstallFiles" ConditionGroup="">
+            <ActionItem Name="InstallFiles" ActionType="InstallFiles" ConditionGroup="" Condition="None">
               <Params>
                 <Items />
               </Params>
@@ -170,7 +170,7 @@ cul8er</Value>
         <PanelName>Install Section</PanelName>
         <WizardButtonsEnum>Next</WizardButtonsEnum>
       </SectionItem>
-      <SectionItem Guid="e4d0d8f2-ad3d-4036-a846-cb0122f99fd8" Name="Setup Complete" ConditionGroup="">
+      <SectionItem Guid="e4d0d8f2-ad3d-4036-a846-cb0122f99fd8" Name="Setup Complete" ConditionGroup="" Condition="None">
         <Params>
           <Items>
             <SectionParam Name="Header text">
@@ -210,20 +210,21 @@ cul8er</Value>
         <Type>MediaPortal</Type>
         <Id />
         <MinVersion>
-          <Major>1</Major>
-          <Minor>1</Minor>
-          <Build>6</Build>
-          <Revision>27644</Revision>
+          <Major>*</Major>
+          <Minor>*</Minor>
+          <Build>*</Build>
+          <Revision>*</Revision>
         </MinVersion>
         <MaxVersion>
-          <Major>1</Major>
-          <Minor>1</Minor>
-          <Build>6</Build>
-          <Revision>27644</Revision>
+          <Major>*</Major>
+          <Minor>*</Minor>
+          <Build>*</Build>
+          <Revision>*</Revision>
         </MaxVersion>
         <WarnOnly>false</WarnOnly>
-        <Message>This version of LatestsMediaHandler requires MediaPortal 1.25 Pre</Message>
+        <Message />
         <Name>MediaPortal</Name>
+        <Condition>None</Condition>
       </DependencyItem>
       <DependencyItem>
         <Type>Skin</Type>
@@ -243,6 +244,7 @@ cul8er</Value>
         <WarnOnly>true</WarnOnly>
         <Message>Requires Skin version 1.4.0.0 to 1.4.0.0.</Message>
         <Name>Skin</Name>
+        <Condition>None</Condition>
       </DependencyItem>
       <DependencyItem>
         <Type>Installer</Type>
@@ -262,6 +264,7 @@ cul8er</Value>
         <WarnOnly>false</WarnOnly>
         <Message>This version of LatestsMediaHandler requires MediaPortal 1.25 Pre</Message>
         <Name>Installer</Name>
+        <Condition>None</Condition>
       </DependencyItem>
     </Items>
   </Dependencies>
@@ -272,12 +275,12 @@ cul8er</Value>
     <Name>Latest Media Handler</Name>
     <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
     <Author>ajs (maintained by yoavain, original by cul8er)</Author>
-    <HomePage>https://github.com/yoavain/mediaportal-latest-media-handler</HomePage>
-    <ForumPage>http://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
-    <UpdateUrl>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
+    <HomePage>https://github.com/andrewjswan/mediaportal-latest-media-handler</HomePage>
+    <ForumPage>https://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
+    <UpdateUrl>https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
     <Version>
       <Major>2</Major>
-      <Minor>4</Minor>
+      <Minor>5</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
@@ -303,13 +306,16 @@ cul8er</Value>
 
 </ExtensionDescription>
     <VersionDescription>Rebuild to support x86 and x64 architectures.
+Migrate to new Repository
+Migrate to Gihub Build Action
 
 *** We Stand with Ukraine ***</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/builds/LatestMediaHandler-{VERSION}.mpe1</OnlineLocation>
-    <ReleaseDate>2023-04-01T09:06:46</ReleaseDate>
+    <OnlineLocation>https://github.com/andrewjswan/mediaportal-latest-media-handler/releases/download/v[Version]/LatestMediaHandler-[Version].mpe1</OnlineLocation>
+    <ReleaseDate>2024-03-24T20:20:20</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
-    <Location>..\builds\LatestMediaHandler-MAJOR.MINOR.BUILD.REVISION.mpe1</Location>
+    <PlatformCompatibility>AnyCPU</PlatformCompatibility>
+    <Location>..\builds\LatestMediaHandler-[Version].mpe1</Location>
     <Params>
       <Items>
         <SectionParam Name="Icon">
@@ -318,7 +324,7 @@ cul8er</Value>
           <Description>The icon file of the package (jpg,png,bmp)</Description>
         </SectionParam>
         <SectionParam Name="Online Icon">
-          <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/LatestMediaHandler_Icon.png</Value>
+          <Value>https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/LatestMediaHandler_Icon.png</Value>
           <ValueType>String</ValueType>
           <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
         </SectionParam>
@@ -330,7 +336,7 @@ cul8er</Value>
  If have .dll extension used like MP plugin configuration</Description>
         </SectionParam>
         <SectionParam Name="Online Screenshots">
-          <Value>https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/yoavain/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
+          <Value>https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
           <ValueType>String</ValueType>
           <Description>Online stored screenshot urls separated by ; </Description>
         </SectionParam>
@@ -344,77 +350,77 @@ cul8er</Value>
   </GeneralInfo>
   <UniqueFileList>
     <Items>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\LatestMediaHandler\bin\Release\LatestMediaHandler.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{3e0cdaf9-7327-465e-b13e-9bf42591759d}-LatestMediaHandler.dll</ZipFileName>
         <DestinationFilename>%Base%\plugins\process\LatestMediaHandler.dll</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\config\LatestMediaHandler.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{d7d746d5-0e97-4660-b732-22a8d22bdec9}-LatestMediaHandler.xml</ZipFileName>
         <DestinationFilename>%Config%\LatestMediaHandler.xml</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\language\en.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c2eab1ba-0331-4372-80c0-fe560ec77f5f}-en.xml</ZipFileName>
         <DestinationFilename>%Language%\LatestMediaHandler\en.xml</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\language\sv.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{50137788-85a9-44d0-9037-6efdc2b7496e}-sv.xml</ZipFileName>
         <DestinationFilename>%Language%\LatestMediaHandler\sv.xml</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\language\fr.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{bf54ed8e-eea9-11e4-90ec-1681e6b88ec1}-fr.xml</ZipFileName>
         <DestinationFilename>%Language%\LatestMediaHandler\fr.xml</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\language\ru.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b409cb17-1a68-48d9-976e-e82760ce6e13}-ru.xml</ZipFileName>
         <DestinationFilename>%Language%\LatestMediaHandler\ru.xml</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\language\de.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{0e27f0e5-ba0c-4d06-bd92-9715a1518443}-de.xml</ZipFileName>
         <DestinationFilename>%Language%\LatestMediaHandler\de.xml</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\language\es.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{9ddb4c07-6510-4e0a-a732-210d92d2a152}-es.xml</ZipFileName>
         <DestinationFilename>%Language%\LatestMediaHandler\es.xml</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Installer\config\LatestMediaHandler.SkinSettings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b62f410f-6966-48be-957f-d0f047117d63}-LatestMediaHandler.SkinSettings.xml</ZipFileName>
         <DestinationFilename>%Skin%\Generic\LatestMediaHandler.SkinSettings.xml</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\LatestMediaHandler_Icon.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{0b1c8721-929c-455c-8311-3f4b0b2dac74}-LatestMediaHandler_Icon.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\LatestMediaHandler\Resources\LatestMediaHandler_Icon.png</LocalFileName>
@@ -426,7 +432,7 @@ cul8er</Value>
   <ProjectSettings>
     <FolderGroups />
     <ProjectFilename>LatestMediaHandler.xmp2</ProjectFilename>
-    <UpdatePath1>LatestMediaHandler-{VERSION}.xml</UpdatePath1>
+    <UpdatePath1>LatestMediaHandler.xml</UpdatePath1>
     <UpdatePath2 />
     <UpdatePath3 />
   </ProjectSettings>
