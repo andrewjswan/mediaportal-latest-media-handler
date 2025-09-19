@@ -71,7 +71,7 @@ namespace LatestMediaHandler
       {
         Utils.ReleaseDelayStop("LatestReorgWorker-OnDoWork");
         LatestMediaHandlerSetup.ReorgTimer.Interval = (Int32.Parse(Utils.ReorgInterval)*60000);
-        LatestMediaHandlerSetup.ReorgTimerTick = Environment.TickCount;
+        LatestMediaHandlerSetup.ReorgTimerTick = DateTime.UtcNow.Ticks;
         Utils.SyncPointReorg = 0;
 
         Utils.SetProperty("#latestMediaHandler.scanned", ((Utils.DelayStopCount > 0) ? "true" : "false"));
@@ -123,3 +123,4 @@ namespace LatestMediaHandler
     }
   }
 }
+
