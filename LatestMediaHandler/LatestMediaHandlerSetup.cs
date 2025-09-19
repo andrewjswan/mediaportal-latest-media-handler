@@ -173,7 +173,7 @@ namespace LatestMediaHandler
 
     internal static int GetReorgTimerInterval()
     {
-      int newTick = Environment.TickCount - ReorgTimerTick;
+      int newTick = unchecked((int)((uint)Environment.TickCount - (uint)ReorgTimerTick));
       try
       {
         newTick = (Int32.Parse(Utils.ReorgInterval) * 60000) - newTick;
@@ -1690,4 +1690,5 @@ namespace LatestMediaHandler
 
     #endregion
   }
+
 }
