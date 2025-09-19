@@ -305,15 +305,13 @@ cul8er</Value>
 * latest added tv recordings
 
 </ExtensionDescription>
-    <VersionDescription>Rebuild to support x86 and x64 architectures.
-Migrate to new Repository
-Migrate to Gihub Build Action
+    <VersionDescription>OverflowException Fix
 Version bump
 
 *** We Stand with Ukraine ***</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/andrewjswan/mediaportal-latest-media-handler/releases/download/v[Version]/LatestMediaHandler-[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2024-03-24T20:20:20</ReleaseDate>
+    <ReleaseDate>2025-09-19T20:20:20</ReleaseDate>
     <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
     <PlatformCompatibility>AnyCPU</PlatformCompatibility>
     <Location>..\builds\LatestMediaHandler-[Version].mpe1</Location>
