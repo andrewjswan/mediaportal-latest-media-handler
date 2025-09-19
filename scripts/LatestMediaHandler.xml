@@ -362,5 +362,184 @@ Version bump
       </ProjectSettings>
       <IsSkin>false</IsSkin>
     </PackageClass>
+    <PackageClass>
+      <Version>2.0</Version>
+      <Groups>
+        <Items>
+          <GroupItem Name="Default">
+            <DisplayName>Default</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Default</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Languages">
+            <DisplayName>Languages</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Languages</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Skin">
+            <DisplayName>Skin</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Skin</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+        </Items>
+      </Groups>
+      <Sections>
+        <Items />
+      </Sections>
+      <Dependencies>
+        <Items>
+          <DependencyItem>
+            <Type>MediaPortal</Type>
+            <Id />
+            <MinVersion>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
+            </MinVersion>
+            <MaxVersion>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
+            </MaxVersion>
+            <WarnOnly>false</WarnOnly>
+            <Message />
+            <Name>MediaPortal</Name>
+            <Condition>None</Condition>
+          </DependencyItem>
+          <DependencyItem>
+            <Type>Skin</Type>
+            <Id />
+            <MinVersion>
+              <Major>1</Major>
+              <Minor>4</Minor>
+              <Build>0</Build>
+              <Revision>0</Revision>
+            </MinVersion>
+            <MaxVersion>
+              <Major>1</Major>
+              <Minor>4</Minor>
+              <Build>0</Build>
+              <Revision>0</Revision>
+            </MaxVersion>
+            <WarnOnly>true</WarnOnly>
+            <Message>Requires Skin version 1.4.0.0 to 1.4.0.0.</Message>
+            <Name>Skin</Name>
+            <Condition>None</Condition>
+          </DependencyItem>
+          <DependencyItem>
+            <Type>Installer</Type>
+            <Id />
+            <MinVersion>
+              <Major>1</Major>
+              <Minor>24</Minor>
+              <Build>100</Build>
+              <Revision>0</Revision>
+            </MinVersion>
+            <MaxVersion>
+              <Major>1</Major>
+              <Minor>99</Minor>
+              <Build>999</Build>
+              <Revision>999</Revision>
+            </MaxVersion>
+            <WarnOnly>false</WarnOnly>
+            <Message>This version of LatestsMediaHandler requires MediaPortal 1.25 Pre</Message>
+            <Name>Installer</Name>
+            <Condition>None</Condition>
+          </DependencyItem>
+        </Items>
+      </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
+      <GeneralInfo>
+        <Name>Latest Media Handler</Name>
+        <Id>fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</Id>
+        <Author>ajs (maintained by yoavain, original by cul8er)</Author>
+        <HomePage>https://github.com/andrewjswan/mediaportal-latest-media-handler</HomePage>
+        <ForumPage>https://forum.team-mediaportal.com/threads/latest-media-handler-v2-3-x-000.132114/</ForumPage>
+        <UpdateUrl>https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/scripts/LatestMediaHandler.xml</UpdateUrl>
+        <Version>
+          <Major>2</Major>
+          <Minor>5</Minor>
+          <Build>0</Build>
+          <Revision>100</Revision>
+        </Version>
+        <ExtensionDescription>The plugin basically supports pushing latest added media to your skin.
+
+
+
+* latest added pictures
+
+* latest added music
+
+* latest added videos
+
+* latest added series (tvseries)
+
+* latest added movies (moving pictures)
+
+* latest added movies (my films)
+
+* latest added videos (mvcentral)
+
+* latest added tv recordings
+
+</ExtensionDescription>
+        <VersionDescription>OverflowException Fix
+Version bump
+
+*** We Stand with Ukraine ***</VersionDescription>
+        <DevelopmentStatus>Stable</DevelopmentStatus>
+        <OnlineLocation>https://github.com/andrewjswan/mediaportal-latest-media-handler/releases/download/v2.5.0.100/LatestMediaHandler-2.5.0.100.mpe1</OnlineLocation>
+        <ReleaseDate>2025-09-19T10:36:59.6640488+00:00</ReleaseDate>
+        <Tags>latest media,music,recording,picture,series,movie,mvcentral</Tags>
+        <PlatformCompatibility>AnyCPU</PlatformCompatibility>
+        <Location>..\builds\LatestMediaHandler-[Version].mpe1</Location>
+        <Params>
+          <Items>
+            <SectionParam Name="Online Icon">
+              <Value>https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/LatestMediaHandler_Icon.png</Value>
+              <ValueType>String</ValueType>
+              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
+            </SectionParam>
+            <SectionParam Name="Configuration file">
+              <Value>%Plugins%\process\latestmediahandler.dll</Value>
+              <ValueType>Template</ValueType>
+              <Description>The file used to configure the extension.
+ If have .exe extension the will be executed
+ If have .dll extension used like MP plugin configuration</Description>
+            </SectionParam>
+            <SectionParam Name="Online Screenshots">
+              <Value>https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/screenshots/screenshot01.jpg;https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/screenshots/screenshot02.jpg;https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/screenshots/screenshot03.jpg;https://raw.githubusercontent.com/andrewjswan/mediaportal-latest-media-handler/master/screenshots/screenshot04.jpg</Value>
+              <ValueType>String</ValueType>
+              <Description>Online stored screenshot urls separated by ; </Description>
+            </SectionParam>
+            <SectionParam Name="Force to uninstall on update">
+              <Value>YES</Value>
+              <ValueType>Bool</ValueType>
+              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+      </GeneralInfo>
+      <UniqueFileList>
+        <Items />
+      </UniqueFileList>
+      <ProjectSettings>
+        <FolderGroups />
+      </ProjectSettings>
+      <IsSkin>false</IsSkin>
+    </PackageClass>
   </Items>
 </ExtensionCollection>
