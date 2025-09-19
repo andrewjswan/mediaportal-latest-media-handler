@@ -173,7 +173,7 @@ namespace LatestMediaHandler
 
     internal static int GetReorgTimerInterval()
     {
-      int newTick = Environment.TickCount - ReorgTimerTick;
+      int newTick = DateTime.UtcNow.Ticks - ReorgTimerTick;
       try
       {
         newTick = (Int32.Parse(Utils.ReorgInterval) * 60000) - newTick;
@@ -345,7 +345,7 @@ namespace LatestMediaHandler
       LatestsHandlers.Add(new LatestMvCentralHandler());
       LatestsHandlers.Add(new LatestTVAllRecordingsHandler());
 
-      ReorgTimerTick = Environment.TickCount;
+      ReorgTimerTick = DateTime.UtcNow.Ticks;
 
       Utils.SetProperty("#latestMediaHandler.scanned", "false");
 
@@ -1690,4 +1690,5 @@ namespace LatestMediaHandler
 
     #endregion
   }
+
 }
