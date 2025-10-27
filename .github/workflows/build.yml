@@ -214,7 +214,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: LatestMediaHandler XML
           path: ${{ github.workspace }}/scripts/
@@ -246,13 +246,13 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: LatestMediaHandler MPE1
           path: release-files
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: LatestMediaHandler Version Description
           path: release-description
