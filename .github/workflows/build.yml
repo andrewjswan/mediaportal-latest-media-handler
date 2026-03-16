@@ -226,7 +226,7 @@ jobs:
           add: '${{ github.workspace }}/scripts/LatestMediaHandler.xml'
 
       - name: Delete XML Artifact
-        uses: geekyeggo/delete-artifact@v5
+        uses: geekyeggo/delete-artifact@v6
         with:
           name: LatestMediaHandler XML
           failOnError: false
@@ -273,13 +273,13 @@ jobs:
             release-files/*.mpe1
 
       - name: Delete MPE1 Artifact
-        uses: geekyeggo/delete-artifact@v5
+        uses: geekyeggo/delete-artifact@v6
         with:
           name: LatestMediaHandler MPE1
           failOnError: false
 
       - name: Delete Version Description Artifact
-        uses: geekyeggo/delete-artifact@v5
+        uses: geekyeggo/delete-artifact@v6
         with:
           name: LatestMediaHandler Version Description
           failOnError: false
